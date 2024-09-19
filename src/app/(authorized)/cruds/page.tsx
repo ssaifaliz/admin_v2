@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import Image from "next/image";
-import Departments from "@/components/tabs/departments";
 import SwapRequests from "@/components/tabs/swapRequests";
 import whitePlus from "@/assets/whitePlus.png";
 import downArrow from "@/assets/downArrow.png";
@@ -16,6 +15,7 @@ import {
   DropdownItem,
   DropdownMenu,
 } from "@/components/catalyst/dropdown";
+import Departments from "@/components/tabs/departments";
 
 const tabs = [
   {
