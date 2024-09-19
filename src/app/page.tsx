@@ -15,8 +15,9 @@ import hide from "@/assets/hide.png";
 import resLogo from "@/assets/responsive_logo.svg";
 
 const Home = () => {
-  const urlParams = new URLSearchParams(window?.location?.search);
-  const redirectUrl = urlParams.get("redirect");
+  // const urlParams = new URLSearchParams(window?.location?.search);
+  // const redirectUrl = urlParams.get("redirect");
+  const [redirectUrl, setRedirectUrl] = useState("");
   const [visible, setVisible] = useState(false);
   const [status, setStatus] = useState<string>("");
   const { push, refresh } = useRouter();
@@ -58,6 +59,13 @@ const Home = () => {
   useEffect(() => {
     if (Cookies.get("session")) push(redirectUrl || "/dashboard");
   }, [Cookies.get("session")]);
+
+  useEffect(() => {
+    if (window?.location?.search) {
+      const urlParams = new URLSearchParams(window?.location?.search);
+      setRedirectUrl(urlParams.get("redirect") || "");
+    }
+  }, []);
 
   return (
     <main className="flex flex-1 h-[100vh] min-h-[100vh] max-h-[100vh] w-full items-center justify-around bg-[#F7F8F7]">
