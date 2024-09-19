@@ -1,0 +1,67 @@
+:root {
+  --color: #05a5fb;
+  --gray: #bbbbbb;
+}
+
+.btn {
+  outline: none;
+  height: 100%;
+  text-align: center;
+  width: 100%;
+  border-radius: 8px;
+  background: #05a5fb;
+  border: 2px solid var(--color);
+  color: #fff;
+  letter-spacing: 1px;
+  text-shadow: 0;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btnSec {
+  border: 1px solid #05a5fb;
+  background: transparent;
+  color: #05a5fb;
+}
+
+.btn:hover {
+  color: #50c2ff;
+  background: #fff;
+}
+
+.btnSec:hover {
+  background: #fff;
+}
+
+.btn:active {
+  letter-spacing: 2px;
+}
+
+.onclic {
+  width: 40px;
+  border-color: var(--gray);
+  border-width: 3px;
+  font-size: 0;
+  border-left-color: var(--color);
+  animation: rotating 2s 0.25s linear infinite;
+  border-radius: 100%;
+  background: #fff;
+}
+
+.onclic::after {
+  content: "";
+}
+
+.onclic:hover {
+  color: var(--color);
+  background: white;
+}
+
+@keyframes rotating {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
