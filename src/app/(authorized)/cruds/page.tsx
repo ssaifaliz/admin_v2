@@ -1,12 +1,15 @@
 "use client";
 import React, { useState } from "react";
 import Image from "next/image";
+import Departments from "@/components/tabs/departments";
 import SwapRequests from "@/components/tabs/swapRequests";
 import whitePlus from "@/assets/whitePlus.png";
 import downArrow from "@/assets/downArrow.png";
 import search from "@/assets/search.png";
 import swap from "@/assets/cruds/swap.png";
 import activeSwap from "@/assets/cruds/activeSwap.png";
+import department from "@/assets/cruds/department.png";
+import activeDepartment from "@/assets/cruds/activeDepartment.png";
 import {
   Dropdown,
   DropdownButton,
@@ -15,6 +18,12 @@ import {
 } from "@/components/catalyst/dropdown";
 
 const tabs = [
+  {
+    name: "Departments",
+    img: department,
+    active: activeDepartment,
+    component: (props: any) => <Departments {...props} />,
+  },
   {
     name: "Swap Requests",
     img: swap,
