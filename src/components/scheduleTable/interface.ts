@@ -1,14 +1,14 @@
 interface Location {
   id: number;
-  hospital_name: string;
-  addr_one: string;
-  addr_two: string;
+  address_1: string;
+  address_2: string;
   city: string;
   state: string;
   country: string;
-  postal_code: number;
-  createdAt: string;
-  updatedAt: string;
+  postal_code: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
 }
 
 interface Department {

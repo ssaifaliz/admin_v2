@@ -24,9 +24,8 @@ interface LocationProps {
 }
 
 interface FormValues {
-  hospital_name: string;
-  addr_one: string;
-  addr_two: string;
+  address_1: string;
+  address_2: string;
   country: SelectOption | ICountry | null;
   city: SelectOption | ICity | null;
   state: SelectOption | IState | null;
@@ -59,18 +58,16 @@ const Location: React.FC<LocationProps> = ({
 
   const formik = useFormik<FormValues>({
     initialValues: {
-      hospital_name: "",
-      addr_one: "",
-      addr_two: "",
+      address_1: "",
+      address_2: "",
       country: null,
       city: null,
       state: null,
       postal_code: "",
     },
     validationSchema: Yup?.object({
-      hospital_name: Yup?.string()?.required("Required"),
-      addr_one: Yup?.string()?.required("Required"),
-      addr_two: Yup?.string()?.required("Required"),
+      address_1: Yup?.string()?.required("Required"),
+      address_2: Yup?.string()?.required("Required"),
       country: Yup.object({
         value: Yup.string().required("Value is required"),
       }).required("This is required"),
@@ -86,16 +83,15 @@ const Location: React.FC<LocationProps> = ({
       setStatus("onclic");
       try {
         await fetchWithToken(
-          isAdd ? "/locations" : `/locations/${isModalVisible}`,
+          isAdd ? "/location/create" : `/location/${isModalVisible}`,
           {
             method: isAdd ? "POST" : "PUT",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              hospital_name: values?.hospital_name,
-              addr_one: values?.addr_one,
-              addr_two: values?.addr_two,
+              address_1: values?.address_1,
+              address_2: values?.address_2,
               country: values?.country?.name,
               state: values?.state?.name,
               city: values?.city?.name,
@@ -120,9 +116,8 @@ const Location: React.FC<LocationProps> = ({
       const data = await fetchWithToken(`/locations/${id}`, {
         method: "GET",
       });
-      formik?.setFieldValue("hospital_name", data?.hospital_name);
-      formik?.setFieldValue("addr_one", data?.addr_one);
-      formik?.setFieldValue("addr_two", data?.addr_two);
+      formik?.setFieldValue("address_1", data?.address_1);
+      formik?.setFieldValue("address_2", data?.address_2);
       formik?.setFieldValue(
         "country",
         countries?.filter((each) => each?.name === data?.country)[0]
@@ -213,60 +208,52 @@ const Location: React.FC<LocationProps> = ({
             {!isAdd ? "Edit" : "Add"}
           </div>
           <div className="text-sm text-[#101010] w-full px-5">
-            <div className="font-bold">Hospital Name</div>
-            <input
-              type="text"
-              placeholder="Enter Hospital Name"
-              name="hospital_name"
-              className="w-[350px] h-[40px] border placeholder-[#5D6561] rounded-[8px] p-2 my-2 outline-none"
-              id="hospital_name"
-              onChange={formik?.handleChange}
-              onBlur={formik?.handleBlur}
-              value={formik?.values?.hospital_name}
-              style={{
-                borderColor:
-                  formik?.touched?.hospital_name &&
-                  formik?.errors?.hospital_name
-                    ? "#E23121"
-                    : "#5D6561",
-              }}
-            />
             <div className="font-bold">address line 1</div>
             <input
               type="text"
               placeholder="Enter address line 1"
-              name="addr_one"
+              name="address_1"
               required
               className="w-[350px] h-[40px] border placeholder-[#5D6561] rounded-[8px] p-2 my-2 outline-none"
-              id="addr_one"
+              id="address_1"
               onChange={formik?.handleChange}
               onBlur={formik?.handleBlur}
-              value={formik?.values?.addr_one}
+              value={formik?.values?.address_1}
               style={{
                 borderColor:
-                  formik?.touched?.addr_one && formik?.errors?.addr_one
+                  formik?.touched?.address_1 && formik?.errors?.address_1
                     ? "#E23121"
                     : "#5D6561",
               }}
             />
+            <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
+              {formik?.touched?.address_1 && formik?.errors?.address_1 && (
+                <div>{formik?.errors?.address_1}</div>
+              )}
+            </div>
             <div className="font-bold">address line 2</div>
             <input
               type="text"
               placeholder="Enter address line 2"
-              name="addr_two"
+              name="address_2"
               required
               className="w-[350px] h-[40px] border placeholder-[#5D6561] rounded-[8px] p-2 my-2 outline-none"
-              id="addr_two"
+              id="address_2"
               onChange={formik?.handleChange}
               onBlur={formik?.handleBlur}
-              value={formik?.values?.addr_two}
+              value={formik?.values?.address_2}
               style={{
                 borderColor:
-                  formik?.touched?.addr_two && formik?.errors?.addr_two
+                  formik?.touched?.address_2 && formik?.errors?.address_2
                     ? "#E23121"
                     : "#5D6561",
               }}
             />
+            <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
+              {formik?.touched?.address_2 && formik?.errors?.address_2 && (
+                <div>{formik?.errors?.address_2}</div>
+              )}
+            </div>
             <div className="font-bold">Country</div>
             <Select
               options={countries}

@@ -15,17 +15,6 @@ import editIcon from "@/assets/editIcon.png";
 import deleteIcon from "@/assets/deleteIcon.png";
 import grayArrowDown from "@/assets/grayArrowDown.png";
 
-interface Location {
-  id: number;
-  hospital_name: string;
-  addr_one: string;
-  addr_two: string;
-  city: string;
-  state: string;
-  country: string;
-  postal_code: string;
-}
-
 interface LocationsProps {
   isModalVisible: boolean | string | number;
   setModalVisible: React.Dispatch<
@@ -48,7 +37,7 @@ const Locations: React.FC<LocationsProps> = ({
       const data = await fetchWithToken("/location/list", {
         method: "GET",
       });
-      setLocations(data?.content?.department);
+      setLocations(data?.content?.location);
 
       console.log("data", data);
     } catch (error) {
@@ -68,7 +57,7 @@ const Locations: React.FC<LocationsProps> = ({
         fetchLocations={fetchLocations}
       />
       <DeleteModal
-        route="locations"
+        route="location"
         content={content}
         visibilityState={deleteRequestModal}
         setState={setDeleteRequestModal}
@@ -79,13 +68,13 @@ const Locations: React.FC<LocationsProps> = ({
           <TableRow className="bg-[#F7F8F7]">
             <TableHeader className="!outline-none !border-b-0">
               <div className="flex items-center">
-                Hospital
+                Address 1
                 <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
               </div>
             </TableHeader>
             <TableHeader className="!outline-none !border-b-0">
               <div className="flex items-center">
-                Address
+                Address 2
                 <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
               </div>
             </TableHeader>
@@ -117,13 +106,13 @@ const Locations: React.FC<LocationsProps> = ({
           </TableRow>
         </TableHead>
         <TableBody>
-          {locations?.map((each, index) => (
+          {locations?.map((each) => (
             <TableRow key={location?.id}>
               <TableCell className="!outline-none !border-b-0">
                 <div className="flex items-center max-w-min">
                   <div className="flex flex-col justify-center">
                     <div className="text-[16px] font-[600] mt-0">
-                      {location?.hospital_name}
+                      {each?.address_1}
                     </div>
                   </div>
                 </div>
@@ -132,10 +121,7 @@ const Locations: React.FC<LocationsProps> = ({
                 <div className="flex items-center max-w-min">
                   <div className="flex flex-col justify-center">
                     <div className="text-[16px] font-normal mt-0">
-                      {location?.addr_one}
-                    </div>
-                    <div className="text-[16px] font-normal mt-0 text-[#5D6561]">
-                      {location?.addr_two}
+                      {each?.address_2}
                     </div>
                   </div>
                 </div>
@@ -144,7 +130,7 @@ const Locations: React.FC<LocationsProps> = ({
                 <div className="flex items-center max-w-min">
                   <div className="flex flex-col justify-center">
                     <div className="text-[16px] font-[600] mt-0">
-                      {location?.city}
+                      {each?.city}
                     </div>
                   </div>
                 </div>
@@ -153,7 +139,7 @@ const Locations: React.FC<LocationsProps> = ({
                 <div className="flex items-center max-w-min">
                   <div className="flex flex-col justify-center">
                     <div className="text-[16px] font-[600] mt-0">
-                      {location?.state}
+                      {each?.state}
                     </div>
                   </div>
                 </div>
@@ -162,7 +148,7 @@ const Locations: React.FC<LocationsProps> = ({
                 <div className="flex items-center max-w-min">
                   <div className="flex flex-col justify-center">
                     <div className="text-[16px] font-[600] mt-0">
-                      {location?.country}
+                      {each?.country}
                     </div>
                   </div>
                 </div>
@@ -171,7 +157,7 @@ const Locations: React.FC<LocationsProps> = ({
                 <div className="flex items-center max-w-min">
                   <div className="flex flex-col justify-center">
                     <div className="text-[16px] font-[600] mt-0">
-                      {location?.postal_code}
+                      {each?.postal_code}
                     </div>
                   </div>
                 </div>
@@ -179,16 +165,7 @@ const Locations: React.FC<LocationsProps> = ({
               <TableCell className="!outline-none !border-b-0 w-[120px] flex float-right h-16 items-center">
                 <div
                   onClick={() => {
-                    setModalVisible(location.id);
-                  }}
-                  className="w-[60px] h-full flex justify-center items-center cursor-pointer"
-                >
-                  <Image alt="editIcon" src={editIcon} className="w-6 h-6" />
-                </div>
-                <div
-                  onClick={() => {
-                    setDeleteRequestModal(location.id);
-                    setContent(`schedule of ${location?.hospital_name}`);
+                    setDeleteRequestModal(each.id);
                   }}
                   className="w-[60px] h-full flex justify-center items-center cursor-pointer"
                 >
