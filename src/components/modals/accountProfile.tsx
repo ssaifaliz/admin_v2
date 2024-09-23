@@ -36,7 +36,7 @@ const AccountProfile: React.FC<ProfileProps> = ({
     emp_id: number | undefined;
     contact: string | undefined;
     email: string;
-    deptId: SingleValue<{ value: number; label: string }> | null;
+    // deptId: SingleValue<{ value: number; label: string }> | null;
     positionId: SingleValue<{ value: number; label: string }> | null;
     roleId: SingleValue<{ value: number; label: string }> | null;
   }>({
@@ -48,7 +48,7 @@ const AccountProfile: React.FC<ProfileProps> = ({
         : "",
       email: userdata?.email ?? "",
       emp_id: userdata?.emp_id,
-      deptId: departments?.filter((each) => each?.id === userdata?.deptId)[0],
+      // deptId: departments?.filter((each) => each?.id === userdata?.deptId)[0],
       positionId: positions?.filter(
         (each) => each?.id === userdata?.positionId
       )[0],
@@ -87,7 +87,7 @@ const AccountProfile: React.FC<ProfileProps> = ({
             },
             body: JSON.stringify({
               ...values,
-              dept: values?.deptId?.value,
+              // dept: values?.deptId?.value,
               position: values?.positionId?.value,
               role: values?.roleId?.value,
               birthdate: moment(values?.birthdate).format("DD-MM-YYYY"),
@@ -116,7 +116,7 @@ const AccountProfile: React.FC<ProfileProps> = ({
         data?.map((each: Department) => ({
           ...each,
           value: each?.id,
-          label: each?.dept_name,
+          // label: each?.dept_name,
         }))
       );
     } catch (error) {
@@ -380,7 +380,7 @@ const AccountProfile: React.FC<ProfileProps> = ({
                 <div>{formik?.errors?.email}</div>
               )}
             </div>
-            <div className="font-bold mb-[8px]">department</div>
+            {/* <div className="font-bold mb-[8px]">department</div>
             <Select
               options={departments}
               value={formik.values.deptId}
@@ -392,7 +392,7 @@ const AccountProfile: React.FC<ProfileProps> = ({
               {formik?.touched?.deptId && formik?.errors?.deptId && (
                 <div>{formik?.errors?.deptId}</div>
               )}
-            </div>
+            </div> */}
             <div className="font-bold mb-[8px]">position</div>
             <Select
               options={positions}
