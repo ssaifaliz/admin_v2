@@ -36,7 +36,7 @@ const Home = () => {
       push("/cruds");
       return;
       try {
-        const response = await fetchWithToken("/auth/login", {
+        const response = await fetchWithToken("/user/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
