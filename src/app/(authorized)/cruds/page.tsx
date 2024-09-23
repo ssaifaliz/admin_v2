@@ -104,8 +104,7 @@ const tabs = [
 
 const Page = () => {
   const [isModalVisible, setModalVisible] = useState(false);
-  const [isDropdown, setIsDropdown] = useState(false);
-  const [selectedTab, setSelectedTab] = useState(tabs[2]);
+  const [selectedTab, setSelectedTab] = useState(tabs[7]);
 
   return (
     <div className="flex flex-1 w-full h-full flex-col">
@@ -148,7 +147,6 @@ const Page = () => {
                     key={index}
                     onClick={() => {
                       setSelectedTab(tab);
-                      setIsDropdown(false);
                     }}
                   >
                     <Image

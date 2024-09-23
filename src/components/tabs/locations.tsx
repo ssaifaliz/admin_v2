@@ -45,10 +45,11 @@ const Locations: React.FC<LocationsProps> = ({
 
   const fetchLocations = async () => {
     try {
-      const data: Location[] = await fetchWithToken("/locations", {
+      const data = await fetchWithToken("/location/list", {
         method: "GET",
       });
-      setLocations(data);
+      setLocations(data?.content?.department);
+
       console.log("data", data);
     } catch (error) {
       console.error("Failed to fetch locations:", error);
@@ -117,12 +118,12 @@ const Locations: React.FC<LocationsProps> = ({
         </TableHead>
         <TableBody>
           {locations?.map((each, index) => (
-            <TableRow key={each?.id}>
+            <TableRow key={location?.id}>
               <TableCell className="!outline-none !border-b-0">
                 <div className="flex items-center max-w-min">
                   <div className="flex flex-col justify-center">
                     <div className="text-[16px] font-[600] mt-0">
-                      {each?.hospital_name}
+                      {location?.hospital_name}
                     </div>
                   </div>
                 </div>
@@ -131,10 +132,10 @@ const Locations: React.FC<LocationsProps> = ({
                 <div className="flex items-center max-w-min">
                   <div className="flex flex-col justify-center">
                     <div className="text-[16px] font-normal mt-0">
-                      {each?.addr_one}
+                      {location?.addr_one}
                     </div>
                     <div className="text-[16px] font-normal mt-0 text-[#5D6561]">
-                      {each?.addr_two}
+                      {location?.addr_two}
                     </div>
                   </div>
                 </div>
@@ -143,7 +144,7 @@ const Locations: React.FC<LocationsProps> = ({
                 <div className="flex items-center max-w-min">
                   <div className="flex flex-col justify-center">
                     <div className="text-[16px] font-[600] mt-0">
-                      {each?.city}
+                      {location?.city}
                     </div>
                   </div>
                 </div>
@@ -152,7 +153,7 @@ const Locations: React.FC<LocationsProps> = ({
                 <div className="flex items-center max-w-min">
                   <div className="flex flex-col justify-center">
                     <div className="text-[16px] font-[600] mt-0">
-                      {each?.state}
+                      {location?.state}
                     </div>
                   </div>
                 </div>
@@ -161,7 +162,7 @@ const Locations: React.FC<LocationsProps> = ({
                 <div className="flex items-center max-w-min">
                   <div className="flex flex-col justify-center">
                     <div className="text-[16px] font-[600] mt-0">
-                      {each?.country}
+                      {location?.country}
                     </div>
                   </div>
                 </div>
@@ -170,7 +171,7 @@ const Locations: React.FC<LocationsProps> = ({
                 <div className="flex items-center max-w-min">
                   <div className="flex flex-col justify-center">
                     <div className="text-[16px] font-[600] mt-0">
-                      {each?.postal_code}
+                      {location?.postal_code}
                     </div>
                   </div>
                 </div>
@@ -178,7 +179,7 @@ const Locations: React.FC<LocationsProps> = ({
               <TableCell className="!outline-none !border-b-0 w-[120px] flex float-right h-16 items-center">
                 <div
                   onClick={() => {
-                    setModalVisible(each.id);
+                    setModalVisible(location.id);
                   }}
                   className="w-[60px] h-full flex justify-center items-center cursor-pointer"
                 >
@@ -186,8 +187,8 @@ const Locations: React.FC<LocationsProps> = ({
                 </div>
                 <div
                   onClick={() => {
-                    setDeleteRequestModal(each.id);
-                    setContent(`schedule of ${each?.hospital_name}`);
+                    setDeleteRequestModal(location.id);
+                    setContent(`schedule of ${location?.hospital_name}`);
                   }}
                   className="w-[60px] h-full flex justify-center items-center cursor-pointer"
                 >
