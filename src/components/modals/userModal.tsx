@@ -43,17 +43,20 @@ const UserModal: React.FC<userProps> = ({
     onSubmit: async (values) => {
       setStatus("onclic");
       try {
-        await fetchWithToken(isAdd ? "/users" : `/users/${isModalVisible}`, {
-          method: isAdd ? "POST" : "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            username: values?.username,
-            password: values?.password,
-            email: values?.email,
-          }),
-        });
+        await fetchWithToken(
+          isAdd ? "/user/create" : `/user/${isModalVisible}`,
+          {
+            method: isAdd ? "POST" : "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              username: values?.username,
+              password: values?.password,
+              email: values?.email,
+            }),
+          }
+        );
         setStatus("success");
         setTimeout(() => {
           setModalVisible(!isModalVisible);
@@ -68,7 +71,7 @@ const UserModal: React.FC<userProps> = ({
 
   const getUserDetails = async (id: string | number) => {
     try {
-      const data = await fetchWithToken(`/users/${id}`, {
+      const data = await fetchWithToken(`/user/${id}`, {
         method: "GET",
       });
       formik?.setFieldValue("username", data?.username);

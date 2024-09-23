@@ -5,6 +5,7 @@ import { useFormik } from "formik";
 import "react-dropdown/style.css";
 import fetchWithToken from "@/utils/api";
 import AnimatedBtn from "../animatedBtn";
+import { permission, title } from "process";
 
 interface roleProps {
   isModalVisible: boolean | string | number;
@@ -35,16 +36,20 @@ const RoleModal: React.FC<roleProps> = ({
     onSubmit: async (values) => {
       setStatus("onclic");
       try {
-        await fetchWithToken(isAdd ? "/roles" : `/roles/${isModalVisible}`, {
-          method: isAdd ? "POST" : "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            role: values?.role,
-            code_name: values?.code_name,
-          }),
-        });
+        await fetchWithToken(
+          isAdd ? "/role/create" : `/role-/${isModalVisible}`,
+          {
+            method: isAdd ? "POST" : "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              code_name: values?.code_name,
+              permission: permission,
+              title: title,
+            }),
+          }
+        );
         setStatus("success");
         setTimeout(() => {
           setModalVisible(!isModalVisible);
@@ -59,7 +64,7 @@ const RoleModal: React.FC<roleProps> = ({
 
   const getRoleDetails = async (id: string | number) => {
     try {
-      const data = await fetchWithToken(`/roles/${id}`, {
+      const data = await fetchWithToken(`/role/${id}`, {
         method: "GET",
       });
       formik?.setFieldValue("role", data?.role);

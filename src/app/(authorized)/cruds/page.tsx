@@ -104,7 +104,7 @@ const tabs = [
 
 const Page = () => {
   const [isModalVisible, setModalVisible] = useState(false);
-  const [selectedTab, setSelectedTab] = useState(tabs[7]);
+  const [selectedTab, setSelectedTab] = useState(tabs[4]);
 
   return (
     <div className="flex flex-1 w-full h-full flex-col">

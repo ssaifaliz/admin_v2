@@ -31,10 +31,10 @@ const Roles: React.FC<rolesProps> = ({ isModalVisible, setModalVisible }) => {
 
   const fetchRoles = async () => {
     try {
-      const data = await fetchWithToken("/roles", {
+      const data = await fetchWithToken("/role/list", {
         method: "GET",
       });
-      setRoles(data);
+      setRoles(data?.content?.role);
       console.log("data", data);
     } catch (error) {
       console.error("Failed to fetch roles:", error);

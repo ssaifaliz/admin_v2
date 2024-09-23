@@ -5,6 +5,7 @@ import { useFormik } from "formik";
 import "react-dropdown/style.css";
 import fetchWithToken from "@/utils/api";
 import AnimatedBtn from "../animatedBtn";
+import { title } from "process";
 
 interface positionProps {
   isModalVisible: boolean | string | number;
@@ -25,23 +26,25 @@ const PositionModal: React.FC<positionProps> = ({
 
   const formik = useFormik({
     initialValues: {
-      position_name: "",
+      title: "",
     },
     validationSchema: Yup?.object({
-      position_name: Yup?.string()?.required("Required"),
+      title: Yup?.string()?.required("Required"),
     }),
     onSubmit: async (values) => {
       setStatus("onclic");
       try {
         await fetchWithToken(
-          isAdd ? "/positions" : `/positions/${isModalVisible}`,
+          isAdd ? "/position/create" : `/position/${isModalVisible}`,
+
           {
             method: isAdd ? "POST" : "PUT",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              position_name: values?.position_name,
+              // position_name: values?.position_name,
+              title: values?.title,
             }),
           }
         );
@@ -59,10 +62,10 @@ const PositionModal: React.FC<positionProps> = ({
 
   const getPositionDetails = async (id: string | number) => {
     try {
-      const data = await fetchWithToken(`/positions/${id}`, {
+      const data = await fetchWithToken(`/position/${id}`, {
         method: "GET",
       });
-      formik?.setFieldValue("position_name", data?.position_name);
+      formik?.setFieldValue("title", data?.title);
     } catch (error) {
       console.error("Failed to fetch position:", error);
     }
@@ -92,19 +95,18 @@ const PositionModal: React.FC<positionProps> = ({
             <div className="text-sm text-[#101010]">
               <div className="font-bold">position</div>
               <input
-                type="position_name"
+                type="text"
                 placeholder="Enter position"
-                name="position_name"
+                name="title"
                 required
                 className="w-[350px] h-[40px] border placeholder-[#5D6561] rounded-[8px] p-2 my-2 outline-none"
-                id="position_name"
+                id="title"
                 onChange={formik?.handleChange}
                 onBlur={formik?.handleBlur}
-                value={formik?.values?.position_name}
+                value={formik?.values?.title}
                 style={{
                   borderColor:
-                    formik?.touched?.position_name &&
-                    formik?.errors?.position_name
+                    formik?.touched?.title && formik?.errors?.title
                       ? "#E23121"
                       : "#5D6561",
                 }}
