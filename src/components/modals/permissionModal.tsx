@@ -5,20 +5,20 @@ import { useFormik } from "formik";
 import "react-dropdown/style.css";
 import fetchWithToken from "@/utils/api";
 import AnimatedBtn from "../animatedBtn";
-import { permission, title } from "process";
+import { title } from "process";
 
-interface roleProps {
+interface permissionProps {
   isModalVisible: boolean | string | number;
   setModalVisible: React.Dispatch<
     React.SetStateAction<boolean | string | number>
   >;
-  fetchRoles: () => void;
+  fetchPermissions: () => void;
 }
 
-const RoleModal: React.FC<roleProps> = ({
+const PermissionModal: React.FC<permissionProps> = ({
   isModalVisible,
   setModalVisible,
-  fetchRoles,
+  fetchPermissions,
 }) => {
   const isAdd = isModalVisible === true;
   const [status, setStatus] = useState<string>("");
@@ -26,28 +26,23 @@ const RoleModal: React.FC<roleProps> = ({
 
   const formik = useFormik({
     initialValues: {
-      code_name: "",
-      permission: "",
       title: "",
     },
     validationSchema: Yup?.object({
-      code_name: Yup?.string()?.required("Required"),
-      permission: Yup?.string()?.required("Required"),
       title: Yup?.string()?.required("Required"),
     }),
     onSubmit: async (values) => {
       setStatus("onclic");
       try {
         await fetchWithToken(
-          isAdd ? "/role/create" : `/role/${isModalVisible}`,
+          isAdd ? "/permission/create" : `/permission/${isModalVisible}`,
+
           {
             method: isAdd ? "POST" : "PUT",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              code_name: values?.code_name,
-              permission: values?.permission,
               title: values?.title,
             }),
           }
@@ -56,24 +51,22 @@ const RoleModal: React.FC<roleProps> = ({
         setTimeout(() => {
           setModalVisible(!isModalVisible);
         }, 1250);
-        fetchRoles();
+        fetchPermissions();
       } catch (error) {
         setStatus("fail");
-        console.error("Error creating role:", error);
+        console.error("Error creating position:", error);
       }
     },
   });
 
-  const getRoleDetails = async (id: string | number) => {
+  const getPositionDetails = async (id: string | number) => {
     try {
-      const data = await fetchWithToken(`/role/${id}`, {
+      const data = await fetchWithToken(`/permission/${id}`, {
         method: "GET",
       });
-      formik?.setFieldValue("code_name", data?.code_name);
-      formik?.setFieldValue("permission", data?.permision);
       formik?.setFieldValue("title", data?.title);
     } catch (error) {
-      console.error("Failed to fetch role:", error);
+      console.error("Failed to fetch permision:", error);
     }
   };
 
@@ -83,7 +76,7 @@ const RoleModal: React.FC<roleProps> = ({
       typeof isModalVisible === "number" ||
       typeof isModalVisible === "string"
     )
-      getRoleDetails(isModalVisible);
+      getPositionDetails(isModalVisible);
   }, [isModalVisible]);
 
   return (
@@ -97,48 +90,12 @@ const RoleModal: React.FC<roleProps> = ({
             onClick={(e) => e?.stopPropagation()}
             className="py-5 max-w-[40%] h-[70%] overflow-auto m-auto w-[385px] capitalize p-5 bg-[#FFF] rounded-[8px] scrollbar-hidden"
           >
-            <div className="text-center text-lg font-bold">role</div>
+            <div className="text-center text-lg font-bold">Permission</div>
             <div className="text-sm text-[#101010]">
-              <div className="font-bold">code name</div>
-              <input
-                type="text"
-                placeholder="Enter code name"
-                name="code_name"
-                required
-                className="w-[350px] h-[40px] border placeholder-[#5D6561] rounded-[8px] p-2 my-2 outline-none"
-                id="code_name"
-                onChange={formik?.handleChange}
-                onBlur={formik?.handleBlur}
-                value={formik?.values?.code_name}
-                style={{
-                  borderColor:
-                    formik?.touched?.code_name && formik?.errors?.code_name
-                      ? "#E23121"
-                      : "#5D6561",
-                }}
-              />
-              <div className="font-bold">Permission</div>
-              <input
-                type="text"
-                placeholder="Enter permission"
-                name="permission"
-                required
-                className="w-[350px] h-[40px] border placeholder-[#5D6561] rounded-[8px] p-2 my-2 outline-none"
-                id="role"
-                onChange={formik?.handleChange}
-                onBlur={formik?.handleBlur}
-                value={formik?.values?.permission}
-                style={{
-                  borderColor:
-                    formik?.touched?.permission && formik?.errors?.permission
-                      ? "#E23121"
-                      : "#5D6561",
-                }}
-              />
               <div className="font-bold">Title</div>
               <input
                 type="text"
-                placeholder="Enter title"
+                placeholder="Enter Title"
                 name="title"
                 required
                 className="w-[350px] h-[40px] border placeholder-[#5D6561] rounded-[8px] p-2 my-2 outline-none"
@@ -185,4 +142,4 @@ const RoleModal: React.FC<roleProps> = ({
   );
 };
 
-export default RoleModal;
+export default PermissionModal;
