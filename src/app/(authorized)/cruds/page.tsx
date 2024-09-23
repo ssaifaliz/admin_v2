@@ -111,10 +111,10 @@ const tabs = [
 
 const Page = () => {
   const [isModalVisible, setModalVisible] = useState(false);
-  const [selectedTab, setSelectedTab] = useState(tabs[9]);
+  const [selectedTab, setSelectedTab] = useState(tabs[4]);
 
   return (
-    <div className="flex flex-1 w-full h-full flex-col">
+    <div className="flex flex-1 w-full h-full flex-col relative">
       <div className="w-full flex items-center justify-between">
         <div className="h-[40px] flex">
           <Dropdown>
@@ -190,6 +190,10 @@ const Page = () => {
       <div className="flex-1 overflow-y-auto scrollbar-hidden mt-1">
         {selectedTab?.component({ isModalVisible, setModalVisible })}
       </div>
+      <div
+        style={{ border: "10px solid green" }}
+        className="absolute bottom-[2%] w-full h-[60px]"
+      ></div>
     </div>
   );
 };
