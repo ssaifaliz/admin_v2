@@ -56,7 +56,7 @@ const Positions: React.FC<rolesProps> = ({
             <TableHeader className="!outline-none !border-b-0">
               <div className="flex items-center">
                 Position
-                {<Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />}
+                <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
               </div>
             </TableHeader>
             <TableHeader className="!outline-none !border-b-0"></TableHeader>
