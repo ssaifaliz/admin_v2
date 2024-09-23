@@ -4,12 +4,8 @@ import Image from "next/image";
 import Departments from "@/components/tabs/departments";
 import Positions from "@/components/tabs/positions";
 import Permission from "@/components/tabs/permission";
-import Profiles from "@/components/tabs/profiles";
 import Roles from "@/components/tabs/roles";
-import Shifts from "@/components/tabs/shifts";
 import Users from "@/components/tabs/users";
-import SwapRequests from "@/components/tabs/swapRequests";
-import Schedules from "@/components/tabs/schedules";
 import Locations from "@/components/tabs/locations";
 import whitePlus from "@/assets/whitePlus.png";
 import downArrow from "@/assets/downArrow.png";
@@ -32,7 +28,6 @@ import activeRole from "@/assets/cruds/activeRole.png";
 import activeShift from "@/assets/cruds/activeShift.png";
 import activeSwap from "@/assets/cruds/activeSwap.png";
 import activeUsers from "@/assets/cruds/activeUsers.png";
-import Leaves from "@/components/tabs/leaves";
 import {
   Dropdown,
   DropdownButton,
@@ -41,18 +36,6 @@ import {
 } from "@/components/catalyst/dropdown";
 
 const tabs = [
-  {
-    name: "Schedules",
-    img: schedules,
-    active: activeSchedule,
-    component: (props: any) => <Schedules {...props} />,
-  },
-  {
-    name: "Profiles",
-    img: profile,
-    active: activeProfile,
-    component: (props: any) => <Profiles {...props} />,
-  },
   {
     name: "Departments",
     img: department,
@@ -78,18 +61,6 @@ const tabs = [
     component: (props: any) => <Roles {...props} />,
   },
   {
-    name: "Shifts",
-    img: shift,
-    active: activeShift,
-    component: (props: any) => <Shifts {...props} />,
-  },
-  {
-    name: "Swap Requests",
-    img: swap,
-    active: activeSwap,
-    component: (props: any) => <SwapRequests {...props} />,
-  },
-  {
     name: "Locations",
     img: location,
     active: activeLocation,
@@ -101,17 +72,11 @@ const tabs = [
     active: activeUsers,
     component: (props: any) => <Users {...props} />,
   },
-  {
-    name: "Leaves",
-    img: users,
-    active: activeUsers,
-    component: (props: any) => <Leaves {...props} />,
-  },
 ];
 
 const Page = () => {
   const [isModalVisible, setModalVisible] = useState(false);
-  const [selectedTab, setSelectedTab] = useState(tabs[4]);
+  const [selectedTab, setSelectedTab] = useState(tabs[0]);
 
   return (
     <div className="flex flex-1 w-full h-full flex-col relative">
