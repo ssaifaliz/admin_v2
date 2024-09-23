@@ -29,6 +29,14 @@ interface Position {
   label: string;
 }
 
+interface Permission {
+  created_at: string;
+  deleted_at: string | null;
+  id: string;
+  title: string;
+  updated_at: string;
+}
+
 interface Role {
   id: number;
   role: string;

@@ -25,7 +25,7 @@ const Permission: React.FC<permissionProps> = ({
   setModalVisible,
 }) => {
   const [content, setContent] = useState<string>("");
-  const [permission, setpermission] = useState<any[]>([]);
+  const [permission, setpermission] = useState<Permission[]>([]);
   //   const [deleteDepartmentModal, setDeleteDepartmentModal] = useState<
   //     boolean | number | string
   //   >(false);
@@ -71,7 +71,7 @@ const Permission: React.FC<permissionProps> = ({
                   </div>
                 </div>
               </TableCell>
-              <TableCell className="!outline-none !border-b-0">
+              {/* <TableCell className="!outline-none !border-b-0">
                 <div className="flex items-center max-w-min">
                   <div className="flex flex-col justify-center">
                     <div className="text-[16px] font-[600] mt-0">
@@ -79,7 +79,7 @@ const Permission: React.FC<permissionProps> = ({
                     </div>
                   </div>
                 </div>
-              </TableCell>
+              </TableCell> */}
 
               {/* <TableCell className="!outline-none !border-b-0 w-[120px] flex float-right">
                 <div
