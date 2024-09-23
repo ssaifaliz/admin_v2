@@ -34,10 +34,10 @@ const Positions: React.FC<rolesProps> = ({
 
   const fetchPositons = async () => {
     try {
-      const data = await fetchWithToken("/positions", {
+      const data = await fetchWithToken("/position/list", {
         method: "GET",
       });
-      setPositions(data);
+      setPositions(data?.content?.position);
       console.log("data", data);
     } catch (error) {
       console.error("Failed to fetch roles:", error);
@@ -64,29 +64,27 @@ const Positions: React.FC<rolesProps> = ({
         </TableHead>
         <TableBody>
           {positions?.map((position) => {
-            const { id, position_name } = position;
+            const { id, title } = position;
             return (
               <TableRow key={id}>
                 <TableCell className="!outline-none !border-b-0">
                   <div className="flex items-center max-w-min">
                     <div className="flex flex-col justify-center">
-                      <div className="text-[16px] font-[600] mt-0">
-                        {position_name}
-                      </div>
+                      <div className="text-[16px] font-[600] mt-0">{title}</div>
                     </div>
                   </div>
                 </TableCell>
                 <TableCell className="!outline-none !border-b-0 w-[120px] flex float-right">
-                  <div
+                  {/* <div
                     onClick={() => setModalVisible(id)}
                     className="w-[60px] h-full flex justify-center items-center cursor-pointer"
                   >
                     <Image alt="editIcon" src={editIcon} className="w-6 h-6" />
-                  </div>
+                  </div> */}
                   <div
                     onClick={() => {
                       setDeletePositionModal(id);
-                      setContent(position_name);
+                      setContent(title);
                     }}
                     className="w-[60px] h-full flex justify-center items-center cursor-pointer"
                   >

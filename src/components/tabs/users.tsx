@@ -31,10 +31,10 @@ const Users: React.FC<usersProps> = ({ isModalVisible, setModalVisible }) => {
 
   const fetchUsers = async () => {
     try {
-      const data = await fetchWithToken("/users", {
+      const data = await fetchWithToken("/user/list", {
         method: "GET",
       });
-      setUsers(data);
+      setUsers(data?.content?.user);
       console.log("data", data);
     } catch (error) {
       console.error("Failed to fetch users:", error);

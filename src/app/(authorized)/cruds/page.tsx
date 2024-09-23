@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Departments from "@/components/tabs/departments";
 import Positions from "@/components/tabs/positions";
+import Permission from "@/components/tabs/permission";
 import Profiles from "@/components/tabs/profiles";
 import Roles from "@/components/tabs/roles";
 import Shifts from "@/components/tabs/shifts";
@@ -65,6 +66,12 @@ const tabs = [
     component: (props: any) => <Positions {...props} />,
   },
   {
+    name: "Permissions",
+    img: position,
+    active: activePosition,
+    component: (props: any) => <Permission {...props} />,
+  },
+  {
     name: "Roles",
     img: role,
     active: activeRole,
@@ -104,7 +111,7 @@ const tabs = [
 
 const Page = () => {
   const [isModalVisible, setModalVisible] = useState(false);
-  const [selectedTab, setSelectedTab] = useState(tabs[7]);
+  const [selectedTab, setSelectedTab] = useState(tabs[9]);
 
   return (
     <div className="flex flex-1 w-full h-full flex-col">

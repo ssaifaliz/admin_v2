@@ -7,18 +7,18 @@ import fetchWithToken from "@/utils/api";
 import AnimatedBtn from "../animatedBtn";
 import { title } from "process";
 
-interface positionProps {
+interface permissionProps {
   isModalVisible: boolean | string | number;
   setModalVisible: React.Dispatch<
     React.SetStateAction<boolean | string | number>
   >;
-  fetchPositions: () => void;
+  fetchPermissions: () => void;
 }
 
-const PositionModal: React.FC<positionProps> = ({
+const PermissionModal: React.FC<permissionProps> = ({
   isModalVisible,
   setModalVisible,
-  fetchPositions,
+  fetchPermissions,
 }) => {
   const isAdd = isModalVisible === true;
   const [status, setStatus] = useState<string>("");
@@ -35,7 +35,7 @@ const PositionModal: React.FC<positionProps> = ({
       setStatus("onclic");
       try {
         await fetchWithToken(
-          isAdd ? "/position/create" : `/position/${isModalVisible}`,
+          isAdd ? "/permission/create" : `/permission/${isModalVisible}`,
 
           {
             method: isAdd ? "POST" : "PUT",
@@ -43,7 +43,6 @@ const PositionModal: React.FC<positionProps> = ({
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              // position_name: values?.position_name,
               title: values?.title,
             }),
           }
@@ -52,7 +51,7 @@ const PositionModal: React.FC<positionProps> = ({
         setTimeout(() => {
           setModalVisible(!isModalVisible);
         }, 1250);
-        fetchPositions();
+        fetchPermissions();
       } catch (error) {
         setStatus("fail");
         console.error("Error creating position:", error);
@@ -62,12 +61,12 @@ const PositionModal: React.FC<positionProps> = ({
 
   const getPositionDetails = async (id: string | number) => {
     try {
-      const data = await fetchWithToken(`/position/${id}`, {
+      const data = await fetchWithToken(`/permission/${id}`, {
         method: "GET",
       });
       formik?.setFieldValue("title", data?.title);
     } catch (error) {
-      console.error("Failed to fetch position:", error);
+      console.error("Failed to fetch permision:", error);
     }
   };
 
@@ -91,12 +90,12 @@ const PositionModal: React.FC<positionProps> = ({
             onClick={(e) => e?.stopPropagation()}
             className="py-5 max-w-[40%] h-[70%] overflow-auto m-auto w-[385px] capitalize p-5 bg-[#FFF] rounded-[8px] scrollbar-hidden"
           >
-            <div className="text-center text-lg font-bold">position</div>
+            <div className="text-center text-lg font-bold">Permission</div>
             <div className="text-sm text-[#101010]">
-              <div className="font-bold">position</div>
+              <div className="font-bold">Title</div>
               <input
                 type="text"
-                placeholder="Enter position"
+                placeholder="Enter Title"
                 name="title"
                 required
                 className="w-[350px] h-[40px] border placeholder-[#5D6561] rounded-[8px] p-2 my-2 outline-none"
@@ -143,4 +142,4 @@ const PositionModal: React.FC<positionProps> = ({
   );
 };
 
-export default PositionModal;
+export default PermissionModal;

@@ -31,10 +31,10 @@ const Roles: React.FC<rolesProps> = ({ isModalVisible, setModalVisible }) => {
 
   const fetchRoles = async () => {
     try {
-      const data = await fetchWithToken("/roles", {
+      const data = await fetchWithToken("/role/list", {
         method: "GET",
       });
-      setRoles(data);
+      setRoles(data?.content?.role);
       console.log("data", data);
     } catch (error) {
       console.error("Failed to fetch roles:", error);
@@ -52,13 +52,19 @@ const Roles: React.FC<rolesProps> = ({ isModalVisible, setModalVisible }) => {
           <TableRow className="bg-[#F7F8F7]">
             <TableHeader className="!outline-none !border-b-0">
               <div className="flex items-center">
-                Role
+                Code Name
                 {<Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />}
               </div>
             </TableHeader>
             <TableHeader className="!outline-none !border-b-0">
               <div className="flex items-center">
-                Code Name
+                Permission
+                {<Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />}
+              </div>
+            </TableHeader>
+            <TableHeader className="!outline-none !border-b-0">
+              <div className="flex items-center">
+                Title
                 {<Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />}
               </div>
             </TableHeader>
@@ -67,16 +73,9 @@ const Roles: React.FC<rolesProps> = ({ isModalVisible, setModalVisible }) => {
         </TableHead>
         <TableBody>
           {roles?.map((each) => {
-            const { id, role, code_name } = each;
+            const { id, code_name, permission, title } = each;
             return (
               <TableRow key={id}>
-                <TableCell className="!outline-none !border-b-0">
-                  <div className="flex items-center max-w-min">
-                    <div className="flex flex-col justify-center">
-                      <div className="text-[16px] font-[600] mt-0">{role}</div>
-                    </div>
-                  </div>
-                </TableCell>
                 <TableCell className="!outline-none !border-b-0">
                   <div className="flex items-center max-w-min">
                     <div className="flex flex-col justify-center">
@@ -86,19 +85,35 @@ const Roles: React.FC<rolesProps> = ({ isModalVisible, setModalVisible }) => {
                     </div>
                   </div>
                 </TableCell>
+                <TableCell className="!outline-none !border-b-0">
+                  <div className="flex items-center max-w-min">
+                    <div className="flex flex-col justify-center">
+                      <div className="text-[16px] font-[600] mt-0">
+                        {permission}
+                      </div>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell className="!outline-none !border-b-0">
+                  <div className="flex items-center max-w-min">
+                    <div className="flex flex-col justify-center">
+                      <div className="text-[16px] font-[600] mt-0">{title}</div>
+                    </div>
+                  </div>
+                </TableCell>
                 <TableCell className="!outline-none !border-b-0 w-[120px] flex float-right">
-                  <div
+                  {/* <div
                     onClick={() => {
                       setModalVisible(id);
                     }}
                     className="w-[60px] h-full flex justify-center items-center cursor-pointer"
                   >
                     <Image alt="editIcon" src={editIcon} className="w-6 h-6" />
-                  </div>
+                  </div> */}
                   <div
                     onClick={() => {
                       setDeleteRoleModal(id);
-                      setContent(role);
+                      // setContent(role);
                     }}
                     className="w-[60px] h-full flex justify-center items-center cursor-pointer"
                   >
@@ -120,7 +135,7 @@ const Roles: React.FC<rolesProps> = ({ isModalVisible, setModalVisible }) => {
         fetchRoles={fetchRoles}
       />
       <DeleteModal
-        route="roles"
+        route="role"
         content={content}
         visibilityState={deleteRoleModal}
         setState={setDeleteRoleModal}

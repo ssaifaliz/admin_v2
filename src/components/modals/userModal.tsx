@@ -29,12 +29,13 @@ const UserModal: React.FC<userProps> = ({
 
   const formik = useFormik({
     initialValues: {
-      username: "",
+      name: "",
       password: "",
       email: "",
+      role_id: "",
     },
     validationSchema: Yup?.object({
-      username: Yup?.string()?.required("Required"),
+      name: Yup?.string()?.required("Required"),
       password: Yup?.string().required("Required"),
       email: Yup?.string()
         ?.email("Invalid email address")
@@ -43,17 +44,20 @@ const UserModal: React.FC<userProps> = ({
     onSubmit: async (values) => {
       setStatus("onclic");
       try {
-        await fetchWithToken(isAdd ? "/users" : `/users/${isModalVisible}`, {
-          method: isAdd ? "POST" : "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            username: values?.username,
-            password: values?.password,
-            email: values?.email,
-          }),
-        });
+        await fetchWithToken(
+          isAdd ? "/user/create" : `/user/${isModalVisible}`,
+          {
+            method: isAdd ? "POST" : "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: values?.email,
+              name: values?.name,
+              password: values?.password,
+            }),
+          }
+        );
         setStatus("success");
         setTimeout(() => {
           setModalVisible(!isModalVisible);
@@ -68,12 +72,13 @@ const UserModal: React.FC<userProps> = ({
 
   const getUserDetails = async (id: string | number) => {
     try {
-      const data = await fetchWithToken(`/users/${id}`, {
+      const data = await fetchWithToken(`/user/${id}`, {
         method: "GET",
       });
-      formik?.setFieldValue("username", data?.username);
+      formik?.setFieldValue("name", data?.name);
       formik?.setFieldValue("password", data?.password);
       formik?.setFieldValue("email", data?.email);
+      formik?.setFieldValue("role_id", data?.role_id);
     } catch (error) {
       console.error("Failed to fetch user:", error);
     }
@@ -101,29 +106,6 @@ const UserModal: React.FC<userProps> = ({
           >
             <div className="text-center text-lg font-bold">user</div>
             <div className="text-sm text-[#101010]">
-              <div className="font-bold">name</div>
-              <input
-                type="text"
-                placeholder="Enter name"
-                name="username"
-                required
-                className="w-[350px] h-[40px] border placeholder-[#5D6561] rounded-[8px] p-2 my-2 outline-none"
-                id="username"
-                onChange={formik?.handleChange}
-                onBlur={formik?.handleBlur}
-                value={formik?.values?.username}
-                style={{
-                  borderColor:
-                    formik?.touched?.username && formik?.errors?.username
-                      ? "#E23121"
-                      : "#5D6561",
-                }}
-              />
-              <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
-                {formik?.touched?.username && formik?.errors?.username && (
-                  <div>{formik?.errors?.username}</div>
-                )}
-              </div>
               <div className="font-bold">password</div>
 
               <div className="w-[350px] h-[40px] border rounded-[8px] border-[#101010] flex">
@@ -186,6 +168,29 @@ const UserModal: React.FC<userProps> = ({
               <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
                 {formik?.touched?.email && formik?.errors?.email && (
                   <div>{formik?.errors?.email}</div>
+                )}
+              </div>
+              <div className="font-bold">Role Id</div>
+              <input
+                type="text"
+                placeholder="Enter role id"
+                name="role id"
+                required
+                className="w-[350px] h-[40px] border placeholder-[#5D6561] rounded-[8px] p-2 my-2 outline-none"
+                id="name"
+                onChange={formik?.handleChange}
+                onBlur={formik?.handleBlur}
+                value={formik?.values?.role_id}
+                style={{
+                  borderColor:
+                    formik?.touched?.role_id && formik?.errors?.role_id
+                      ? "#E23121"
+                      : "#5D6561",
+                }}
+              />
+              <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
+                {formik?.touched?.role_id && formik?.errors?.role_id && (
+                  <div>{formik?.errors?.role_id}</div>
                 )}
               </div>
             </div>
