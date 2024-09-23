@@ -4,14 +4,7 @@ import type { NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
   const token = request.cookies.get("session")?.value;
-  if (!token) {
-    const redirectUrl = new URL("/", request?.url);
-    redirectUrl?.searchParams?.set(
-      "redirect",
-      request?.nextUrl?.pathname?.substring(1)
-    );
-    return NextResponse.redirect(redirectUrl);
-  }
+  if (!token) return NextResponse.redirect(new URL("/", request.url));
   return NextResponse.next();
 }
 

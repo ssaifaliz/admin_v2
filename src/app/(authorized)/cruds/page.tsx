@@ -1,23 +1,57 @@
 "use client";
 import React, { useState } from "react";
 import Image from "next/image";
+import Departments from "@/components/tabs/departments";
+import Positions from "@/components/tabs/positions";
+import Profiles from "@/components/tabs/profiles";
+import Roles from "@/components/tabs/roles";
+import Shifts from "@/components/tabs/shifts";
+import Users from "@/components/tabs/users";
 import SwapRequests from "@/components/tabs/swapRequests";
+import Schedules from "@/components/tabs/schedules";
+import Locations from "@/components/tabs/locations";
 import whitePlus from "@/assets/whitePlus.png";
 import downArrow from "@/assets/downArrow.png";
 import search from "@/assets/search.png";
-import swap from "@/assets/cruds/swap.png";
-import activeSwap from "@/assets/cruds/activeSwap.png";
+import schedules from "@/assets/cruds/schedule.png";
 import department from "@/assets/cruds/department.png";
+import location from "@/assets/cruds/location.png";
+import position from "@/assets/cruds/position.png";
+import profile from "@/assets/cruds/profile.png";
+import role from "@/assets/cruds/role.png";
+import shift from "@/assets/cruds/shift.png";
+import swap from "@/assets/cruds/swap.png";
+import users from "@/assets/cruds/users.png";
+import activeSchedule from "@/assets/cruds/activeSchedule.png";
 import activeDepartment from "@/assets/cruds/activeDepartment.png";
+import activeLocation from "@/assets/cruds/activeLocation.png";
+import activePosition from "@/assets/cruds/activePosition.png";
+import activeProfile from "@/assets/cruds/activeProfile.png";
+import activeRole from "@/assets/cruds/activeRole.png";
+import activeShift from "@/assets/cruds/activeShift.png";
+import activeSwap from "@/assets/cruds/activeSwap.png";
+import activeUsers from "@/assets/cruds/activeUsers.png";
+import Leaves from "@/components/tabs/leaves";
 import {
   Dropdown,
   DropdownButton,
   DropdownItem,
   DropdownMenu,
 } from "@/components/catalyst/dropdown";
-import Departments from "@/components/tabs/departments";
 
 const tabs = [
+  {
+    name: "Schedules",
+    img: schedules,
+    active: activeSchedule,
+    component: (props: any) => <Schedules {...props} />,
+  },
+  {
+    name: "Profiles",
+    img: profile,
+    active: activeProfile,
+    component: (props: any) => <Profiles {...props} />,
+  },
   {
     name: "Departments",
     img: department,
@@ -25,17 +59,53 @@ const tabs = [
     component: (props: any) => <Departments {...props} />,
   },
   {
+    name: "Positions",
+    img: position,
+    active: activePosition,
+    component: (props: any) => <Positions {...props} />,
+  },
+  {
+    name: "Roles",
+    img: role,
+    active: activeRole,
+    component: (props: any) => <Roles {...props} />,
+  },
+  {
+    name: "Shifts",
+    img: shift,
+    active: activeShift,
+    component: (props: any) => <Shifts {...props} />,
+  },
+  {
     name: "Swap Requests",
     img: swap,
     active: activeSwap,
     component: (props: any) => <SwapRequests {...props} />,
+  },
+  {
+    name: "Locations",
+    img: location,
+    active: activeLocation,
+    component: (props: any) => <Locations {...props} />,
+  },
+  {
+    name: "Users",
+    img: users,
+    active: activeUsers,
+    component: (props: any) => <Users {...props} />,
+  },
+  {
+    name: "Leaves",
+    img: users,
+    active: activeUsers,
+    component: (props: any) => <Leaves {...props} />,
   },
 ];
 
 const Page = () => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [isDropdown, setIsDropdown] = useState(false);
-  const [selectedTab, setSelectedTab] = useState(tabs[0]);
+  const [selectedTab, setSelectedTab] = useState(tabs[2]);
 
   return (
     <div className="flex flex-1 w-full h-full flex-col">

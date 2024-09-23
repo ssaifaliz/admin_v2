@@ -24,6 +24,19 @@ body {
   -ms-overflow-style: none; /* For IE 10+ */
 }
 
+.Dropdown-control {
+  border-radius: 8px !important;
+  border-color: #101010 !important;
+}
+
+.css-t3ipsp-control {
+  border-color: #05a5fb !important;
+  box-shadow: 0 0 0 1px #05a5fb !important;
+}
+.css-15lsz6c-indicatorContainer {
+  color: #05a5fb !important;
+}
+
 /* width */
 ::-webkit-scrollbar {
   height: 6px;

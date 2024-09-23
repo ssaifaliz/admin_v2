@@ -1,3 +1,4 @@
+import FailToast from "@/components/modals/failToast";
 import Cookies from "js-cookie";
 
 async function fetchWithToken(endpoint: string, options: RequestInit = {}) {
@@ -17,7 +18,10 @@ async function fetchWithToken(endpoint: string, options: RequestInit = {}) {
   );
 
   if (!response.ok) {
-    throw new Error("something went wrong and fix this message");
+    const errorData = await response.json();
+    if (errorData?.errors?.length)
+      errorData?.errors?.map((each: any) => FailToast(each?.msg));
+    throw new Error(errorData?.message);
   }
 
   return response.json();

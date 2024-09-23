@@ -2,6 +2,8 @@
 import Header from "@/components/header";
 import Sidebar from "@/components/sidebar";
 import React from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const SubLayout = ({
   children,
@@ -17,6 +19,7 @@ const SubLayout = ({
           {children}
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

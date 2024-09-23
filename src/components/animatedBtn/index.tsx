@@ -1,8 +1,7 @@
 import React, { useEffect } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
 import "./style.css";
-import Image from "next/image";
-import check from "@/assets/check.png";
-import close from "@/assets/close.png";
 
 const AnimatedBtn = ({
   className,
@@ -34,9 +33,9 @@ const AnimatedBtn = ({
         onClick={onClick}
       >
         {status === "fail" ? (
-          <Image alt="close" src={close} className="w-5 h-5" />
+          <FontAwesomeIcon icon={faTimes} />
         ) : status === "success" ? (
-          <Image alt="check" src={check} className="w-5 h-5" />
+          <FontAwesomeIcon icon={faCheck} />
         ) : (
           txt
         )}

@@ -9,8 +9,8 @@ import {
   TableRow,
 } from "../catalyst/table";
 import fetchWithToken from "@/utils/api";
-// import DeleteModal from "../modals/deleteModal";
-// import DepartmentModal from "../modals/departmentModal";
+import DeleteModal from "../modals/deleteModal";
+import DepartmentModal from "../modals/department";
 import editIcon from "@/assets/editIcon.png";
 import deleteIcon from "@/assets/deleteIcon.png";
 import grayArrowDown from "@/assets/grayArrowDown.png";
@@ -38,7 +38,6 @@ const Departments: React.FC<departmentsProps> = ({
         method: "GET",
       });
       setDepartments(data?.content?.department);
-      // console.log("data", data);
     } catch (error) {
       console.error("Failed to fetch departments:", error);
     }
@@ -55,14 +54,14 @@ const Departments: React.FC<departmentsProps> = ({
           <TableRow className="bg-[#F7F8F7]">
             <TableHeader className="!outline-none !border-b-0">
               <div className="flex items-center">
-                Name
-                {/* {<Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />} */}
+                Department
+                <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
               </div>
             </TableHeader>
             <TableHeader className="!outline-none !border-b-0">
               <div className="flex items-center">
                 Description
-                {/* {<Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />} */}
+                <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
               </div>
             </TableHeader>
             <TableHeader className="!outline-none !border-b-0"></TableHeader>
@@ -89,47 +88,38 @@ const Departments: React.FC<departmentsProps> = ({
                   </div>
                 </div>
               </TableCell>
-              <TableCell className="!outline-none !border-b-0 w-[120px]">
-                <div className="flex">
-                  <div
-                    onClick={() => {
-                      setModalVisible(department?.id);
-                    }}
-                    className="w-[60px] h-full flex justify-center items-center cursor-pointer"
-                  >
-                    <Image alt="editIcon" src={editIcon} className="w-6 h-6" />
-                  </div>
-                  <div
-                    onClick={() => {
-                      setDeleteDepartmentModal(department?.id);
-                      setContent(department?.name);
-                    }}
-                    className="w-[60px] h-full flex justify-center items-center cursor-pointer"
-                  >
-                    <Image
-                      alt="deleteIcon"
-                      src={deleteIcon}
-                      className="w-6 h-6"
-                    />
-                  </div>
+
+              <TableCell className="!outline-none !border-b-0 w-[120px] flex float-right">
+                <div
+                  onClick={() => {
+                    setDeleteDepartmentModal(department?.id);
+                    setContent(department?.name);
+                  }}
+                  className="w-[60px] h-full flex justify-center items-center cursor-pointer"
+                >
+                  <Image
+                    alt="deleteIcon"
+                    src={deleteIcon}
+                    className="w-6 h-6"
+                  />
                 </div>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-      {/* <DepartmentModal
+      <DepartmentModal
         isModalVisible={isModalVisible}
         setModalVisible={setModalVisible}
         fetchDepartments={fetchDepartments}
       />
       <DeleteModal
-        route="departments"
+        route="department"
         content={content}
         visibilityState={deleteDepartmentModal}
         setState={setDeleteDepartmentModal}
         fetchAllCall={fetchDepartments}
-      /> */}
+      />
     </>
   );
 };

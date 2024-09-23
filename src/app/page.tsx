@@ -15,9 +15,7 @@ import hide from "@/assets/hide.png";
 import resLogo from "@/assets/responsive_logo.svg";
 
 const Home = () => {
-  // const urlParams = new URLSearchParams(window?.location?.search);
-  // const redirectUrl = urlParams.get("redirect");
-  const [redirectUrl, setRedirectUrl] = useState("");
+  // const urlPar
   const [visible, setVisible] = useState(false);
   const [status, setStatus] = useState<string>("");
   const { push, refresh } = useRouter();
@@ -35,8 +33,10 @@ const Home = () => {
     }),
     onSubmit: async (values) => {
       setStatus("onclic");
+      push("/cruds");
+      return;
       try {
-        const response = await fetchWithToken("/login", {
+        const response = await fetchWithToken("/auth/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -46,7 +46,7 @@ const Home = () => {
         setStatus("success");
         const { token } = await response;
         setToken(token);
-        push(redirectUrl || "/dashboard");
+        push("/dashboard");
         refresh();
       } catch (error: any) {
         console.error("Login failed:", error);
@@ -57,13 +57,13 @@ const Home = () => {
   });
 
   useEffect(() => {
-    if (Cookies.get("session")) push(redirectUrl || "/dashboard");
+    if (Cookies.get("session")) push("/dashboard");
   }, [Cookies.get("session")]);
 
   useEffect(() => {
     if (window?.location?.search) {
       const urlParams = new URLSearchParams(window?.location?.search);
-      setRedirectUrl(urlParams.get("redirect") || "");
+      // setRedirectUrl(urlParams.get("redirect") || "");
     }
   }, []);
 

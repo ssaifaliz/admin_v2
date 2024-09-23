@@ -13,11 +13,11 @@ import editIcon from "@/assets/editIcon.png";
 import deleteIcon from "@/assets/deleteIcon.png";
 import message from "@/assets/message.png";
 import close from "@/assets/close.png";
-// import SwapRequest from "../modals/swapRequest";
-// import SwapMessage from "../modals/swapMessage";
+import SwapRequest from "../modals/swapRequest";
+import SwapMessage from "../modals/swapMessage";
 import fetchWithToken from "@/utils/api";
 import moment from "moment";
-// import DeleteModal from "../modals/deleteModal";
+import DeleteModal from "../modals/deleteModal";
 import grayArrowDown from "@/assets/grayArrowDown.png";
 
 interface Profile {
@@ -71,6 +71,46 @@ interface SwapRequestsProps {
   >;
 }
 
+const badgeColors: Array<
+  | "blue"
+  | "cyan"
+  | "fuchsia"
+  | "green"
+  | "indigo"
+  | "lime"
+  | "orange"
+  | "pink"
+  | "purple"
+  | "red"
+  | "teal"
+  | "violet"
+  | "yellow"
+  | "amber"
+  | "emerald"
+  | "sky"
+  | "rose"
+  | "zinc"
+> = [
+  "red",
+  "orange",
+  "amber",
+  "yellow",
+  "lime",
+  "green",
+  "emerald",
+  "teal",
+  "cyan",
+  "sky",
+  "blue",
+  "indigo",
+  "violet",
+  "purple",
+  "fuchsia",
+  "pink",
+  "rose",
+  "zinc",
+];
+
 const SwapRequests: React.FC<SwapRequestsProps> = ({
   isModalVisible,
   setModalVisible,
@@ -100,7 +140,7 @@ const SwapRequests: React.FC<SwapRequestsProps> = ({
 
   return (
     <>
-      {/* <SwapRequest
+      <SwapRequest
         isModalVisible={isModalVisible}
         setModalVisible={setModalVisible}
         fetchSwapRequests={fetchSwapRequests}
@@ -112,7 +152,7 @@ const SwapRequests: React.FC<SwapRequestsProps> = ({
         visibilityState={deleteRequestModal}
         setState={setDeleteRequestModal}
         fetchAllCall={fetchSwapRequests}
-      /> */}
+      />
       <Table className={"relative mt-5"}>
         <TableHead>
           <TableRow className="bg-[#F7F8F7]">

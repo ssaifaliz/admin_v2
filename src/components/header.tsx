@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import moment from "moment";
 import fetchWithToken from "@/utils/api";
-// import Notifications from "./modals/notifications";
-// import Chats from "./modals/chats";
-// import AccountProfile from "./modals/accountProfile";
-// import Logout from "./modals/logout";
+import Notifications from "./modals/notifications";
+import Chats from "./modals/chats";
+import AccountProfile from "./modals/accountProfile";
+import Logout from "./modals/logout";
 import message from "@/assets/message.png";
 import notification from "@/assets/notification.png";
 import dp from "@/assets/noProfile.svg";
@@ -54,10 +54,10 @@ const Header = () => {
 
   return (
     <div className="flex items-center justify-between px-2">
-      {/* <AccountProfile
+      <AccountProfile
         isModalVisible={isModalVisible}
         setModalVisible={setModalVisible}
-      /> */}
+      />
       <div>
         <div className="text-[24px] font-[500]">{`${getGreeting()}, ${
           userName || "Administrator"
@@ -140,12 +140,12 @@ const Header = () => {
           </DropdownMenu>
         </Dropdown>
       </div>
-      {/* <Notifications
+      <Notifications
         showNotification={showNotification}
         setShowNotification={setShowNotification}
       />
       <Chats showChats={showChats} setShowChats={setShowChats} />
-      <Logout isLogout={isLogout} setIsLogout={setIsLogout} /> */}
+      <Logout isLogout={isLogout} setIsLogout={setIsLogout} />
     </div>
   );
 };
