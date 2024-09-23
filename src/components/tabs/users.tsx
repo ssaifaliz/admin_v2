@@ -62,20 +62,30 @@ const Users: React.FC<usersProps> = ({ isModalVisible, setModalVisible }) => {
                 {<Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />}
               </div>
             </TableHeader>
+            <TableHeader className="!outline-none !border-b-0">
+              <div className="flex items-center">
+                Role Id
+                {<Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />}
+              </div>
+            </TableHeader>
+            <TableHeader className="!outline-none !border-b-0">
+              <div className="flex items-center">
+                Password
+                {<Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />}
+              </div>
+            </TableHeader>
             <TableHeader className="!outline-none !border-b-0"></TableHeader>
           </TableRow>
         </TableHead>
         <TableBody>
           {users?.map((user) => {
-            const { id, username, email } = user;
+            const { id, name, email, role_id, password } = user;
             return (
               <TableRow key={id}>
                 <TableCell className="max-w-[100px] overflow-x-auto !outline-none !border-b-0">
                   <div className="flex items-center max-w-min">
                     <div className="flex flex-col justify-center">
-                      <div className="text-[16px] font-[600] mt-0">
-                        {username}
-                      </div>
+                      <div className="text-[16px] font-[600] mt-0">{name}</div>
                     </div>
                   </div>
                 </TableCell>
@@ -83,6 +93,24 @@ const Users: React.FC<usersProps> = ({ isModalVisible, setModalVisible }) => {
                   <div className="flex items-center max-w-min">
                     <div className="flex flex-col justify-center">
                       <div className="text-[16px] font-[600] mt-0">{email}</div>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell className="max-w-1/5 overflow-x-auto !outline-none !border-b-0">
+                  <div className="flex items-center max-w-min">
+                    <div className="flex flex-col justify-center">
+                      <div className="text-[16px] font-[600] mt-0">
+                        {role_id}
+                      </div>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell className="max-w-1/5 overflow-x-auto !outline-none !border-b-0">
+                  <div className="flex items-center max-w-min">
+                    <div className="flex flex-col justify-center">
+                      <div className="text-[16px] font-[600] mt-0">
+                        {password}
+                      </div>
                     </div>
                   </div>
                 </TableCell>
@@ -98,7 +126,7 @@ const Users: React.FC<usersProps> = ({ isModalVisible, setModalVisible }) => {
                   <div
                     onClick={() => {
                       setDeleteUserModal(id);
-                      setContent(username);
+                      setContent(name);
                     }}
                     className="w-[60px] h-full flex justify-center items-center cursor-pointer"
                   >

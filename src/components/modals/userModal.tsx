@@ -8,6 +8,7 @@ import "react-dropdown/style.css";
 import view from "@/assets/view.png";
 import hide from "@/assets/hide.png";
 import AnimatedBtn from "../animatedBtn";
+import Select from "react-select";
 
 interface userProps {
   isModalVisible: boolean | string | number;
@@ -24,8 +25,31 @@ const UserModal: React.FC<userProps> = ({
 }) => {
   const isAdd = isModalVisible === true;
   const [visible, setVisible] = useState(false);
+  const [roles, setRoles] = useState<Role[]>([]);
   const [isDecline, setIsDecline] = useState<boolean>(false);
   const [status, setStatus] = useState<string>("");
+
+  const fetchRoleId = async () => {
+    try {
+      const data = await fetchWithToken("/role/list", {
+        method: "GET",
+      });
+      setRoles(
+        data?.content?.role?.map((each: Role) => ({
+          ...each,
+          value: each?.id,
+          label: each?.title,
+        }))
+      );
+      console.log("data", data);
+    } catch (error) {
+      console.error("Failed to fetch users:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchRoleId();
+  }, []);
 
   const formik = useFormik({
     initialValues: {
@@ -40,6 +64,7 @@ const UserModal: React.FC<userProps> = ({
       email: Yup?.string()
         ?.email("Invalid email address")
         ?.required("Required"),
+      role_id: Yup?.string()?.required("Required"),
     }),
     onSubmit: async (values) => {
       setStatus("onclic");
@@ -55,6 +80,7 @@ const UserModal: React.FC<userProps> = ({
               email: values?.email,
               name: values?.name,
               password: values?.password,
+              role_id: values?.role_id,
             }),
           }
         );
@@ -106,6 +132,30 @@ const UserModal: React.FC<userProps> = ({
           >
             <div className="text-center text-lg font-bold">user</div>
             <div className="text-sm text-[#101010]">
+              <div className="font-bold">Name</div>
+              <input
+                type="name"
+                placeholder="Enter name"
+                name="name"
+                required
+                className="w-[350px] h-[40px] border placeholder-[#5D6561] rounded-[8px] p-2 my-2 outline-none"
+                id="name"
+                onChange={formik?.handleChange}
+                onBlur={formik?.handleBlur}
+                value={formik?.values?.name}
+                style={{
+                  borderColor:
+                    formik?.touched?.name && formik?.errors?.name
+                      ? "#E23121"
+                      : "#5D6561",
+                }}
+              />
+              <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
+                {formik?.touched?.name && formik?.errors?.name && (
+                  <div>{formik?.errors?.name}</div>
+                )}
+              </div>
+
               <div className="font-bold">password</div>
 
               <div className="w-[350px] h-[40px] border rounded-[8px] border-[#101010] flex">
@@ -170,23 +220,22 @@ const UserModal: React.FC<userProps> = ({
                   <div>{formik?.errors?.email}</div>
                 )}
               </div>
-              <div className="font-bold">Role Id</div>
-              <input
-                type="text"
-                placeholder="Enter role id"
-                name="role id"
-                required
-                className="w-[350px] h-[40px] border placeholder-[#5D6561] rounded-[8px] p-2 my-2 outline-none"
-                id="name"
-                onChange={formik?.handleChange}
-                onBlur={formik?.handleBlur}
-                value={formik?.values?.role_id}
-                style={{
-                  borderColor:
-                    formik?.touched?.role_id && formik?.errors?.role_id
-                      ? "#E23121"
-                      : "#5D6561",
+
+              <div className="font-bold">Role</div>
+              <Select
+                options={roles}
+                value={
+                  roles?.filter(
+                    (role) => role.id?.toString() === formik?.values?.role_id
+                  )[0]
+                }
+                name="role_id"
+                onChange={(option: any) => {
+                  console.log(option);
+                  formik.setFieldValue("role_id", option?.id);
                 }}
+                onBlur={formik.handleBlur}
+                className="w-[350px] h-[40px] my-2"
               />
               <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
                 {formik?.touched?.role_id && formik?.errors?.role_id && (
@@ -209,7 +258,7 @@ const UserModal: React.FC<userProps> = ({
               </button>
               <div className="w-[168px]">
                 <AnimatedBtn
-                  txt="Log In"
+                  txt="Create"
                   status={status}
                   setStatus={setStatus}
                   onClick={(e: any) => {

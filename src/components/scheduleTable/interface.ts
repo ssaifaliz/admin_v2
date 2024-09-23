@@ -39,10 +39,12 @@ interface Permission {
 
 interface Role {
   id: number;
-  role: string;
+  title: string;
   code_name: string;
-  createdAt: string;
-  updatedAt: string;
+  permission: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
   value: number;
   label: string;
 }
