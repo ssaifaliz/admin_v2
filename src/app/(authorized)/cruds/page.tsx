@@ -5,6 +5,7 @@ import Departments from "@/components/tabs/departments";
 import Positions from "@/components/tabs/positions";
 import Permission from "@/components/tabs/permission";
 import Roles from "@/components/tabs/roles";
+import Shift from "@/components/tabs/shift"
 import Users from "@/components/tabs/users";
 import Locations from "@/components/tabs/locations";
 import whitePlus from "@/assets/whitePlus.png";
@@ -35,6 +36,7 @@ import {
   DropdownItem,
   DropdownMenu,
 } from "@/components/catalyst/dropdown";
+import Schedule from "@/components/tabs/schedule";
 
 const tabs = [
   {
@@ -42,6 +44,12 @@ const tabs = [
     img: department,
     active: activeDepartment,
     component: (props: any) => <Departments {...props} />,
+  },
+  {
+    name: "Schedules",
+    img: schedules,
+    active: activeSchedule,
+    component: (props: any) => <Schedule {...props} />,
   },
   {
     name: "Positions",
@@ -62,6 +70,12 @@ const tabs = [
     component: (props: any) => <Roles {...props} />,
   },
   {
+    name: "Shift",
+    img: shift,
+    active: activeShift,
+    component: (props: any) => <Shift {...props} />,
+  },
+  {
     name: "Locations",
     img: location,
     active: activeLocation,
@@ -77,7 +91,7 @@ const tabs = [
 
 const Page = () => {
   const [isModalVisible, setModalVisible] = useState(false);
-  const [selectedTab, setSelectedTab] = useState(tabs[0]);
+  const [selectedTab, setSelectedTab] = useState(tabs[4]);
 
   return (
     <div className="flex flex-1 w-full h-full flex-col relative">
