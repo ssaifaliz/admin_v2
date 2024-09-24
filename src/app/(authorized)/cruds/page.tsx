@@ -183,7 +183,9 @@ const Page = () => {
                     backgroundColor: "white",
                   }}
                 >
-                  <p>1</p>
+                  <DropdownItem className="cursor-pointer">
+                    <p>1</p>
+                  </DropdownItem>
                   <DropdownItem className="cursor-pointer">
                     <p>2</p>
                   </DropdownItem>
