@@ -1,7 +1,11 @@
 name: Deploy Next.js App to EC2
 
-# Allow the workflow to be manually triggered
 on:
+  # Trigger the workflow on release
+  release:
+    types: [published]
+
+  # Allow manual triggering
   workflow_dispatch:
 
 jobs:
