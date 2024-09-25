@@ -210,23 +210,23 @@ const Profile: React.FC<ProfileProps> = ({
       console.error("Failed to fetch swap requests:", error);
     }
   };
-  const fetchRoles = async () => {
-    try {
-      const data = await fetchWithToken("/roles", {
-        method: "GET",
-      });
+  // const fetchRoles = async () => {
+  //   try {
+  //     const data = await fetchWithToken("/roles", {
+  //       method: "GET",
+  //     });
 
-      setRoles(
-        data?.map((each: Role) => ({
-          ...each,
-          value: each?.id,
-          label: each?.role,
-        }))
-      );
-    } catch (error) {
-      console.error("Failed to fetch swap requests:", error);
-    }
-  };
+  //     setRoles(
+  //       data?.map((each: Role) => ({
+  //         ...each,
+  //         value: each?.id,
+  //         label: each?.role,
+  //       }))
+  //     );
+  //   } catch (error) {
+  //     console.error("Failed to fetch swap requests:", error);
+  //   }
+  // };
   const fetchUsers = async () => {
     try {
       const data = await fetchWithToken("/users", {
@@ -257,7 +257,7 @@ const Profile: React.FC<ProfileProps> = ({
   useEffect(() => {
     fetchDepartments();
     fetchPositions();
-    fetchRoles();
+    // fetchRoles();
     fetchUsers();
   }, []);
 
