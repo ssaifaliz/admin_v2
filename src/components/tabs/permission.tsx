@@ -10,6 +10,7 @@ import {
 } from "../catalyst/table";
 import fetchWithToken from "@/utils/api";
 import PermissionModal from "../modals/permissionModal";
+import editIcon from "@/assets/editIcon.png"
 import deleteIcon from "@/assets/deleteIcon.png";
 import grayArrowDown from "@/assets/grayArrowDown.png";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -83,31 +84,29 @@ const Permission: React.FC<permissionProps> = ({
                   </div>
                 </div>
               </TableCell>
-              {/* <TableCell className="!outline-none !border-b-0">
-                <div className="flex items-center max-w-min">
-                  <div className="flex flex-col justify-center">
-                    <div className="text-[16px] font-[600] mt-0">
-                      {permission?.description}
-                    </div>
-                  </div>
-                </div>
-              </TableCell> */}
+          
 
-              {/* <TableCell className="!outline-none !border-b-0 w-[120px] flex float-right">
-                <div
+              <TableCell className="!outline-none !border-b-0 w-[120px] flex float-right">
+             <div
+                    onClick={() => setModalVisible(permission?.id)}
+                    className="w-[60px] h-full flex justify-center items-center cursor-pointer"
+                  >
+                    <Image alt="editIcon" src={editIcon} className="w-6 h-6" />
+                  </div>
+                {/* <div
                   onClick={() => {
                     setDeleteDepartmentModal(department?.id);
                     setContent(department?.name);
                   }}
                   className="w-[60px] h-full flex justify-center items-center cursor-pointer"
-                >
+                > */}
                   <Image
                     alt="deleteIcon"
                     src={deleteIcon}
                     className="w-6 h-6"
                   />
-                </div>
-              </TableCell> */}
+                {/* </div> */}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

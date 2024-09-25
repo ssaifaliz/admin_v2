@@ -90,6 +90,12 @@ const Departments: React.FC<departmentsProps> = ({
               </TableCell>
 
               <TableCell className="!outline-none !border-b-0 w-[120px] flex float-right">
+             <div
+                    onClick={() => setModalVisible(department?.id)}
+                    className="w-[60px] h-full flex justify-center items-center cursor-pointer"
+                  >
+                    <Image alt="editIcon" src={editIcon} className="w-6 h-6" />
+                  </div>
                 <div
                   onClick={() => {
                     setDeleteDepartmentModal(department?.id);
