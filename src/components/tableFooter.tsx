@@ -54,7 +54,7 @@ const TableFooter = () => {
                 />
               </DropdownButton>
               <DropdownMenu
-                className="bg-[white] cursor-pointer  overflow-hidden"
+                className="bg-[white] cursor-pointer"
                 style={{
                   backgroundColor: "white",
                 }}
