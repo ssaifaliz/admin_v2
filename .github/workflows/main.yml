@@ -33,7 +33,6 @@ jobs:
           source: ".next/*, public/*"  # Local source directory (current project directory)
           target: '/home/ec2-user/vitto_v2'  # Updated target directory path
           port: 22  # Use port 22 for SSH by default
-          rm: true  # Removes files at the target before copying
           debug: true  # Enables detailed logging for troubleshooting
 
       - name: SSH to EC2 and run deployment script
