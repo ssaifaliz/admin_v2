@@ -36,6 +36,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           source: './'
           target: '/vitto_v2'
+          debug: true  # Enables more detailed logging
 
       - name: SSH and run PM2 to serve app
         uses: appleboy/ssh-action@master
