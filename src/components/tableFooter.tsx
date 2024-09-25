@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import {
@@ -16,13 +17,6 @@ const TableFooter = () => {
   const page = parseInt(searchParams.get("page") || "1");
   const limit = parseInt(searchParams.get("limit") || "10");
   const totalPages = parseInt(searchParams.get("totalPages") || "1");
-  const [pages, setPages] = useState<number[]>([]);
-  useEffect(() => {
-    const tempTotal = totalPages;
-    const tempArr = [];
-    for (let i = 1; i <= tempTotal; i++) tempArr.push(i);
-    setPages(tempArr);
-  }, [totalPages]);
   useEffect(() => {
     updateQueryParams(
       {
