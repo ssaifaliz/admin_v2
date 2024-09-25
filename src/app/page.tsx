@@ -15,7 +15,6 @@ import hide from "@/assets/hide.png";
 import resLogo from "@/assets/responsive_logo.svg";
 
 const Home = () => {
-  // const urlPar
   const [visible, setVisible] = useState(false);
   const [status, setStatus] = useState<string>("");
   const { push, refresh } = useRouter();
@@ -33,39 +32,30 @@ const Home = () => {
     }),
     onSubmit: async (values) => {
       setStatus("onclic");
-      push("/cruds");
-      return;
-      try {
-        const response = await fetchWithToken("/user/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ ...values }),
-        });
+      const response = await fetchWithToken("/user/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...values }),
+      });
+      console.log("response", response?.status);
+      if (response?.status) {
         setStatus("success");
-        const { token } = await response;
-        setToken(token);
-        push("/dashboard");
+        setToken(response?.content?.token);
+        push("/cruds");
         refresh();
-      } catch (error: any) {
-        console.error("Login failed:", error);
+      } else {
+        console.error("Login failed:", response?.validation?.message);
         setStatus("fail");
-        formik.setFieldError("password", error?.message);
+        formik.setFieldError("password", response?.validation?.message);
       }
     },
   });
 
   useEffect(() => {
-    if (Cookies.get("session")) push("/dashboard");
+    if (Cookies.get("session")) push("/cruds");
   }, [Cookies.get("session")]);
-
-  useEffect(() => {
-    if (window?.location?.search) {
-      const urlParams = new URLSearchParams(window?.location?.search);
-      // setRedirectUrl(urlParams.get("redirect") || "");
-    }
-  }, []);
 
   return (
     <main className="flex flex-1 h-[100vh] min-h-[100vh] max-h-[100vh] w-full items-center justify-around bg-[#F7F8F7]">
@@ -154,7 +144,12 @@ const Home = () => {
             )}
           </div>
           <div className="w-[280px]">
-            <AnimatedBtn txt="Log In" status={status} setStatus={setStatus} />
+            <AnimatedBtn
+              txt="Log In"
+              status={status}
+              setStatus={setStatus}
+              onClick={formik?.handleSubmit}
+            />
           </div>
         </form>
       </div>

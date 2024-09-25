@@ -12,6 +12,8 @@ import fetchWithToken from "@/utils/api";
 import PermissionModal from "../modals/permissionModal";
 import deleteIcon from "@/assets/deleteIcon.png";
 import grayArrowDown from "@/assets/grayArrowDown.png";
+import { useRouter, useSearchParams } from "next/navigation";
+import { updateQueryParams } from "@/lib";
 
 interface permissionProps {
   isModalVisible: boolean | string | number;
@@ -24,18 +26,28 @@ const Permission: React.FC<permissionProps> = ({
   isModalVisible,
   setModalVisible,
 }) => {
-  const [content, setContent] = useState<string>("");
+  const { replace } = useRouter();
+  const searchParams = useSearchParams();
+  const page = parseInt(searchParams.get("page") || "1");
+  const limit = parseInt(searchParams.get("limit") || "10");
   const [permission, setpermission] = useState<Permission[]>([]);
-  //   const [deleteDepartmentModal, setDeleteDepartmentModal] = useState<
-  //     boolean | number | string
-  //   >(false);
 
   const fetchPermissions = async () => {
     try {
-      const data = await fetchWithToken("/permission/list", {
-        method: "GET",
-      });
+      const data = await fetchWithToken(
+        `/permission/list?page=${page}&limit=${limit}`,
+        // `/permission/list`,
+        {
+          method: "GET",
+        }
+      );
       setpermission(data?.content?.permission);
+      updateQueryParams(
+        {
+          totalPages: data?.content?.totalPages?.toString(),
+        },
+        replace
+      );
     } catch (error) {
       console.error("Failed to fetch permission:", error);
     }
@@ -43,7 +55,7 @@ const Permission: React.FC<permissionProps> = ({
 
   useEffect(() => {
     fetchPermissions();
-  }, []);
+  }, [page, limit]);
 
   return (
     <>

@@ -1,18 +1,13 @@
-// src/lib.ts
-import { SignJWT, jwtVerify } from "jose";
+export const updateQueryParams = (
+  newParams: { [key: string]: string },
+  replace: any
+) => {
+  const params = new URLSearchParams(window.location.search);
 
-const secretKey = "secret";
-const key = new TextEncoder().encode(secretKey);
+  Object.entries(newParams).forEach(([key, value]) => {
+    params.set(key, value);
+  });
 
-export const encrypt = async (payload: any) => {
-  return await new SignJWT(payload)
-    ?.setProtectedHeader({ alg: "HS256" })
-    ?.setIssuedAt()
-    ?.setExpirationTime("10 sec from now")
-    ?.sign(key);
-};
-
-export const decrypt = async (input: string): Promise<any> => {
-  const { payload } = await jwtVerify(input, key, { algorithms: ["HS256"] });
-  return payload;
+  // Update the URL with the new query params
+  replace(`?${params.toString()}`);
 };

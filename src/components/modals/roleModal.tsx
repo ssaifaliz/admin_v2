@@ -90,7 +90,7 @@ const RoleModal: React.FC<roleProps> = ({
     isModalVisible && (
       <main
         onClick={() => setModalVisible(!isModalVisible)}
-        className="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-30 flex justify-center align-middle"
+        className="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-30 flex justify-center align-middle z-10"
       >
         <div className="container my-auto">
           <div

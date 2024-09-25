@@ -17,12 +17,12 @@ async function fetchWithToken(endpoint: string, options: RequestInit = {}) {
     }
   );
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    if (errorData?.errors?.length)
-      errorData?.errors?.map((each: any) => FailToast(each?.msg));
-    throw new Error(errorData?.message);
-  }
+  // if (!response.ok) {
+  //   const errorData = await response.json();
+  //   if (errorData?.errors?.length)
+  //     errorData?.errors?.map((each: any) => FailToast(each?.msg));
+  //   throw new Error(errorData?.message);
+  // }
 
   return response.json();
 }

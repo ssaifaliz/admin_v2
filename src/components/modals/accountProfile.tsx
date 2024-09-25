@@ -172,7 +172,7 @@ const AccountProfile: React.FC<ProfileProps> = ({
 
   useEffect(() => {
     if (isModalVisible) {
-      fetchuserdata();
+      // fetchuserdata();
       fetchDepartments();
       fetchPositions();
       // fetchRoles();

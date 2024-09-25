@@ -25,7 +25,7 @@ const SingleChat: React.FC<singleChatProps> = ({ showChat, setShowChat }) => {
   };
 
   useEffect(() => {
-    fetchMessages();
+    // fetchMessages();
   }, []);
 
   const formatTimeDifference = (timestamp: string) => {

@@ -29,7 +29,7 @@ const Notifications: React.FC<notificationProps> = ({
   };
 
   useEffect(() => {
-    fetchNotifications();
+    // fetchNotifications();
   }, []);
 
   const clearAll = async () => {

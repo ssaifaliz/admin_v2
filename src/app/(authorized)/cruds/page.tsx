@@ -5,7 +5,7 @@ import Departments from "@/components/tabs/departments";
 import Positions from "@/components/tabs/positions";
 import Permission from "@/components/tabs/permission";
 import Roles from "@/components/tabs/roles";
-import Shift from "@/components/tabs/shift"
+import Shift from "@/components/tabs/shift";
 import Users from "@/components/tabs/users";
 import Locations from "@/components/tabs/locations";
 import whitePlus from "@/assets/whitePlus.png";
@@ -37,6 +37,7 @@ import {
   DropdownMenu,
 } from "@/components/catalyst/dropdown";
 import Schedule from "@/components/tabs/schedule";
+import TableFooter from "@/components/tableFooter";
 
 const tabs = [
   {
@@ -91,7 +92,7 @@ const tabs = [
 
 const Page = () => {
   const [isModalVisible, setModalVisible] = useState(false);
-  const [selectedTab, setSelectedTab] = useState(tabs[4]);
+  const [selectedTab, setSelectedTab] = useState(tabs[3]);
 
   return (
     <div className="flex flex-1 w-full h-full flex-col relative">
@@ -170,96 +171,7 @@ const Page = () => {
       <div className="flex-1 overflow-y-auto scrollbar-hidden mt-1">
         {selectedTab?.component({ isModalVisible, setModalVisible })}
       </div>
-      <div className="absolute bottom-[2%] w-full h-[60px]">
-        <div className="flex items-center justify-between bg-[#F7F8F7] rounded-lg shadow-md px-6 py-2 w-full h-full">
-          <div className="flex items-center">
-            <span className="text-[14px] text-[#101010] font-semibold">
-              Rows
-            </span>
-            <Dropdown>
-              <div className="ml-2 flex items-center border border-gray-300 bg-white rounded">
-                <DropdownButton
-                  className="cursor-pointer"
-                  style={{ background: "white" }}
-                >
-                  <span className=" text-[#101010] text-[14px] font-semibold">
-                    12
-                  </span>
-                  <Image
-                    src={arrowIcon}
-                    alt="arrow icon"
-                    className="ml-1 w-4 h-4 rotate-90"
-                  />
-                </DropdownButton>
-                <DropdownMenu
-                  className="bg-[white] cursor-pointer gap-2"
-                  style={{
-                    backgroundColor: "white",
-                  }}
-                >
-                  <DropdownItem className="cursor-pointer">
-                    <p>1</p>
-                  </DropdownItem>
-                  <DropdownItem className="cursor-pointer">
-                    <p>2</p>
-                  </DropdownItem>
-                  <DropdownItem className="cursor-pointer">
-                    <p>3</p>
-                  </DropdownItem>
-                  <DropdownItem className="cursor-pointer">
-                    <p>4</p>
-                  </DropdownItem>
-                  <DropdownItem className="cursor-pointer">
-                    <p>5</p>
-                  </DropdownItem>
-                  <DropdownItem className="cursor-pointer">
-                    <p>6</p>
-                  </DropdownItem>
-                  <DropdownItem className="cursor-pointer">
-                    <p>7</p>
-                  </DropdownItem>
-                  <DropdownItem className="cursor-pointer">
-                    <p>8</p>
-                  </DropdownItem>
-                  <DropdownItem className="cursor-pointer">
-                    <p>9</p>
-                  </DropdownItem>
-                  <DropdownItem className="cursor-pointer">
-                    <p>10</p>
-                  </DropdownItem>
-                  <DropdownItem className="cursor-pointer">
-                    <p>11</p>
-                  </DropdownItem>
-                  <DropdownItem className="cursor-pointer">
-                    <p>12</p>
-                  </DropdownItem>
-                </DropdownMenu>
-              </div>
-            </Dropdown>
-          </div>
-
-          <div className="text-[14px] font-semibold text-center text-[#101010]">
-            Items 1-4 of 4
-          </div>
-
-          <div className="flex items-center">
-            <button className="ml-2 text-gray-500">
-              <Image src={arrowIcon} alt="arrow icon" className="w-4 h-4" />
-            </button>
-            <button className="text-gray-500">
-              <Image
-                src={arrowIcon}
-                alt="arrow icon"
-                className="rotate-180 w-4 h-4"
-              />
-            </button>
-
-            <span className="text-[14px] font-semibold mr-2 text-[#101010]">
-              Page 1 of 1
-            </span>
-          </div>
-        </div>
-      </div>
+      <TableFooter />
     </div>
   );
 };

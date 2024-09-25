@@ -30,7 +30,7 @@ const Chats: React.FC<chatProps> = ({ showChats, setShowChats }) => {
   };
 
   useEffect(() => {
-    fetchChats();
+    // fetchChats();
   }, []);
 
   const formatTimeDifference = (createdDateTime: string) => {
