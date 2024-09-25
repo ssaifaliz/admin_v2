@@ -26,7 +26,6 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
   const deleteData = async () => {
     setStatus("onclic");
     try {
-      // await fetchWithToken(`/${route}/${visibilityState}`, {
       await fetchWithToken(`/${route}/remove`, {
         method: "DELETE",
         headers: {

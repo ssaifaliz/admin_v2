@@ -10,7 +10,7 @@ import {
 } from "../catalyst/table";
 import fetchWithToken from "@/utils/api";
 import PermissionModal from "../modals/permissionModal";
-import editIcon from "@/assets/editIcon.png"
+import editIcon from "@/assets/editIcon.png";
 import deleteIcon from "@/assets/deleteIcon.png";
 import DeleteModal from "../modals/deleteModal";
 import grayArrowDown from "@/assets/grayArrowDown.png";
@@ -18,10 +18,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { updateQueryParams } from "@/lib";
 
 interface permissionProps {
-  isModalVisible: boolean | string | number;
-  setModalVisible: React.Dispatch<
-    React.SetStateAction<boolean | string | number>
-  >;
+  isModalVisible: boolean | Permission;
+  setModalVisible: React.Dispatch<React.SetStateAction<boolean | Permission>>;
 }
 
 const Permission: React.FC<permissionProps> = ({
@@ -36,18 +34,17 @@ const Permission: React.FC<permissionProps> = ({
   const searchParams = useSearchParams();
   const page = parseInt(searchParams.get("page") || "1");
   const limit = parseInt(searchParams.get("limit") || "10");
-  const [permission, setpermission] = useState<Permission[]>([]);
+  const [permissions, setPermissions] = useState<Permission[]>([]);
 
   const fetchPermissions = async () => {
     try {
       const data = await fetchWithToken(
         `/permission/list?page=${page}&limit=${limit}`,
-        // `/permission/list`,
         {
           method: "GET",
         }
       );
-      setpermission(data?.content?.permission);
+      setPermissions(data?.content?.permission);
       updateQueryParams(
         {
           totalPages: data?.content?.totalPages?.toString(),
@@ -78,7 +75,7 @@ const Permission: React.FC<permissionProps> = ({
           </TableRow>
         </TableHead>
         <TableBody>
-          {permission?.map((permission) => (
+          {permissions?.map((permission) => (
             <TableRow key={permission?.id}>
               <TableCell className="!outline-none !border-b-0">
                 <div className="flex items-center max-w-min">
@@ -89,15 +86,14 @@ const Permission: React.FC<permissionProps> = ({
                   </div>
                 </div>
               </TableCell>
-          
 
               <TableCell className="!outline-none !border-b-0 w-[120px] flex float-right">
-             <div
-                    onClick={() => setModalVisible(permission?.id)}
-                    className="w-[60px] h-full flex justify-center items-center cursor-pointer"
-                  >
-                    <Image alt="editIcon" src={editIcon} className="w-6 h-6" />
-                  </div>
+                <div
+                  onClick={() => setModalVisible(permission)}
+                  className="w-[60px] h-full flex justify-center items-center cursor-pointer"
+                >
+                  <Image alt="editIcon" src={editIcon} className="w-6 h-6" />
+                </div>
                 <div
                   onClick={() => {
                     setDeletePermissiontModal(permission?.id);

@@ -8,10 +8,8 @@ import AnimatedBtn from "../animatedBtn";
 import { title } from "process";
 
 interface permissionProps {
-  isModalVisible: boolean | string | number;
-  setModalVisible: React.Dispatch<
-    React.SetStateAction<boolean | string | number>
-  >;
+  isModalVisible: boolean | Permission;
+  setModalVisible: React.Dispatch<React.SetStateAction<boolean | Permission>>;
   fetchPermissions: () => void;
 }
 
@@ -20,7 +18,7 @@ const PermissionModal: React.FC<permissionProps> = ({
   setModalVisible,
   fetchPermissions,
 }) => {
-  const isAdd = isModalVisible === true;
+  const isEdit = typeof isModalVisible !== "boolean";
   const [status, setStatus] = useState<string>("");
   const [isDecline, setIsDecline] = useState<boolean>(false);
 
@@ -35,14 +33,15 @@ const PermissionModal: React.FC<permissionProps> = ({
       setStatus("onclic");
       try {
         await fetchWithToken(
-          isAdd ? "/permission/create" : `/permission/${isModalVisible}`,
+          !isEdit ? "/permission/create" : `/permission/update`,
 
           {
-            method: isAdd ? "POST" : "PUT",
+            method: !isEdit ? "POST" : "PUT",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
+              ...(isEdit && { id: isModalVisible?.id }),
               title: values?.title,
             }),
           }
@@ -59,24 +58,11 @@ const PermissionModal: React.FC<permissionProps> = ({
     },
   });
 
-  const getPositionDetails = async (id: string | number) => {
-    try {
-      const data = await fetchWithToken(`/permission/${id}`, {
-        method: "GET",
-      });
-      formik?.setFieldValue("title", data?.title);
-    } catch (error) {
-      console.error("Failed to fetch permision:", error);
-    }
-  };
-
   useEffect(() => {
     formik?.resetForm();
-    if (
-      typeof isModalVisible === "number" ||
-      typeof isModalVisible === "string"
-    )
-      getPositionDetails(isModalVisible);
+    if (isEdit) {
+      formik?.setFieldValue("title", isModalVisible?.title);
+    }
   }, [isModalVisible]);
 
   return (
