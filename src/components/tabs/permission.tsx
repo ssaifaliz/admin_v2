@@ -12,6 +12,7 @@ import fetchWithToken from "@/utils/api";
 import PermissionModal from "../modals/permissionModal";
 import editIcon from "@/assets/editIcon.png"
 import deleteIcon from "@/assets/deleteIcon.png";
+import DeleteModal from "../modals/deleteModal";
 import grayArrowDown from "@/assets/grayArrowDown.png";
 import { useRouter, useSearchParams } from "next/navigation";
 import { updateQueryParams } from "@/lib";
@@ -27,6 +28,10 @@ const Permission: React.FC<permissionProps> = ({
   isModalVisible,
   setModalVisible,
 }) => {
+  const [content, setContent] = useState<string>("");
+  const [deletePermissionModal, setDeletePermissiontModal] = useState<
+    boolean | number | string
+  >(false);
   const { replace } = useRouter();
   const searchParams = useSearchParams();
   const page = parseInt(searchParams.get("page") || "1");
@@ -93,19 +98,19 @@ const Permission: React.FC<permissionProps> = ({
                   >
                     <Image alt="editIcon" src={editIcon} className="w-6 h-6" />
                   </div>
-                {/* <div
+                <div
                   onClick={() => {
-                    setDeleteDepartmentModal(department?.id);
-                    setContent(department?.name);
+                    setDeletePermissiontModal(permission?.id);
+                    setContent(permission?.title);
                   }}
                   className="w-[60px] h-full flex justify-center items-center cursor-pointer"
-                > */}
+                >
                   <Image
                     alt="deleteIcon"
                     src={deleteIcon}
                     className="w-6 h-6"
                   />
-                {/* </div> */}
+                </div>
               </TableCell>
             </TableRow>
           ))}
@@ -116,13 +121,13 @@ const Permission: React.FC<permissionProps> = ({
         setModalVisible={setModalVisible}
         fetchPermissions={fetchPermissions}
       />
-      {/* <DeleteModal
-        route="department"
+      <DeleteModal
+        route="permission"
         content={content}
-        visibilityState={deleteDepartmentModal}
-        setState={setDeleteDepartmentModal}
-        fetchAllCall={fetchDepartments}
-      /> */}
+        visibilityState={deletePermissionModal}
+        setState={setDeletePermissiontModal}
+        fetchAllCall={fetchPermissions}
+      />
     </>
   );
 };
