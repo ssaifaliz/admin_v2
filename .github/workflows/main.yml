@@ -1,16 +1,12 @@
-name: Deploy Next.js App to EC2
+name: Deploy Next.js app to EC2
 
 on:
-  # Trigger the workflow on release
-  release:
-    types: [published]
-
-  # Allow manual triggering
-  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   deploy:
-    name: Deploy Next.js App
     runs-on: ubuntu-latest
 
     steps:
@@ -20,12 +16,12 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '18'
+          node-version: '16'  # Use your specific Node.js version here
 
       - name: Install dependencies
         run: npm install
 
-      - name: Build the Next.js app
+      - name: Build Next.js app
         run: npm run build
 
       - name: Deploy files to EC2
@@ -34,19 +30,19 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: './'
-          target: '/vitto_v2'
-          debug: true  # Enables more detailed logging
+          source: './'  # Local source directory (current project directory)
+          target: '/home/ec2-user/vitto_v2'  # Updated target directory path
+          port: 22  # Use port 22 for SSH by default
+          rm: true  # Removes files at the target before copying
+          debug: true  # Enables detailed logging for troubleshooting
 
-      - name: SSH and run PM2 to serve app
-        uses: appleboy/ssh-action@master
+      - name: SSH to EC2 and run deployment script
+        uses: appleboy/ssh-action@v0.1.4
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd /vitto_v2
-            npm install --production
-            npm run build
-            pm2 delete vitto_v2 || true
-            pm2 start npm --name "vitto_v2" -- start
+            cd /home/ec2-user/vitto_v2
+            npm install --production  # Install only production dependencies
+            pm2 restart nextjs-app  # Restart your app using pm2 or any other process manager
