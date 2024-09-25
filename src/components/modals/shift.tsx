@@ -29,6 +29,7 @@ const Shift: React.FC<ShiftProps> = ({
       start_time: "",
       end_time: "",
       shift_type: "",
+      shift_name: ""
     },
     validationSchema: Yup?.object({
       start_time: Yup?.string()?.required("Required"),
@@ -47,6 +48,7 @@ const Shift: React.FC<ShiftProps> = ({
             start_time: moment(values?.start_time, "HH:mm").format("HH:mm:ss"),
             end_time: moment(values?.end_time, "HH:mm").format("HH:mm:ss"),
             shift_type: values?.shift_type,
+            shift_name: values?.shift_name,
           }),
         });
         setStatus("success");

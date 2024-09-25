@@ -5,7 +5,6 @@ import { useFormik } from "formik";
 import "react-dropdown/style.css";
 import fetchWithToken from "@/utils/api";
 import AnimatedBtn from "../animatedBtn";
-import { permission, title } from "process";
 
 interface roleProps {
   isModalVisible: boolean | string | number;

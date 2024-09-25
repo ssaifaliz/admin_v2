@@ -50,10 +50,16 @@ interface Role {
 }
 
 interface Shift {
+  created_at: string; 
+  deleted_at: string | null; 
+  end_time: string; 
   id: number;
-  start_time: string;
-  end_time: string;
+  shift_name: string; 
+  shift_type: string; 
+  start_time: string; 
+  updated_at: string; 
 }
+
 
 interface Schedule_dept {
   city: string;

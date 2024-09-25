@@ -9,8 +9,9 @@ import {
   TableRow,
 } from "../catalyst/table";
 import fetchWithToken from "@/utils/api";
-import PermissionModal from "../modals/permissionModal";
+import editIcon from "@/assets/editIcon.png"
 import deleteIcon from "@/assets/deleteIcon.png";
+import DeleteModal from "../modals/deleteModal";
 import grayArrowDown from "@/assets/grayArrowDown.png";
 
 interface ShiftProps {
@@ -20,15 +21,12 @@ interface ShiftProps {
   >;
 }
 
-const Shift: React.FC<ShiftProps> = ({
-  isModalVisible,
-  setModalVisible,
-}) => {
+const Shift: React.FC<ShiftProps> = ({ isModalVisible, setModalVisible }) => {
   const [content, setContent] = useState<string>("");
   const [shift, setShift] = useState<Shift[]>([]);
-  //   const [deleteDepartmentModal, setDeleteDepartmentModal] = useState<
-  //     boolean | number | string
-  //   >(false);
+  const [deleteShiftModal, setDeleteShifttModal] = useState<
+    boolean | number | string
+  >(false);
 
   const fetchShift = async () => {
     try {
@@ -57,7 +55,7 @@ const Shift: React.FC<ShiftProps> = ({
               </div>
             </TableHeader>
             <TableHeader className="!outline-none !border-b-0">
-            <div className="flex items-center">
+              <div className="flex items-center">
                 Shift Type
                 <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
               </div>
@@ -72,8 +70,7 @@ const Shift: React.FC<ShiftProps> = ({
                 <div className="flex items-center max-w-min">
                   <div className="flex flex-col justify-center">
                     <div className="text-[16px] font-[600] mt-0">
-                      {/* {shift?.name} */}
-                      <h1>shift name</h1>
+                      {shift?.shift_name}
                     </div>
                   </div>
                 </div>
@@ -82,19 +79,26 @@ const Shift: React.FC<ShiftProps> = ({
                 <div className="flex items-center max-w-min">
                   <div className="flex flex-col justify-center">
                     <div className="text-[16px] font-[600] mt-0">
-                      {/* {department?.description} */}
-                      <h1>jhsfkz</h1>
+                      {shift?.shift_type}
                     </div>
                   </div>
                 </div>
               </TableCell>
 
-              {/* <TableCell className="!outline-none !border-b-0 w-[120px] flex float-right">
+              <TableCell className="!outline-none !border-b-0 w-[120px] flex float-right">
+              <div
+                    onClick={() => {
+                      setModalVisible(shift?.id);
+                    }}
+                    className="w-[60px] h-full flex justify-center items-center cursor-pointer"
+                  >
+                    <Image alt="editIcon" src={editIcon} className="w-6 h-6" />
+                  </div>
                 <div
-                //   onClick={() => {
-                //     setDeleteDepartmentModal(department?.id);
-                //     setContent(department?.name);
-                //   }}
+                  onClick={() => {
+                    setDeleteShifttModal(shift?.id);
+                    setContent(shift?.shift_name);
+                  }}
                   className="w-[60px] h-full flex justify-center items-center cursor-pointer"
                 >
                   <Image
@@ -103,23 +107,23 @@ const Shift: React.FC<ShiftProps> = ({
                     className="w-6 h-6"
                   />
                 </div>
-              </TableCell> */}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-      {/* <PermissionModal
+      <Shift
         isModalVisible={isModalVisible}
         setModalVisible={setModalVisible}
-        fetchPermissions={fetchPermissions}
-      /> */}
-      {/* <DeleteModal
-        route="department"
+        // fetchShift={fetchShift}
+      />
+      <DeleteModal
+        route="shift"
         content={content}
-        visibilityState={deleteDepartmentModal}
-        setState={setDeleteDepartmentModal}
-        fetchAllCall={fetchDepartments}
-      /> */}
+        visibilityState={deleteShiftModal}
+        setState={setDeleteShifttModal}
+        fetchAllCall={fetchShift}
+      />
     </>
   );
 };
