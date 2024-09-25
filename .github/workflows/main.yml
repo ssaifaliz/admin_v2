@@ -44,5 +44,4 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /home/ec2-user/vitto_v2
-            npm install --production  # Install only production dependencies
-            pm2 restart nextjs-app  # Restart your app using pm2 or any other process manager
+            ls -al
