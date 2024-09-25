@@ -14,12 +14,11 @@ import DepartmentModal from "../modals/department";
 import editIcon from "@/assets/editIcon.png";
 import deleteIcon from "@/assets/deleteIcon.png";
 import grayArrowDown from "@/assets/grayArrowDown.png";
-
+import { useRouter, useSearchParams } from "next/navigation";
+import { updateQueryParams } from "@/lib";
 interface departmentsProps {
-  isModalVisible: boolean | string | number;
-  setModalVisible: React.Dispatch<
-    React.SetStateAction<boolean | string | number>
-  >;
+  isModalVisible: boolean | Department;
+  setModalVisible: React.Dispatch<React.SetStateAction<boolean | Department>>;
 }
 
 const Departments: React.FC<departmentsProps> = ({
@@ -32,20 +31,36 @@ const Departments: React.FC<departmentsProps> = ({
     boolean | number | string
   >(false);
 
+  const { replace } = useRouter();
+  const searchParams = useSearchParams();
+  const page = parseInt(searchParams.get("page") || "1");
+  const limit = parseInt(searchParams.get("limit") || "10");
+  
   const fetchDepartments = async () => {
     try {
-      const data = await fetchWithToken("/department/list", {
-        method: "GET",
-      });
+      const data = await fetchWithToken(
+        `/department/list?page=${page}&limit=${limit}`,
+        {
+          method: "GET",
+        }
+      );
       setDepartments(data?.content?.department);
-    } catch (error) {
+      updateQueryParams(
+        {
+          totalPages: data?.content?.totalPages?.toString(),
+        },
+        replace
+      );
+    }  catch (error) {
       console.error("Failed to fetch departments:", error);
     }
   };
 
+
+
   useEffect(() => {
     fetchDepartments();
-  }, []);
+  }, [page, limit]);
 
   return (
     <>
@@ -90,12 +105,12 @@ const Departments: React.FC<departmentsProps> = ({
               </TableCell>
 
               <TableCell className="!outline-none !border-b-0 w-[120px] flex float-right">
-             <div
-                    onClick={() => setModalVisible(department?.id)}
-                    className="w-[60px] h-full flex justify-center items-center cursor-pointer"
-                  >
-                    <Image alt="editIcon" src={editIcon} className="w-6 h-6" />
-                  </div>
+                <div
+                  onClick={() => setModalVisible(department)}
+                  className="w-[60px] h-full flex justify-center items-center cursor-pointer"
+                >
+                  <Image alt="editIcon" src={editIcon} className="w-6 h-6" />
+                </div>
                 <div
                   onClick={() => {
                     setDeleteDepartmentModal(department?.id);

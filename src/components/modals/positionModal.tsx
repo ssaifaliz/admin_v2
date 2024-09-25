@@ -5,22 +5,21 @@ import { useFormik } from "formik";
 import "react-dropdown/style.css";
 import fetchWithToken from "@/utils/api";
 import AnimatedBtn from "../animatedBtn";
-import { title } from "process";
 
 interface positionProps {
-  isModalVisible: boolean | string | number;
-  setModalVisible: React.Dispatch<
-    React.SetStateAction<boolean | string | number>
-  >;
+  isModalVisible: boolean | Position;
+  setModalVisible: React.Dispatch<React.SetStateAction<boolean | Position>>;
+
   fetchPositions: () => void;
 }
+
 
 const PositionModal: React.FC<positionProps> = ({
   isModalVisible,
   setModalVisible,
   fetchPositions,
 }) => {
-  const isAdd = isModalVisible === true;
+  const isEdit = typeof isModalVisible !== "boolean";
   const [status, setStatus] = useState<string>("");
   const [isDecline, setIsDecline] = useState<boolean>(false);
 
@@ -35,16 +34,16 @@ const PositionModal: React.FC<positionProps> = ({
       setStatus("onclic");
       try {
         await fetchWithToken(
-          isAdd ? "/position/create" : `/position/${isModalVisible}`,
+          !isEdit ? "/position/create" : `/position/update`,
 
           {
-            method: isAdd ? "POST" : "PUT",
+            method: !isEdit ? "POST" : "PUT",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              // position_name: values?.position_name,
-              title: values?.title,
+              ...(isEdit && { id: isModalVisible?.id }),
+              ntitle: values?.title
             }),
           }
         );

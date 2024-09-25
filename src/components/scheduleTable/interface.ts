@@ -12,7 +12,7 @@ interface Location {
 }
 
 interface Department {
-  id: number;
+  id: string;
   name: string;
   description: string;
   created_at: string;
@@ -21,12 +21,11 @@ interface Department {
 }
 
 interface Position {
-  id: number;
-  position_name: string;
-  createdAt: string;
+  createdAt: string; 
+  deletedAt: string | null; 
+  id: number; 
+  title: string; 
   updatedAt: string;
-  value: number;
-  label: string;
 }
 
 interface Permission {
