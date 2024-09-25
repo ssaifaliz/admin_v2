@@ -15,22 +15,21 @@ import PositionModal from "../modals/positionModal";
 import DeleteModal from "../modals/deleteModal";
 import grayArrowDown from "@/assets/grayArrowDown.png";
 
-interface rolesProps {
-  isModalVisible: boolean | string | number;
-  setModalVisible: React.Dispatch<
-    React.SetStateAction<boolean | string | number>
-  >;
+interface positionProps {
+  isModalVisible: boolean | Position;
+  setModalVisible: React.Dispatch<React.SetStateAction<boolean | Position>>;
 }
 
-const Positions: React.FC<rolesProps> = ({
+
+const Positions: React.FC<positionProps> = ({
   isModalVisible,
   setModalVisible,
 }) => {
+  const [positions, setPositions] =useState<Position[]>([]);
+  const [content, setContent] = useState<string>("");
   const [deletePositionModal, setDeletePositionModal] = useState<
     boolean | number | string
   >(false);
-  const [positions, setPositions] = useState([]);
-  const [content, setContent] = useState<string>("");
 
   const fetchPositons = async () => {
     try {
@@ -76,7 +75,7 @@ const Positions: React.FC<rolesProps> = ({
                 </TableCell>
                 <TableCell className="!outline-none !border-b-0 w-[120px] flex float-right">
                   <div
-                    onClick={() => setModalVisible(id)}
+                    onClick={() => setModalVisible(position)}
                     className="w-[60px] h-full flex justify-center items-center cursor-pointer"
                   >
                     <Image alt="editIcon" src={editIcon} className="w-6 h-6" />
