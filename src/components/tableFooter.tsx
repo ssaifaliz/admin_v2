@@ -13,11 +13,10 @@ import { updateQueryParams } from "@/lib";
 const TableFooter = () => {
   const { replace } = useRouter();
   const searchParams = useSearchParams();
-  const currentPage = parseInt(searchParams.get("page") || "1");
+  const page = parseInt(searchParams.get("page") || "1");
   const limit = parseInt(searchParams.get("limit") || "10");
   const totalPages = parseInt(searchParams.get("totalPages") || "1");
   const [pages, setPages] = useState<number[]>([]);
-  const [page, setPage] = useState<number>(currentPage);
   useEffect(() => {
     const tempTotal = totalPages;
     const tempArr = [];
@@ -46,7 +45,7 @@ const TableFooter = () => {
                 style={{ background: "white" }}
               >
                 <span className=" text-[#101010] text-[14px] font-semibold">
-                  {totalPages}
+                  {limit}
                 </span>
                 <Image
                   src={arrowIcon}
@@ -60,8 +59,14 @@ const TableFooter = () => {
                   backgroundColor: "white",
                 }}
               >
-                {pages?.map((each) => (
-                  <DropdownItem key={each} className="cursor-pointer ">
+                {[5, 10, 15, 20]?.map((each) => (
+                  <DropdownItem
+                    key={each}
+                    className="cursor-pointer "
+                    onClick={() =>
+                      updateQueryParams({ limit: each.toString() }, replace)
+                    }
+                  >
                     {each}
                   </DropdownItem>
                 ))}
@@ -75,10 +80,22 @@ const TableFooter = () => {
         </div>
 
         <div className="flex items-center">
-          <button className="ml-2 text-gray-500">
+          <button
+            className="ml-2 text-gray-500"
+            onClick={() => {
+              if (page > 1)
+                updateQueryParams({ page: (page - 1)?.toString() }, replace);
+            }}
+          >
             <Image src={arrowIcon} alt="arrow icon" className="w-4 h-4" />
           </button>
-          <button className="text-gray-500">
+          <button
+            className="text-gray-500"
+            onClick={() => {
+              if (page < totalPages)
+                updateQueryParams({ page: (page + 1)?.toString() }, replace);
+            }}
+          >
             <Image
               src={arrowIcon}
               alt="arrow icon"
@@ -87,7 +104,7 @@ const TableFooter = () => {
           </button>
 
           <span className="text-[14px] font-semibold mr-2 text-[#101010]">
-            Page 1 of 1
+            {`Page ${page} of ${totalPages}`}
           </span>
         </div>
       </div>
