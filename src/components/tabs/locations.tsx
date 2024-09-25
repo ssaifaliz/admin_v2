@@ -163,6 +163,12 @@ const Locations: React.FC<LocationsProps> = ({
                 </div>
               </TableCell>
               <TableCell className="!outline-none !border-b-0 w-[120px] flex float-right h-16 items-center">
+              <div
+                    onClick={() => setModalVisible(each?.id)}
+                    className="w-[60px] h-full flex justify-center items-center cursor-pointer"
+                  >
+                    <Image alt="editIcon" src={editIcon} className="w-6 h-6" />
+                  </div>
                 <div
                   onClick={() => {
                     setDeleteRequestModal(each.id);

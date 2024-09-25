@@ -75,12 +75,12 @@ const Positions: React.FC<rolesProps> = ({
                   </div>
                 </TableCell>
                 <TableCell className="!outline-none !border-b-0 w-[120px] flex float-right">
-                  {/* <div
+                  <div
                     onClick={() => setModalVisible(id)}
                     className="w-[60px] h-full flex justify-center items-center cursor-pointer"
                   >
                     <Image alt="editIcon" src={editIcon} className="w-6 h-6" />
-                  </div> */}
+                  </div>
                   <div
                     onClick={() => {
                       setDeletePositionModal(id);
