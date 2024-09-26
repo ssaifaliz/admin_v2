@@ -33,6 +33,7 @@ import {
 import Schedule from "@/components/tabs/schedule";
 import TableFooter from "@/components/tableFooter";
 import Search from "@/components/search";
+import Leaves from "@/components/tabs/leaves";
 
 const tabs = [
   {
@@ -83,11 +84,17 @@ const tabs = [
     active: activeUsers,
     component: (props: any) => <Users {...props} />,
   },
+  {
+    name: "Leaves",
+    img: users,
+    active: activeUsers,
+    component: (props: any) => <Leaves {...props} />,
+  },
 ];
 
 const Page = () => {
   const [isModalVisible, setModalVisible] = useState(false);
-  const [selectedTab, setSelectedTab] = useState(tabs[3]);
+  const [selectedTab, setSelectedTab] = useState(tabs[8]);
 
   return (
     <Suspense fallback={<div>Loading...</div>}>

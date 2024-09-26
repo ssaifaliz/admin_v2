@@ -34,12 +34,12 @@ const Departments: React.FC<departmentsProps> = ({
   const { replace } = useRouter();
   const searchParams = useSearchParams();
   const page = parseInt(searchParams.get("page") || "1");
-  const limit = parseInt(searchParams.get("limit") || "10");
-  
+  const pageSize = parseInt(searchParams.get("pageSize") || "10");
+
   const fetchDepartments = async () => {
     try {
       const data = await fetchWithToken(
-        `/department/list?page=${page}&limit=${limit}`,
+        `/department/list?page=${page}&pageSize=${pageSize}`,
         {
           method: "GET",
         }
@@ -51,16 +51,14 @@ const Departments: React.FC<departmentsProps> = ({
         },
         replace
       );
-    }  catch (error) {
+    } catch (error) {
       console.error("Failed to fetch departments:", error);
     }
   };
 
-
-
   useEffect(() => {
     fetchDepartments();
-  }, [page, limit]);
+  }, [page, pageSize]);
 
   return (
     <>
