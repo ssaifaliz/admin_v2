@@ -157,23 +157,23 @@ const SwapRequest: React.FC<SwapRequestProps> = ({
       console.error("Failed to fetch swap requests:", error);
     }
   };
-  const fetchSchedules = async () => {
-    try {
-      const data = await fetchWithToken("/schedules", {
-        method: "GET",
-      });
+  // const fetchSchedules = async () => {
+  //   try {
+  //     const data = await fetchWithToken("/schedules", {
+  //       method: "GET",
+  //     });
 
-      setSchedules(
-        data?.map((each: { id: number; date: string }) => ({
-          ...each,
-          value: each?.id,
-          label: each?.date,
-        }))
-      );
-    } catch (error) {
-      console.error("Failed to fetch swap requests:", error);
-    }
-  };
+  //     setSchedules(
+  //       data?.map((each: Schedule) => ({
+  //         ...each,
+  //         value: each?.id,
+  //         label: each?.id,
+  //       }))
+  //     );
+  //   } catch (error) {
+  //     console.error("Failed to fetch swap requests:", error);
+  //   }
+  // };
 
   useEffect(() => {
     formik?.resetForm();
@@ -203,31 +203,31 @@ const SwapRequest: React.FC<SwapRequestProps> = ({
   };
 
   useEffect(() => {
-    fetchSchedules();
+    // fetchSchedules();
     fetchProfiles();
   }, []);
 
-  const formatOptionLabel = (schedule: Schedule) => (
-    <div className="flex items-center">
-      <Image
-        alt="profile"
-        src={schedule?.profile?.profilePicture || dp}
-        className="w-[40px] rounded-full"
-        width={10}
-        height={10}
-      />
-      <div className="ml-1">
-        <div className="font-[700]">{schedule?.label}</div>
-        <div className="flex text-[14px]">
-          <div>{`${schedule?.shift?.start_time} - ${schedule?.shift?.end_time}`}</div>
-        </div>
-        <div className="flex text-[14px]">
-          <div className="mr-1">{schedule?.profile?.first_name}</div>
-          <div>{schedule?.profile?.last_name}</div>
-        </div>
-      </div>
-    </div>
-  );
+  // const formatOptionLabel = (schedule: Schedule) => (
+  //   <div className="flex items-center">
+  //     <Image
+  //       alt="profile"
+  //       src={schedule?.profile?.profilePicture || dp}
+  //       className="w-[40px] rounded-full"
+  //       width={10}
+  //       height={10}
+  //     />
+  //     <div className="ml-1">
+  //       <div className="font-[700]">{schedule?.label}</div>
+  //       <div className="flex text-[14px]">
+  //         <div>{`${schedule?.shift?.start_time} - ${schedule?.shift?.end_time}`}</div>
+  //       </div>
+  //       <div className="flex text-[14px]">
+  //         <div className="mr-1">{schedule?.profile?.first_name}</div>
+  //         <div>{schedule?.profile?.last_name}</div>
+  //       </div>
+  //     </div>
+  //   </div>
+  // );
 
   return (
     isModalVisible && (
@@ -266,12 +266,10 @@ const SwapRequest: React.FC<SwapRequestProps> = ({
             </div> */}
             </div>
             <div className="font-bold">Schedule From</div>
-            <Select
-              formatOptionLabel={formatOptionLabel}
+            {/* <Select
+              // formatOptionLabel={formatOptionLabel}
               // components={{ Option: CustomOption }}
-              options={schedules?.filter(
-                (each) => each.id !== formik?.values?.schedule_to?.id
-              )}
+              options={schedules}
               // @ts-ignore
               value={formik.values.schedule_from}
               onChange={(option) =>
@@ -279,7 +277,7 @@ const SwapRequest: React.FC<SwapRequestProps> = ({
               }
               onBlur={() => formik.setFieldTouched("schedule_from", true)}
               name="schedule_from"
-            />
+            /> */}
             <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
               {formik?.touched?.schedule_from &&
                 formik?.errors?.schedule_from && (
@@ -287,7 +285,7 @@ const SwapRequest: React.FC<SwapRequestProps> = ({
                 )}
             </div>
             <div className="font-bold">Schedule To</div>
-            <Select
+            {/* <Select
               formatOptionLabel={formatOptionLabel}
               options={schedules?.filter(
                 (each) => each.id !== formik?.values?.schedule_from?.id
@@ -297,7 +295,7 @@ const SwapRequest: React.FC<SwapRequestProps> = ({
               onChange={(option) => formik.setFieldValue("schedule_to", option)}
               onBlur={() => formik.setFieldTouched("schedule_to", true)}
               name="schedule_to"
-            />
+            /> */}
             <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
               {formik?.touched?.schedule_to && formik?.errors?.schedule_to && (
                 <div>{formik?.errors?.schedule_to}</div>

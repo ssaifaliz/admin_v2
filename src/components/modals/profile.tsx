@@ -193,23 +193,23 @@ const Profile: React.FC<ProfileProps> = ({
       console.error("Failed to fetch swap requests:", error);
     }
   };
-  const fetchPositions = async () => {
-    try {
-      const data = await fetchWithToken("/positions", {
-        method: "GET",
-      });
+  // const fetchPositions = async () => {
+  //   try {
+  //     const data = await fetchWithToken("/positions", {
+  //       method: "GET",
+  //     });
 
-      setPositions(
-        data?.map((each: Position) => ({
-          ...each,
-          value: each?.id,
-          label: each?.position_name,
-        }))
-      );
-    } catch (error) {
-      console.error("Failed to fetch swap requests:", error);
-    }
-  };
+  //     setPositions(
+  //       data?.map((each: Position) => ({
+  //         ...each,
+  //         value: each?.id,
+  //         label: each?.position_name,
+  //       }))
+  //     );
+  //   } catch (error) {
+  //     console.error("Failed to fetch swap requests:", error);
+  //   }
+  // };
   // const fetchRoles = async () => {
   //   try {
   //     const data = await fetchWithToken("/roles", {
@@ -256,7 +256,7 @@ const Profile: React.FC<ProfileProps> = ({
 
   useEffect(() => {
     fetchDepartments();
-    fetchPositions();
+    // fetchPositions();
     // fetchRoles();
     fetchUsers();
   }, []);
@@ -440,13 +440,13 @@ const Profile: React.FC<ProfileProps> = ({
               )}
             </div>
             <div className="font-bold">position</div>
-            <Select
+            {/* <Select
               options={positions}
               value={formik.values.positionId}
               name="positionId"
               onChange={(option) => formik.setFieldValue("positionId", option)}
               onBlur={formik.handleBlur}
-            />
+            /> */}
             <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
               {formik?.touched?.positionId && formik?.errors?.positionId && (
                 <div>{formik?.errors?.positionId}</div>

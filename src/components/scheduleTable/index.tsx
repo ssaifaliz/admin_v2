@@ -167,7 +167,7 @@ const ScheduleTable = () => {
                     <div className="mr-1">{each?.last_name}</div>
                   </div>
                 </TableCell>
-                {weekDates?.map((val, index) => (
+                {/* {weekDates?.map((val, index) => (
                   <TableCell
                     key={index}
                     style={{
@@ -220,7 +220,7 @@ const ScheduleTable = () => {
                       </div>
                     )}
                   </TableCell>
-                ))}
+                ))} */}
               </TableRow>
             ))}
           </TableBody>
