@@ -14,12 +14,12 @@ import Location from "../modals/location";
 import editIcon from "@/assets/editIcon.png";
 import deleteIcon from "@/assets/deleteIcon.png";
 import grayArrowDown from "@/assets/grayArrowDown.png";
+import { useRouter, useSearchParams } from "next/navigation";
+import { updateQueryParams } from "@/lib";
 
 interface LocationsProps {
-  isModalVisible: boolean | string | number;
-  setModalVisible: React.Dispatch<
-    React.SetStateAction<boolean | string | number>
-  >;
+  isModalVisible: boolean | Locations;
+  setModalVisible: React.Dispatch<React.SetStateAction<boolean | Locations>>;
 }
 
 const Locations: React.FC<LocationsProps> = ({
@@ -27,19 +27,31 @@ const Locations: React.FC<LocationsProps> = ({
   setModalVisible,
 }) => {
   const [content, setContent] = useState<string>("");
-  const [locations, setLocations] = useState<Location[]>([]);
+  const [locations, setLocations] = useState<Locations[]>([]);
   const [deleteRequestModal, setDeleteRequestModal] = useState<
     boolean | string | number
   >(false);
 
+  const { replace } = useRouter();
+  const searchParams = useSearchParams();
+  const page = parseInt(searchParams.get("page") || "1");
+  const limit = parseInt(searchParams.get("limit") || "10");
+
   const fetchLocations = async () => {
     try {
-      const data = await fetchWithToken("/location/list", {
-        method: "GET",
-      });
+      const data = await fetchWithToken(
+        `/location/list?page=${page}&limit=${limit}`,
+        {
+          method: "GET",
+        }
+      );
       setLocations(data?.content?.location);
-
-      console.log("data", data);
+      updateQueryParams(
+        {
+          totalPages: data?.content?.totalPages?.toString(),
+        },
+        replace
+      );
     } catch (error) {
       console.error("Failed to fetch locations:", error);
     }
@@ -47,7 +59,7 @@ const Locations: React.FC<LocationsProps> = ({
 
   useEffect(() => {
     fetchLocations();
-  }, []);
+  }, [page, limit]);
 
   return (
     <>
@@ -107,7 +119,7 @@ const Locations: React.FC<LocationsProps> = ({
         </TableHead>
         <TableBody>
           {locations?.map((each) => (
-            <TableRow key={location?.id}>
+            <TableRow key={each?.id}>
               <TableCell className="!outline-none !border-b-0">
                 <div className="flex items-center max-w-min">
                   <div className="flex flex-col justify-center">
@@ -164,7 +176,7 @@ const Locations: React.FC<LocationsProps> = ({
               </TableCell>
               <TableCell className="!outline-none !border-b-0 w-[120px] flex float-right h-16 items-center">
               <div
-                    onClick={() => setModalVisible(each?.id)}
+                    onClick={() => setModalVisible(each)}
                     className="w-[60px] h-full flex justify-center items-center cursor-pointer"
                   >
                     <Image alt="editIcon" src={editIcon} className="w-6 h-6" />

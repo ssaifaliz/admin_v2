@@ -1,4 +1,4 @@
-interface Location {
+interface Locations {
   id: number;
   address_1: string;
   address_2: string;
@@ -23,7 +23,7 @@ interface Department {
 interface Position {
   createdAt: string; 
   deletedAt: string | null; 
-  id: number; 
+  id: string; 
   title: string; 
   updatedAt: string;
 }

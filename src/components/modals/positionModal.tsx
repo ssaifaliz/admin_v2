@@ -43,7 +43,7 @@ const PositionModal: React.FC<positionProps> = ({
             },
             body: JSON.stringify({
               ...(isEdit && { id: isModalVisible?.id }),
-              ntitle: values?.title
+              title: values?.title
             }),
           }
         );
@@ -69,14 +69,11 @@ const PositionModal: React.FC<positionProps> = ({
       console.error("Failed to fetch position:", error);
     }
   };
-
   useEffect(() => {
     formik?.resetForm();
-    if (
-      typeof isModalVisible === "number" ||
-      typeof isModalVisible === "string"
-    )
-      getPositionDetails(isModalVisible);
+    if (isEdit) {
+      formik?.setFieldValue("title", isModalVisible?.title);
+    }
   }, [isModalVisible]);
 
   return (

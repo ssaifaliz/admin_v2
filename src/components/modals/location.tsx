@@ -15,11 +15,10 @@ import {
 import fetchWithToken from "@/utils/api";
 import AnimatedBtn from "../animatedBtn";
 
-interface LocationProps {
-  isModalVisible: boolean | string | number;
-  setModalVisible: React.Dispatch<
-    React.SetStateAction<boolean | string | number>
-  >;
+interface LocationsProps {
+  isModalVisible: boolean | Locations;
+  setModalVisible: React.Dispatch<React.SetStateAction<boolean | Locations>>;
+
   fetchLocations: () => void;
 }
 
@@ -39,7 +38,7 @@ interface SelectOption {
   isoCode: string | any;
 }
 
-const Location: React.FC<LocationProps> = ({
+const Location: React.FC<LocationsProps> = ({
   isModalVisible,
   setModalVisible,
   fetchLocations,
@@ -49,6 +48,7 @@ const Location: React.FC<LocationProps> = ({
   const [citiesList, setCitiesList] = useState<SelectOption[]>();
   const [status, setStatus] = useState<string>("");
   const [isDecline, setIsDecline] = useState<boolean>(false);
+  
 
   const countries = Country.getAllCountries()?.map((each: ICountry) => ({
     ...each,

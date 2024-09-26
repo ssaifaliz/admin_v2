@@ -14,38 +14,53 @@ import fetchWithToken from "@/utils/api";
 import PositionModal from "../modals/positionModal";
 import DeleteModal from "../modals/deleteModal";
 import grayArrowDown from "@/assets/grayArrowDown.png";
+import { useSearchParams, useRouter } from "next/navigation";
+import { updateQueryParams } from "@/lib";
+
 
 interface positionProps {
   isModalVisible: boolean | Position;
   setModalVisible: React.Dispatch<React.SetStateAction<boolean | Position>>;
 }
 
-
 const Positions: React.FC<positionProps> = ({
   isModalVisible,
   setModalVisible,
 }) => {
-  const [positions, setPositions] =useState<Position[]>([]);
+  const [positions, setPositions] = useState<Position[]>([]);
   const [content, setContent] = useState<string>("");
   const [deletePositionModal, setDeletePositionModal] = useState<
     boolean | number | string
   >(false);
 
+  const { replace } = useRouter();
+  const searchParams = useSearchParams();
+  const page = parseInt(searchParams.get("page") || "1");
+  const limit = parseInt(searchParams.get("limit") || "10");
+
   const fetchPositons = async () => {
     try {
-      const data = await fetchWithToken("/position/list", {
-        method: "GET",
-      });
+      const data = await fetchWithToken(
+        `/position/list?page=${page}&limit=${limit}`,
+        {
+          method: "GET",
+        }
+      );
       setPositions(data?.content?.position);
-      console.log("data", data);
+      updateQueryParams(
+        {
+          totalPages: data?.content?.totalPages?.toString(),
+        },
+        replace
+      );
     } catch (error) {
-      console.error("Failed to fetch roles:", error);
+      console.error("Failed to fetch positions:", error);
     }
   };
 
   useEffect(() => {
     fetchPositons();
-  }, []);
+  }, [page, limit]);
 
   return (
     <>
@@ -63,13 +78,14 @@ const Positions: React.FC<positionProps> = ({
         </TableHead>
         <TableBody>
           {positions?.map((position) => {
-            const { id, title } = position;
             return (
-              <TableRow key={id}>
+              <TableRow key={position?.id}>
                 <TableCell className="!outline-none !border-b-0">
                   <div className="flex items-center max-w-min">
                     <div className="flex flex-col justify-center">
-                      <div className="text-[16px] font-[600] mt-0">{title}</div>
+                      <div className="text-[16px] font-[600] mt-0">
+                        {position?.title}
+                      </div>
                     </div>
                   </div>
                 </TableCell>
@@ -82,8 +98,8 @@ const Positions: React.FC<positionProps> = ({
                   </div>
                   <div
                     onClick={() => {
-                      setDeletePositionModal(id);
-                      setContent(title);
+                      setDeletePositionModal(position?.id);
+                      setContent(position?.title);
                     }}
                     className="w-[60px] h-full flex justify-center items-center cursor-pointer"
                   >
