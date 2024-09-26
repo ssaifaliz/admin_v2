@@ -47,29 +47,28 @@ const Leave: React.FC<LeaveProps> = ({
   const [status, setStatus] = useState<string>("");
 
   const formik = useFormik<{
-    start_date: string;
-    end_date: string;
-    profile_id: Profile | null;
-    approved: SelectOption | null;
+    approved_by: string;
+    end_date_id: string;
     leave_type: string;
+    start_date_id: string;
+    total_days: string;
+    total_holidays: string;
   }>({
     initialValues: {
-      start_date: "",
-      end_date: "",
-      profile_id: null,
-      approved: null,
+      approved_by: "",
+      end_date_id: "",
       leave_type: "",
+      start_date_id: "",
+      total_days: "",
+      total_holidays: "",
     },
     validationSchema: Yup.object({
-      start_date: Yup.string().required("Required"),
-      end_date: Yup.string().required("Required"),
-      profile_id: Yup.object()
-        .shape({
-          value: Yup.number(),
-          label: Yup.string(),
-        })
-        .required("Profile is required"),
+      approved_by: Yup.string().required("Required"),
+      end_date_id: Yup.string().required("Required"),
       leave_type: Yup.string().required("Required"),
+      start_date_id: Yup.string().required("Required"),
+      total_days: Yup.string().required("Required"),
+      total_holidays: Yup.string().required("Required"),
     }),
     onSubmit: async (values) => {
       setStatus("onclic");
@@ -81,11 +80,11 @@ const Leave: React.FC<LeaveProps> = ({
           },
           body: JSON.stringify({
             ...values,
-            start_date: moment(values?.start_date).format("DD-MM-YYYY"),
-            end_date: moment(values?.end_date).format("DD-MM-YYYY"),
-            profile_id: values?.profile_id?.id,
-            approved: values?.approved?.value,
-            leave_type: values?.leave_type,
+            // start_date: moment(values?.start_date).format("DD-MM-YYYY"),
+            // end_date: moment(values?.end_date).format("DD-MM-YYYY"),
+            // profile_id: values?.profile_id?.id,
+            // approved: values?.approved?.value,
+            // leave_type: values?.leave_type,
           }),
         });
         setStatus("success");
@@ -100,60 +99,60 @@ const Leave: React.FC<LeaveProps> = ({
     },
   });
 
-  const fetchProfiles = async () => {
-    try {
-      const data = await fetchWithToken("/profiles", {
-        method: "GET",
-      });
+  // const fetchProfiles = async () => {
+  //   try {
+  //     const data = await fetchWithToken("/profiles", {
+  //       method: "GET",
+  //     });
 
-      setProfiles(
-        data?.map((each: Profile) => ({
-          ...each,
-          value: each?.id,
-          label: each?.email,
-        }))
-      );
-    } catch (error) {
-      console.error("Failed to fetch profiles:", error);
-    }
-  };
+  //     setProfiles(
+  //       data?.map((each: Profile) => ({
+  //         ...each,
+  //         value: each?.id,
+  //         label: each?.email,
+  //       }))
+  //     );
+  //   } catch (error) {
+  //     console.error("Failed to fetch profiles:", error);
+  //   }
+  // };
 
-  const getLeaveDetails = async (id: string | number) => {
-    try {
-      const data = await fetchWithToken(`/leave/${id}`, {
-        method: "GET",
-      });
+  // const getLeaveDetails = async (id: string | number) => {
+  //   try {
+  //     const data = await fetchWithToken(`/leave/${id}`, {
+  //       method: "GET",
+  //     });
 
-      console.log("qwerty", data);
+  //     console.log("qwerty", data);
 
-      formik?.setFieldValue("start_date", data?.start_date);
-      formik?.setFieldValue("end_date", data?.end_date);
-      formik?.setFieldValue(
-        "profile_id",
-        profiles?.filter((each) => each?.id === data?.profile_id)[0]
-      );
-      formik?.setFieldValue(
-        "approved",
-        statusOptions?.filter((each) => each?.value === data?.approved)[0]
-      );
-      formik?.setFieldValue("leave_type", data?.leave_type);
-    } catch (error) {
-      console.error("Failed to fetch department:", error);
-    }
-  };
+  //     formik?.setFieldValue("start_date", data?.start_date);
+  //     formik?.setFieldValue("end_date", data?.end_date);
+  //     formik?.setFieldValue(
+  //       "profile_id",
+  //       profiles?.filter((each) => each?.id === data?.profile_id)[0]
+  //     );
+  //     formik?.setFieldValue(
+  //       "approved",
+  //       statusOptions?.filter((each) => each?.value === data?.approved)[0]
+  //     );
+  //     formik?.setFieldValue("leave_type", data?.leave_type);
+  //   } catch (error) {
+  //     console.error("Failed to fetch department:", error);
+  //   }
+  // };
 
-  useEffect(() => {
-    formik?.resetForm();
-    if (
-      typeof isModalVisible === "number" ||
-      typeof isModalVisible === "string"
-    )
-      getLeaveDetails(isModalVisible);
-  }, [isModalVisible]);
+  // useEffect(() => {
+  //   formik?.resetForm();
+  //   if (
+  //     typeof isModalVisible === "number" ||
+  //     typeof isModalVisible === "string"
+  //   )
+  //     getLeaveDetails(isModalVisible);
+  // }, [isModalVisible]);
 
-  useEffect(() => {
-    fetchProfiles();
-  }, []);
+  // useEffect(() => {
+  //   fetchProfiles();
+  // }, []);
 
   const formatOptionLabel = (profile: Profile) => (
     <div className="flex items-center">

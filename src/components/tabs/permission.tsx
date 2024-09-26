@@ -34,13 +34,13 @@ const Permission: React.FC<permissionProps> = ({
   const { replace } = useRouter();
   const searchParams = useSearchParams();
   const page = parseInt(searchParams.get("page") || "1");
-  const limit = parseInt(searchParams.get("limit") || "10");
+  const pageSize = parseInt(searchParams.get("pageSize") || "10");
   const [permissions, setPermissions] = useState<Permission[]>([]);
 
   const fetchPermissions = async () => {
     try {
       const data = await fetchWithToken(
-        `/permission/list?page=${page}&limit=${limit}`,
+        `/permission/list?page=${page}&pageSize=${pageSize}`,
         {
           method: "GET",
         }
@@ -59,7 +59,7 @@ const Permission: React.FC<permissionProps> = ({
 
   useEffect(() => {
     fetchPermissions();
-  }, [page, limit]);
+  }, [page, pageSize]);
 
   return (
     <>

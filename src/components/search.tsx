@@ -20,7 +20,7 @@ const Search = () => {
         placeholder="Search"
         className="outline-none w-[250px] text-sm font-normal leading-[22px] bg-[#FDFDFF]"
         onChange={(e) => setTypedText((e.target as HTMLInputElement).value)}
-        value={typedText || ""}
+        value={typedText}
       />
       <Image src={searchImg} alt="search" className="w-5 h-5" />
     </div>

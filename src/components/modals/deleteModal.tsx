@@ -27,7 +27,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
     setStatus("onclic");
     try {
       await fetchWithToken(`/${route}/remove`, {
-        method: "DELETE",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },

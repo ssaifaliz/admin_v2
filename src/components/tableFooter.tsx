@@ -15,18 +15,18 @@ const TableFooter = () => {
   const { replace } = useRouter();
   const searchParams = useSearchParams();
   const page = parseInt(searchParams.get("page") || "1");
-  const limit = parseInt(searchParams.get("limit") || "10");
+  const pageSize = parseInt(searchParams.get("pageSize") || "10");
   const totalPages = parseInt(searchParams.get("totalPages") || "1");
   useEffect(() => {
     updateQueryParams(
       {
         page: page?.toString(),
         totalPages: totalPages?.toString(),
-        limit: limit?.toString(),
+        pageSize: pageSize?.toString(),
       },
       replace
     );
-  }, [page, totalPages, limit]);
+  }, [page, totalPages, pageSize]);
   return (
     <div className="w-full h-[60px]">
       <div className="flex items-center justify-between bg-[#F7F8F7] rounded-lg shadow-md px-6 py-2 w-full h-full">
@@ -39,7 +39,7 @@ const TableFooter = () => {
                 style={{ background: "white" }}
               >
                 <span className=" text-[#101010] text-[14px] font-semibold">
-                  {limit}
+                  {pageSize}
                 </span>
                 <Image
                   src={arrowIcon}
@@ -58,7 +58,7 @@ const TableFooter = () => {
                     key={each}
                     className="cursor-pointer "
                     onClick={() =>
-                      updateQueryParams({ limit: each.toString() }, replace)
+                      updateQueryParams({ pageSize: each.toString() }, replace)
                     }
                   >
                     {each}
