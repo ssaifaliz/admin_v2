@@ -47,20 +47,18 @@ const Leave: React.FC<LeaveProps> = ({
   const [status, setStatus] = useState<string>("");
 
   const formik = useFormik<{
-    approved_by: string;
-    end_date_id: string;
+    start_date: string;
+    end_date: string;
+    profile_id: Profile | null;
+    approved: SelectOption | null;
     leave_type: string;
-    start_date_id: string;
-    total_days: string;
-    total_holidays: string;
   }>({
     initialValues: {
-      approved_by: "",
-      end_date_id: "",
+      start_date: "",
+      end_date: "",
+      profile_id: null,
+      approved: null,
       leave_type: "",
-      start_date_id: "",
-      total_days: "",
-      total_holidays: "",
     },
     validationSchema: Yup.object({
       approved_by: Yup.string().required("Required"),
@@ -73,18 +71,18 @@ const Leave: React.FC<LeaveProps> = ({
     onSubmit: async (values) => {
       setStatus("onclic");
       try {
-        await fetchWithToken(isAdd ? "/leave" : `/leave/${isModalVisible}`, {
+        await fetchWithToken(isAdd ? "/leave/list" : `/leave/create`, {
           method: isAdd ? "POST" : "PUT",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
             ...values,
-            // start_date: moment(values?.start_date).format("DD-MM-YYYY"),
-            // end_date: moment(values?.end_date).format("DD-MM-YYYY"),
-            // profile_id: values?.profile_id?.id,
-            // approved: values?.approved?.value,
-            // leave_type: values?.leave_type,
+            start_date: moment(values?.start_date).format("DD-MM-YYYY"),
+            end_date: moment(values?.end_date).format("DD-MM-YYYY"),
+            profile_id: values?.profile_id?.id,
+            approved: values?.approved?.value,
+            leave_type: values?.leave_type,
           }),
         });
         setStatus("success");
@@ -99,59 +97,56 @@ const Leave: React.FC<LeaveProps> = ({
     },
   });
 
-  // const fetchProfiles = async () => {
-  //   try {
-  //     const data = await fetchWithToken("/profiles", {
-  //       method: "GET",
-  //     });
+  const fetchProfiles = async () => {
+    try {
+      const data = await fetchWithToken("/user/list", {
+        method: "GET",
+      });
 
-  //     setProfiles(
-  //       data?.map((each: Profile) => ({
-  //         ...each,
-  //         value: each?.id,
-  //         label: each?.email,
-  //       }))
-  //     );
-  //   } catch (error) {
-  //     console.error("Failed to fetch profiles:", error);
-  //   }
-  // };
+      const profilesData = data?.map((each: Profile) => ({
+        value: each.id,
+        label: each.email,
+      }));
 
-  // const getLeaveDetails = async (id: string | number) => {
-  //   try {
-  //     const data = await fetchWithToken(`/leave/${id}`, {
-  //       method: "GET",
-  //     });
+      setProfiles(profilesData);
+    } catch (error) {
+      console.error("Failed to fetch profiles:", error);
+    }
+  };
 
-  //     console.log("qwerty", data);
+  const getLeaveDetails = async (id: string | number) => {
+    try {
+      const data = await fetchWithToken(`/leave/${id}`, {
+        method: "GET",
+      });
 
-  //     formik?.setFieldValue("start_date", data?.start_date);
-  //     formik?.setFieldValue("end_date", data?.end_date);
-  //     formik?.setFieldValue(
-  //       "profile_id",
-  //       profiles?.filter((each) => each?.id === data?.profile_id)[0]
-  //     );
-  //     formik?.setFieldValue(
-  //       "approved",
-  //       statusOptions?.filter((each) => each?.value === data?.approved)[0]
-  //     );
-  //     formik?.setFieldValue("leave_type", data?.leave_type);
-  //   } catch (error) {
-  //     console.error("Failed to fetch department:", error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   formik?.resetForm();
-  //   if (
-  //     typeof isModalVisible === "number" ||
-  //     typeof isModalVisible === "string"
-  //   )
-  //     getLeaveDetails(isModalVisible);
-  // }, [isModalVisible]);
+      formik?.setFieldValue("start_date", data?.start_date);
+      formik?.setFieldValue("end_date", data?.end_date);
+      formik?.setFieldValue(
+        "profile_id",
+        profiles?.filter((each) => each?.id === data?.profile_id)[0]
+      );
+      formik?.setFieldValue(
+        "approved",
+        statusOptions?.filter((each) => each?.value === data?.approved)[0]
+      );
+      formik?.setFieldValue("leave_type", data?.leave_type);
+    } catch (error) {
+      console.error("Failed to fetch department:", error);
+    }
+  };
 
   useEffect(() => {
-    //   fetchProfiles();
+    formik?.resetForm();
+    if (
+      typeof isModalVisible === "number" ||
+      typeof isModalVisible === "string"
+    )
+      getLeaveDetails(isModalVisible);
+  }, [isModalVisible]);
+
+  useEffect(() => {
+      fetchProfiles();
   }, []);
 
   const formatOptionLabel = (profile: Profile) => (
@@ -169,6 +164,7 @@ const Leave: React.FC<LeaveProps> = ({
       </div>
     </div>
   );
+
 
   return (
     isModalVisible && (
