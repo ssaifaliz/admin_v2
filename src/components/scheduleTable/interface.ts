@@ -84,26 +84,12 @@ interface Profile {
 }
 
 interface Schedule {
-  created_at: string;
-  deleted_at: string | null; 
-  end_date_id: number;
-  end_time: string | null; 
-  hours_worked: number;
   id: number;
-<<<<<<< HEAD
   hours_worked: number;
-  overtime_hours: number;
-  start_date_id: number;
   end_date_id: number;
-  shift_id: number;
-  start_time: string | null;
   end_time: string | null;
-  user_id: number;
-  leave_id: number | null;
   created_at: string;
-  updated_at: string;
   deleted_at: string | null;
-=======
   leave_id: number | null;
   overtime_hours: number;
   shift_id: number;
@@ -111,7 +97,6 @@ interface Schedule {
   start_time: string | null; 
   updated_at: string; 
   user_id: number;
->>>>>>> ddfbe32943cf26f89576fe208b1a86d1f452c5cf
 }
 
 interface ScheduleDept {
