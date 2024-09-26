@@ -55,7 +55,7 @@ const Shifts: React.FC<ShiftProps> = ({ isModalVisible, setModalVisible }) => {
 
   useEffect(() => {
     fetchShifts();
-  }, []);
+  }, [page, pageSize]);
 
   return (
     <>

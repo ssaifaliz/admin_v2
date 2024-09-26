@@ -14,6 +14,8 @@ import fetchWithToken from "@/utils/api";
 import DeleteModal from "../modals/deleteModal";
 import UserModal from "../modals/userModal";
 import grayArrowDown from "@/assets/grayArrowDown.png";
+import { useRouter, useSearchParams } from "next/navigation";
+import { updateQueryParams } from "@/lib";
 
 interface usersProps {
   isModalVisible: boolean | string | number;
@@ -29,13 +31,26 @@ const Users: React.FC<usersProps> = ({ isModalVisible, setModalVisible }) => {
   >(false);
   const [users, setUsers] = useState([]);
 
+  const { replace } = useRouter();
+  const searchParams = useSearchParams();
+  const page = parseInt(searchParams.get("page") || "1");
+  const pageSize = parseInt(searchParams.get("pageSize") || "10");
+
   const fetchUsers = async () => {
     try {
-      const data = await fetchWithToken("/user/list", {
-        method: "GET",
-      });
+      const data = await fetchWithToken(
+        `/user/list?page=${page}&pageSize=${pageSize}`,
+        {
+          method: "GET",
+        }
+      );
       setUsers(data?.content?.user);
-      console.log("data", data);
+      updateQueryParams(
+        {
+          totalPages: data?.content?.totalPages?.toString(),
+        },
+        replace
+      );
     } catch (error) {
       console.error("Failed to fetch users:", error);
     }
@@ -43,7 +58,7 @@ const Users: React.FC<usersProps> = ({ isModalVisible, setModalVisible }) => {
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [page, pageSize]);
 
   return (
     <>
