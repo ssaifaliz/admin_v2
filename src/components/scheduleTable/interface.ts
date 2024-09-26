@@ -69,38 +69,35 @@ interface Schedule_dept {
 }
 
 interface Profile {
-  id: string;
-  first_name: string;
-  last_name: string;
+  created_at: string; 
+  created_by: number | null; 
+  deleted_at: string | null;  
   email: string;
-  contact: string;
-  birthdate: string;
-  profilePicture: string | null;
-  emp_id: number;
-  userId: number;
-  deptId: number;
-  positionId: number;
-  roleId: number;
-  createdAt: string;
-  updatedAt: string;
-  value: number;
-  label: string;
+  id: number;
+  image: string | null; 
+  is_active: boolean;
+  is_admin: boolean;
+  name: string;
+  password: string;  
+  prefered_language: string;
+  role_id: number; 
+  updated_at: string; 
 }
 
 interface Schedule {
+  created_at: string;
+  deleted_at: string | null; 
+  end_date_id: number;
+  end_time: string | null; 
+  hours_worked: number;
   id: number;
-  date: string;
-  profileId: number;
-  shiftId: number;
-  deptId: number;
-  createdAt: string;
-  updatedAt: string;
-  department: Department;
-  profile: Profile;
-  shift: Shift;
-  value: number;
-  label: string;
-  schedule_dept: ScheduleDept;
+  leave_id: number | null;
+  overtime_hours: number;
+  shift_id: number;
+  start_date_id: number;
+  start_time: string | null; 
+  updated_at: string; 
+  user_id: number;
 }
 
 interface ScheduleDept {

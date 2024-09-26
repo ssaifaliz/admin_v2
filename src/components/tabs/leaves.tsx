@@ -74,6 +74,12 @@ const Leaves: React.FC<LeaveProps> = ({ isModalVisible, setModalVisible }) => {
       <Table className={"relative mt-5"}>
         <TableHead>
           <TableRow className="bg-[#F7F8F7]">
+          <TableHeader className="!outline-none !border-b-0">
+              <div className="flex items-center">
+                Approved By
+                {<Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />}
+              </div>
+            </TableHeader>
             <TableHeader className="!outline-none !border-b-0">
               <div className="flex items-center">
                 Start Date
@@ -110,6 +116,15 @@ const Leaves: React.FC<LeaveProps> = ({ isModalVisible, setModalVisible }) => {
         <TableBody>
           {leaves?.map((each, index) => (
             <TableRow key={index}>
+                <TableCell className="!outline-none !border-b-0">
+                <div className="flex items-center max-w-min">
+                  <div className="flex flex-col justify-center">
+                    <div className="text-[16px] font-[600] mt-0">
+                      {each?.approved}
+                    </div>
+                  </div>
+                </div>
+              </TableCell>
               <TableCell className="!outline-none !border-b-0">
                 <div className="flex items-center max-w-min">
                   <div className="flex flex-col justify-center">
