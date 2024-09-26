@@ -94,7 +94,7 @@ const tabs = [
 
 const Page = () => {
   const [isModalVisible, setModalVisible] = useState(false);
-  const [selectedTab, setSelectedTab] = useState(tabs[4]);
+  const [selectedTab, setSelectedTab] = useState(tabs[1]);
 
   return (
     <Suspense fallback={<div>Loading...</div>}>

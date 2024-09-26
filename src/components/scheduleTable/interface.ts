@@ -21,10 +21,10 @@ interface Department {
 }
 
 interface Position {
-  createdAt: string; 
-  deletedAt: string | null; 
-  id: string; 
-  title: string; 
+  createdAt: string;
+  deletedAt: string | null;
+  id: string;
+  title: string;
   updatedAt: string;
 }
 
@@ -49,16 +49,15 @@ interface Role {
 }
 
 interface Shift {
-  created_at: string; 
-  deleted_at: string | null; 
-  end_time: string; 
+  created_at: string;
+  deleted_at: string | null;
+  end_time: string;
   id: number;
-  shift_name: string; 
-  shift_type: string; 
-  start_time: string; 
-  updated_at: string; 
+  shift_name: string;
+  shift_type: string;
+  start_time: string;
+  updated_at: string;
 }
-
 
 interface Schedule_dept {
   city: string;
@@ -89,18 +88,18 @@ interface Profile {
 
 interface Schedule {
   id: number;
-  date: string;
-  profileId: number;
-  shiftId: number;
-  deptId: number;
-  createdAt: string;
-  updatedAt: string;
-  department: Department;
-  profile: Profile;
-  shift: Shift;
-  value: number;
-  label: string;
-  schedule_dept: ScheduleDept;
+  hours_worked: number;
+  overtime_hours: number;
+  start_date_id: number;
+  end_date_id: number;
+  shift_id: number;
+  start_time: string | null;
+  end_time: string | null;
+  user_id: number;
+  leave_id: number | null;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
 }
 
 interface ScheduleDept {

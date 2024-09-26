@@ -16,10 +16,8 @@ import DeleteModal from "../modals/deleteModal";
 import grayArrowDown from "@/assets/grayArrowDown.png";
 
 interface rolesProps {
-  isModalVisible: boolean | string | number;
-  setModalVisible: React.Dispatch<
-    React.SetStateAction<boolean | string | number>
-  >;
+  isModalVisible: boolean | Role;
+  setModalVisible: React.Dispatch<React.SetStateAction<boolean | Role>>;
 }
 
 const Roles: React.FC<rolesProps> = ({ isModalVisible, setModalVisible }) => {

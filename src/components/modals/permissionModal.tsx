@@ -96,6 +96,11 @@ const PermissionModal: React.FC<permissionProps> = ({
                 }}
               />
             </div>
+            <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
+              {formik?.touched?.title && formik?.errors?.title && (
+                <div>{formik?.errors?.title}</div>
+              )}
+            </div>
             <div className="w-[350px] flex justify-between">
               <button
                 type="button"

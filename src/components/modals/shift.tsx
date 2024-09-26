@@ -38,14 +38,15 @@ const Shift: React.FC<ShiftProps> = ({
     onSubmit: async (values) => {
       setStatus("onclic");
       try {
-        await fetchWithToken(!isEdit ? "/shifts/create" : `/shifts/update`, {
+        await fetchWithToken(!isEdit ? "/shift/create" : `/shift/update`, {
           method: !isEdit ? "POST" : "PUT",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            start_time: moment(values?.start_time)?.format("HH:mm:ss"),
-            end_time: moment(values?.end_time)?.format("HH:mm:ss"),
+            ...(isEdit && { id: isModalVisible?.id }),
+            start_time: moment(values?.start_time, "HH:mm")?.format("HH:mm:ss"),
+            end_time: moment(values?.end_time, "HH:mm")?.format("HH:mm:ss"),
             shift_type: values?.shift_type,
             shift_name: values?.shift_name,
           }),

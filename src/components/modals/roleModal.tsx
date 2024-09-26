@@ -5,12 +5,11 @@ import { useFormik } from "formik";
 import "react-dropdown/style.css";
 import fetchWithToken from "@/utils/api";
 import AnimatedBtn from "../animatedBtn";
+import Select, { SingleValue } from "react-select";
 
 interface roleProps {
-  isModalVisible: boolean | string | number;
-  setModalVisible: React.Dispatch<
-    React.SetStateAction<boolean | string | number>
-  >;
+  isModalVisible: boolean | Role;
+  setModalVisible: React.Dispatch<React.SetStateAction<boolean | Role>>;
   fetchRoles: () => void;
 }
 
@@ -19,9 +18,10 @@ const RoleModal: React.FC<roleProps> = ({
   setModalVisible,
   fetchRoles,
 }) => {
-  const isAdd = isModalVisible === true;
+  const isEdit = typeof isModalVisible !== "boolean";
   const [status, setStatus] = useState<string>("");
   const [isDecline, setIsDecline] = useState<boolean>(false);
+  const [permissions, setPermissions] = useState<Permission[]>([]);
 
   const formik = useFormik({
     initialValues: {
@@ -37,20 +37,18 @@ const RoleModal: React.FC<roleProps> = ({
     onSubmit: async (values) => {
       setStatus("onclic");
       try {
-        await fetchWithToken(
-          isAdd ? "/role/create" : `/role/${isModalVisible}`,
-          {
-            method: isAdd ? "POST" : "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              code_name: values?.code_name,
-              permission: values?.permission,
-              title: values?.title,
-            }),
-          }
-        );
+        await fetchWithToken(!isEdit ? "/role/create" : `/role/update`, {
+          method: !isEdit ? "POST" : "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...(isEdit && { id: isModalVisible?.id }),
+            code_name: values?.code_name,
+            permission: values?.permission,
+            title: values?.title,
+          }),
+        });
         setStatus("success");
         setTimeout(() => {
           setModalVisible(!isModalVisible);
@@ -63,26 +61,44 @@ const RoleModal: React.FC<roleProps> = ({
     },
   });
 
-  const getRoleDetails = async (id: string | number) => {
+  // const getRoleDetails = async (id: string | number) => {
+  //   try {
+  //     const data = await fetchWithToken(`/role/${id}`, {
+  //       method: "GET",
+  //     });
+  //     formik?.setFieldValue("code_name", data?.code_name);
+  //     formik?.setFieldValue("permission", data?.permision);
+  //     formik?.setFieldValue("title", data?.title);
+  //   } catch (error) {
+  //     console.error("Failed to fetch role:", error);
+  //   }
+  // };
+
+  const fetchPermissions = async () => {
     try {
-      const data = await fetchWithToken(`/role/${id}`, {
+      const data = await fetchWithToken(`/permission/list`, {
         method: "GET",
       });
-      formik?.setFieldValue("code_name", data?.code_name);
-      formik?.setFieldValue("permission", data?.permision);
-      formik?.setFieldValue("title", data?.title);
+      setPermissions(
+        data?.content?.permission?.map((each: Permission) => ({
+          ...each,
+          value: each?.id,
+          label: each?.title,
+        }))
+      );
     } catch (error) {
-      console.error("Failed to fetch role:", error);
+      console.error("Failed to fetch permission:", error);
     }
   };
 
   useEffect(() => {
     formik?.resetForm();
-    if (
-      typeof isModalVisible === "number" ||
-      typeof isModalVisible === "string"
-    )
-      getRoleDetails(isModalVisible);
+    if (isEdit) {
+      formik?.setFieldValue("code_name", isModalVisible?.code_name);
+      formik?.setFieldValue("permission", isModalVisible?.permission);
+      formik?.setFieldValue("title", isModalVisible?.title);
+    }
+    fetchPermissions();
   }, [isModalVisible]);
 
   return (
@@ -116,24 +132,31 @@ const RoleModal: React.FC<roleProps> = ({
                       : "#5D6561",
                 }}
               />
+              <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
+                {formik?.touched?.code_name && formik?.errors?.code_name && (
+                  <div>{formik?.errors?.code_name}</div>
+                )}
+              </div>
               <div className="font-bold">Permission</div>
-              <input
-                type="text"
-                placeholder="Enter permission"
+              <Select
+                options={permissions}
+                value={
+                  permissions?.filter(
+                    (each) => each?.id === formik?.values?.permission
+                  )[0]
+                }
                 name="permission"
-                required
-                className="w-[350px] h-[40px] border placeholder-[#5D6561] rounded-[8px] p-2 my-2 outline-none"
-                id="role"
-                onChange={formik?.handleChange}
-                onBlur={formik?.handleBlur}
-                value={formik?.values?.permission}
-                style={{
-                  borderColor:
-                    formik?.touched?.permission && formik?.errors?.permission
-                      ? "#E23121"
-                      : "#5D6561",
-                }}
+                onChange={(option) =>
+                  formik.setFieldValue("permission", option?.id)
+                }
+                onBlur={formik.handleBlur}
+                className="w-[350px] h-[40px] my-2"
               />
+              <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
+                {formik?.touched?.permission && formik?.errors?.permission && (
+                  <div>{formik?.errors?.permission}</div>
+                )}
+              </div>
               <div className="font-bold">Title</div>
               <input
                 type="text"
@@ -152,6 +175,11 @@ const RoleModal: React.FC<roleProps> = ({
                       : "#5D6561",
                 }}
               />
+              <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
+                {formik?.touched?.title && formik?.errors?.title && (
+                  <div>{formik?.errors?.title}</div>
+                )}
+              </div>
             </div>
             <div className="w-[350px] flex justify-between">
               <button

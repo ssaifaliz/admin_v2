@@ -61,10 +61,8 @@ interface Department {
 }
 
 interface scheduleProps {
-  isModalVisible: boolean | string | number;
-  setModalVisible: React.Dispatch<
-    React.SetStateAction<boolean | string | number>
-  >;
+  isModalVisible: boolean | Schedule;
+  setModalVisible: React.Dispatch<React.SetStateAction<boolean | Schedule>>;
   fetchSchedules: () => void;
 }
 

@@ -12,12 +12,13 @@ import fetchWithToken from "@/utils/api";
 import PermissionModal from "../modals/permissionModal";
 import deleteIcon from "@/assets/deleteIcon.png";
 import grayArrowDown from "@/assets/grayArrowDown.png";
+import editIcon from "@/assets/editIcon.png";
+import DeleteModal from "../modals/deleteModal";
+import ScheduleModal from "../modals/schedule";
 
 interface ScheduleProps {
-  isModalVisible: boolean | string | number;
-  setModalVisible: React.Dispatch<
-    React.SetStateAction<boolean | string | number>
-  >;
+  isModalVisible: boolean | Schedule;
+  setModalVisible: React.Dispatch<React.SetStateAction<boolean | Schedule>>;
 }
 
 const Schedule: React.FC<ScheduleProps> = ({
@@ -26,16 +27,16 @@ const Schedule: React.FC<ScheduleProps> = ({
 }) => {
   const [content, setContent] = useState<string>("");
   const [schedule, setSchedule] = useState<Schedule[]>([]);
-  //   const [deleteDepartmentModal, setDeleteDepartmentModal] = useState<
-  //     boolean | number | string
-  //   >(false);
+  const [deleteModal, setDeleteModal] = useState<boolean | number | string>(
+    false
+  );
 
   const fetchSchedule = async () => {
     try {
       const data = await fetchWithToken("/schedule/list", {
         method: "GET",
       });
-      setSchedule(data?.content?.shift);
+      setSchedule(data?.content?.schedule);
     } catch (error) {
       console.error("Failed to fetch shift:", error);
     }
@@ -52,24 +53,30 @@ const Schedule: React.FC<ScheduleProps> = ({
           <TableRow className="bg-[#F7F8F7]">
             <TableHeader className="!outline-none !border-b-0">
               <div className="flex items-center">
-                Shift ID
+                Profile
                 <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
               </div>
             </TableHeader>
             <TableHeader className="!outline-none !border-b-0">
-            <div className="flex items-center">
-                User ID
+              <div className="flex items-center">
+                Start date
                 <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
               </div>
             </TableHeader>
             <TableHeader className="!outline-none !border-b-0">
-            <div className="flex items-center">
-                Worked Hours
+              <div className="flex items-center">
+                End Date
                 <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
               </div>
             </TableHeader>
             <TableHeader className="!outline-none !border-b-0">
-            <div className="flex items-center">
+              <div className="flex items-center">
+                Work Hours
+                <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
+              </div>
+            </TableHeader>
+            <TableHeader className="!outline-none !border-b-0">
+              <div className="flex items-center ">
                 Over Time Hours
                 <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
               </div>
@@ -84,8 +91,7 @@ const Schedule: React.FC<ScheduleProps> = ({
                 <div className="flex items-center max-w-min">
                   <div className="flex flex-col justify-center">
                     <div className="text-[16px] font-[600] mt-0">
-                      {/* {schedule?.name} */}
-                      <h1>schedule name</h1>
+                      {schedule?.user_id}
                     </div>
                   </div>
                 </div>
@@ -94,19 +100,51 @@ const Schedule: React.FC<ScheduleProps> = ({
                 <div className="flex items-center max-w-min">
                   <div className="flex flex-col justify-center">
                     <div className="text-[16px] font-[600] mt-0">
-                      {/* {schedule?.description} */}
-                      <h1>jdsh</h1>
+                      {schedule?.start_date_id}
                     </div>
                   </div>
                 </div>
               </TableCell>
-
-              {/* <TableCell className="!outline-none !border-b-0 w-[120px] flex float-right">
+              <TableCell className="!outline-none !border-b-0">
+                <div className="flex items-center max-w-min">
+                  <div className="flex flex-col justify-center">
+                    <div className="text-[16px] font-[600] mt-0">
+                      {schedule?.end_date_id}
+                    </div>
+                  </div>
+                </div>
+              </TableCell>
+              <TableCell className="!outline-none !border-b-0">
+                <div className="flex items-center max-w-min">
+                  <div className="flex flex-col justify-center">
+                    <div className="text-[16px] font-[600] mt-0">
+                      {schedule?.hours_worked}
+                    </div>
+                  </div>
+                </div>
+              </TableCell>
+              <TableCell className="!outline-none !border-b-0">
+                <div className="flex items-center max-w-min">
+                  <div className="flex flex-col justify-center">
+                    <div className="text-[16px] font-[600] mt-0">
+                      {schedule?.overtime_hours}
+                    </div>
+                  </div>
+                </div>
+              </TableCell>
+              <TableCell className="!outline-none !border-b-0 w-[120px] flex float-right">
                 <div
-                //   onClick={() => {
-                //     setDeleteDepartmentModal(department?.id);
-                //     setContent(department?.name);
-                //   }}
+                  onClick={() => {
+                    setModalVisible(schedule);
+                  }}
+                  className="w-[60px] h-full flex justify-center items-center cursor-pointer"
+                >
+                  <Image alt="editIcon" src={editIcon} className="w-6 h-6" />
+                </div>
+                <div
+                  onClick={() => {
+                    setDeleteModal(schedule?.id);
+                  }}
                   className="w-[60px] h-full flex justify-center items-center cursor-pointer"
                 >
                   <Image
@@ -115,23 +153,23 @@ const Schedule: React.FC<ScheduleProps> = ({
                     className="w-6 h-6"
                   />
                 </div>
-              </TableCell> */}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-      {/* <PermissionModal
+      <ScheduleModal
         isModalVisible={isModalVisible}
         setModalVisible={setModalVisible}
-        fetchPermissions={fetchPermissions}
-      /> */}
-      {/* <DeleteModal
-        route="department"
+        fetchSchedules={fetchSchedule}
+      />
+      <DeleteModal
+        route="schedule"
         content={content}
-        visibilityState={deleteDepartmentModal}
-        setState={setDeleteDepartmentModal}
-        fetchAllCall={fetchDepartments}
-      /> */}
+        visibilityState={deleteModal}
+        setState={setDeleteModal}
+        fetchAllCall={fetchSchedule}
+      />
     </>
   );
 };
