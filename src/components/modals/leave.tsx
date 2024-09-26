@@ -150,9 +150,9 @@ const Leave: React.FC<LeaveProps> = ({
   //     getLeaveDetails(isModalVisible);
   // }, [isModalVisible]);
 
-  // useEffect(() => {
-  //   fetchProfiles();
-  // }, []);
+  useEffect(() => {
+    //   fetchProfiles();
+  }, []);
 
   const formatOptionLabel = (profile: Profile) => (
     <div className="flex items-center">
