@@ -7,10 +7,8 @@ import moment from "moment";
 import AnimatedBtn from "../animatedBtn";
 
 interface ShiftProps {
-  isModalVisible: boolean | string | number;
-  setModalVisible: React.Dispatch<
-    React.SetStateAction<boolean | string | number>
-  >;
+  isModalVisible: boolean | Shift;
+  setModalVisible: React.Dispatch<React.SetStateAction<boolean | Shift>>;
   fetchShifts: () => void;
 }
 
@@ -22,31 +20,32 @@ const Shift: React.FC<ShiftProps> = ({
   const [isDecline, setIsDecline] = useState<boolean>(false);
   const [status, setStatus] = useState<string>("");
 
-  const isAdd = isModalVisible === true;
+  const isEdit = typeof isModalVisible !== "boolean";
 
   const formik = useFormik({
     initialValues: {
-      start_time: "",
       end_time: "",
+      start_time: "",
+      shift_name: "",
       shift_type: "",
-      shift_name: ""
     },
     validationSchema: Yup?.object({
       start_time: Yup?.string()?.required("Required"),
       end_time: Yup?.string()?.required("Required"),
+      shift_name: Yup?.string()?.required("Required"),
       shift_type: Yup?.string()?.required("Required"),
     }),
     onSubmit: async (values) => {
       setStatus("onclic");
       try {
-        await fetchWithToken(isAdd ? "/shifts" : `/shifts/${isModalVisible}`, {
-          method: isAdd ? "POST" : "PUT",
+        await fetchWithToken(!isEdit ? "/shifts/create" : `/shifts/update`, {
+          method: !isEdit ? "POST" : "PUT",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            start_time: moment(values?.start_time, "HH:mm").format("HH:mm:ss"),
-            end_time: moment(values?.end_time, "HH:mm").format("HH:mm:ss"),
+            start_time: moment(values?.start_time)?.format("HH:mm:ss"),
+            end_time: moment(values?.end_time)?.format("HH:mm:ss"),
             shift_type: values?.shift_type,
             shift_name: values?.shift_name,
           }),
@@ -63,26 +62,14 @@ const Shift: React.FC<ShiftProps> = ({
     },
   });
 
-  const getShiftDetails = async (id: string | number) => {
-    try {
-      const data = await fetchWithToken(`/shifts/${id}`, {
-        method: "GET",
-      });
-      formik?.setFieldValue("start_time", data?.start_time);
-      formik?.setFieldValue("end_time", data?.end_time);
-      formik?.setFieldValue("shift_type", data?.shift_type);
-    } catch (error) {
-      console.error("Failed to fetch shift:", error);
-    }
-  };
-
   useEffect(() => {
     formik?.resetForm();
-    if (
-      typeof isModalVisible === "number" ||
-      typeof isModalVisible === "string"
-    )
-      getShiftDetails(isModalVisible);
+    if (isEdit) {
+      formik?.setFieldValue("start_time", isModalVisible?.start_time);
+      formik?.setFieldValue("end_time", isModalVisible?.end_time);
+      formik?.setFieldValue("shift_type", isModalVisible?.shift_type);
+      formik?.setFieldValue("shift_name", isModalVisible?.shift_name);
+    }
   }, [isModalVisible]);
 
   return (
@@ -95,9 +82,8 @@ const Shift: React.FC<ShiftProps> = ({
           className="py-5 max-w-[40%] h-[50%] overflow-auto m-auto w-[385px] capitalize bg-[#FFF] rounded-[8px] flex flex-col items-center scrollbar-hidden"
           onClick={(e) => e?.stopPropagation()}
         >
-          <div className="text-center text-lg font-bold">
-            {!isAdd ? "Edit" : "Add"}
-          </div>
+          <div className="text-center text-lg font-bold">Shift</div>
+
           <div className="text-sm text-[#101010] w-full px-5">
             <div className="font-bold">Start Time</div>
             <input
@@ -163,6 +149,28 @@ const Shift: React.FC<ShiftProps> = ({
             <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
               {formik?.touched?.shift_type && formik?.errors?.shift_type && (
                 <div>{formik?.errors?.shift_type}</div>
+              )}
+            </div>
+            <div className="font-bold">Shift Name</div>
+            <input
+              type="text"
+              placeholder="Enter Shift Type"
+              name="shift_name"
+              className="w-[350px] h-[40px] border placeholder-[#5D6561] rounded-[8px] p-2 my-2 outline-none"
+              id="shift_name"
+              onChange={formik?.handleChange}
+              onBlur={formik?.handleBlur}
+              value={formik?.values?.shift_name}
+              style={{
+                borderColor:
+                  formik?.touched?.shift_name && formik?.errors?.shift_name
+                    ? "#E23121"
+                    : "#5D6561",
+              }}
+            />
+            <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
+              {formik?.touched?.shift_name && formik?.errors?.shift_name && (
+                <div>{formik?.errors?.shift_name}</div>
               )}
             </div>
           </div>

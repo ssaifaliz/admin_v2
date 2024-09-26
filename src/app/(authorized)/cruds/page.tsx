@@ -5,7 +5,7 @@ import Departments from "@/components/tabs/departments";
 import Positions from "@/components/tabs/positions";
 import Permission from "@/components/tabs/permission";
 import Roles from "@/components/tabs/roles";
-import Shift from "@/components/tabs/shift";
+import Shifts from "@/components/tabs/shifts";
 import Users from "@/components/tabs/users";
 import Locations from "@/components/tabs/locations";
 import whitePlus from "@/assets/whitePlus.png";
@@ -70,7 +70,7 @@ const tabs = [
     name: "Shift",
     img: shift,
     active: activeShift,
-    component: (props: any) => <Shift {...props} />,
+    component: (props: any) => <Shifts {...props} />,
   },
   {
     name: "Locations",
@@ -94,7 +94,7 @@ const tabs = [
 
 const Page = () => {
   const [isModalVisible, setModalVisible] = useState(false);
-  const [selectedTab, setSelectedTab] = useState(tabs[8]);
+  const [selectedTab, setSelectedTab] = useState(tabs[5]);
 
   return (
     <Suspense fallback={<div>Loading...</div>}>

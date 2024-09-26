@@ -34,7 +34,6 @@ const PermissionModal: React.FC<permissionProps> = ({
       try {
         await fetchWithToken(
           !isEdit ? "/permission/create" : `/permission/update`,
-
           {
             method: !isEdit ? "POST" : "PUT",
             headers: {

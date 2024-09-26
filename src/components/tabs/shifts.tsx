@@ -9,38 +9,52 @@ import {
   TableRow,
 } from "../catalyst/table";
 import fetchWithToken from "@/utils/api";
-import editIcon from "@/assets/editIcon.png"
+import editIcon from "@/assets/editIcon.png";
 import deleteIcon from "@/assets/deleteIcon.png";
 import DeleteModal from "../modals/deleteModal";
 import grayArrowDown from "@/assets/grayArrowDown.png";
+import { useRouter, useSearchParams } from "next/navigation";
+import Shift from "../modals/shift";
+import { updateQueryParams } from "@/lib";
 
 interface ShiftProps {
-  isModalVisible: boolean | string | number;
-  setModalVisible: React.Dispatch<
-    React.SetStateAction<boolean | string | number>
-  >;
+  isModalVisible: boolean | Shift;
+  setModalVisible: React.Dispatch<React.SetStateAction<boolean | Shift>>;
 }
 
-const Shift: React.FC<ShiftProps> = ({ isModalVisible, setModalVisible }) => {
+const Shifts: React.FC<ShiftProps> = ({ isModalVisible, setModalVisible }) => {
   const [content, setContent] = useState<string>("");
+  const { replace } = useRouter();
+  const searchParams = useSearchParams();
+  const page = parseInt(searchParams.get("page") || "1");
+  const pageSize = parseInt(searchParams.get("pageSize") || "10");
   const [shift, setShift] = useState<Shift[]>([]);
   const [deleteShiftModal, setDeleteShifttModal] = useState<
     boolean | number | string
   >(false);
 
-  const fetchShift = async () => {
+  const fetchShifts = async () => {
     try {
-      const data = await fetchWithToken("/shift/list", {
-        method: "GET",
-      });
+      const data = await fetchWithToken(
+        `/shift/list?page=${page}&pageSize=${pageSize}`,
+        {
+          method: "GET",
+        }
+      );
       setShift(data?.content?.shift);
+      updateQueryParams(
+        {
+          totalPages: data?.content?.totalPages?.toString(),
+        },
+        replace
+      );
     } catch (error) {
       console.error("Failed to fetch shift:", error);
     }
   };
 
   useEffect(() => {
-    fetchShift();
+    fetchShifts();
   }, []);
 
   return (
@@ -86,14 +100,14 @@ const Shift: React.FC<ShiftProps> = ({ isModalVisible, setModalVisible }) => {
               </TableCell>
 
               <TableCell className="!outline-none !border-b-0 w-[120px] flex float-right">
-              <div
-                    onClick={() => {
-                      setModalVisible(shift?.id);
-                    }}
-                    className="w-[60px] h-full flex justify-center items-center cursor-pointer"
-                  >
-                    <Image alt="editIcon" src={editIcon} className="w-6 h-6" />
-                  </div>
+                <div
+                  onClick={() => {
+                    setModalVisible(shift);
+                  }}
+                  className="w-[60px] h-full flex justify-center items-center cursor-pointer"
+                >
+                  <Image alt="editIcon" src={editIcon} className="w-6 h-6" />
+                </div>
                 <div
                   onClick={() => {
                     setDeleteShifttModal(shift?.id);
@@ -115,17 +129,17 @@ const Shift: React.FC<ShiftProps> = ({ isModalVisible, setModalVisible }) => {
       <Shift
         isModalVisible={isModalVisible}
         setModalVisible={setModalVisible}
-        // fetchShift={fetchShift}
+        fetchShifts={fetchShifts}
       />
       <DeleteModal
         route="shift"
         content={content}
         visibilityState={deleteShiftModal}
         setState={setDeleteShifttModal}
-        fetchAllCall={fetchShift}
+        fetchAllCall={fetchShifts}
       />
     </>
   );
 };
 
-export default Shift;
+export default Shifts;
