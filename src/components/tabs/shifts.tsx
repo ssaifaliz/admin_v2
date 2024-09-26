@@ -70,10 +70,23 @@ const Shifts: React.FC<ShiftProps> = ({ isModalVisible, setModalVisible }) => {
             </TableHeader>
             <TableHeader className="!outline-none !border-b-0">
               <div className="flex items-center">
-                Shift Type
+              Shift Type
                 <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
               </div>
             </TableHeader>
+            <TableHeader className="!outline-none !border-b-0">
+              <div className="flex items-center">
+                Start Time
+                <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
+              </div>
+            </TableHeader>
+            <TableHeader className="!outline-none !border-b-0">
+              <div className="flex items-center">
+                End Time
+                <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
+              </div>
+            </TableHeader>
+            
             <TableHeader></TableHeader>
           </TableRow>
         </TableHead>
@@ -94,6 +107,26 @@ const Shifts: React.FC<ShiftProps> = ({ isModalVisible, setModalVisible }) => {
                   <div className="flex flex-col justify-center">
                     <div className="text-[16px] font-[600] mt-0">
                       {shift?.shift_type}
+                    </div>
+                  </div>
+                </div>
+              </TableCell>
+
+              <TableCell className="!outline-none !border-b-0">
+                <div className="flex items-center max-w-min">
+                  <div className="flex flex-col justify-center">
+                    <div className="text-[16px] font-[600] mt-0">
+                      {shift?.start_time}
+                    </div>
+                  </div>
+                </div>
+              </TableCell>
+
+              <TableCell className="!outline-none !border-b-0">
+                <div className="flex items-center max-w-min">
+                  <div className="flex flex-col justify-center">
+                    <div className="text-[16px] font-[600] mt-0">
+                      {shift?.end_time}
                     </div>
                   </div>
                 </div>

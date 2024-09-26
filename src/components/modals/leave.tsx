@@ -8,14 +8,6 @@ import fetchWithToken from "@/utils/api";
 import AnimatedBtn from "../animatedBtn";
 import dp from "@/assets/noProfile.svg";
 
-interface Profile {
-  id: number;
-  email: string;
-  first_name: string;
-  last_name: string;
-  profilePicture?: string;
-}
-
 const statusOptions = [
   { value: "pending", label: "Pending" },
   { value: "accepted", label: "Accepted" },
@@ -44,6 +36,8 @@ const Leave: React.FC<LeaveProps> = ({
   const isAdd = typeof isModalVisible === "boolean";
   const [isDecline, setIsDecline] = useState<boolean>(false);
   const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [schedule, setSchedule] = useState<Schedule[]>([]);
+
   const [status, setStatus] = useState<string>("");
 
   const formik = useFormik<{
@@ -61,17 +55,16 @@ const Leave: React.FC<LeaveProps> = ({
       leave_type: "",
     },
     validationSchema: Yup.object({
-      approved_by: Yup.string().required("Required"),
       end_date_id: Yup.string().required("Required"),
       leave_type: Yup.string().required("Required"),
-      start_date_id: Yup.string().required("Required"),
+      start_date: Yup.string().required("Required"),
       total_days: Yup.string().required("Required"),
       total_holidays: Yup.string().required("Required"),
     }),
     onSubmit: async (values) => {
       setStatus("onclic");
       try {
-        await fetchWithToken(isAdd ? "/leave/list" : `/leave/create`, {
+        await fetchWithToken(isAdd ? "/leave/list" : `/leave/create}`, {
           method: isAdd ? "POST" : "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -81,7 +74,7 @@ const Leave: React.FC<LeaveProps> = ({
             start_date: moment(values?.start_date).format("DD-MM-YYYY"),
             end_date: moment(values?.end_date).format("DD-MM-YYYY"),
             profile_id: values?.profile_id?.id,
-            approved: values?.approved?.value,
+            approved: values?.profile_id,
             leave_type: values?.leave_type,
           }),
         });
@@ -103,12 +96,31 @@ const Leave: React.FC<LeaveProps> = ({
         method: "GET",
       });
 
-      const profilesData = data?.map((each: Profile) => ({
+      const profilesData = data?.content?.user.map((each: Profile) => ({
         value: each.id,
         label: each.email,
+        name: each.name,
+        email: each.email,
       }));
 
       setProfiles(profilesData);
+    } catch (error) {
+      console.error("Failed to fetch profiles:", error);
+    }
+  };
+
+  const fetchSchedule = async () => {
+    try {
+      const data = await fetchWithToken("/schedule/list", {
+        method: "GET",
+      });
+
+      const schedulesData = data?.content?.schedule.map((each: Schedule) => ({
+        value: each.id,
+        label: each.start_time,
+      }));
+
+      setSchedule(schedulesData);
     } catch (error) {
       console.error("Failed to fetch profiles:", error);
     }
@@ -132,7 +144,7 @@ const Leave: React.FC<LeaveProps> = ({
       );
       formik?.setFieldValue("leave_type", data?.leave_type);
     } catch (error) {
-      console.error("Failed to fetch department:", error);
+      console.error("Failed to fetch leave:", error);
     }
   };
 
@@ -146,29 +158,47 @@ const Leave: React.FC<LeaveProps> = ({
   }, [isModalVisible]);
 
   useEffect(() => {
-      fetchProfiles();
+    fetchProfiles();
+  }, []);
+  useEffect(() => {
+    fetchSchedule();
   }, []);
 
   const formatOptionLabel = (profile: Profile) => (
     <div className="flex items-center">
       <Image
         alt="profile"
-        src={profile?.profilePicture || dp}
+        src={dp}
         className="w-[40px] rounded-full"
         width={6}
         height={6}
       />
-      <div className="flex text-[14px] ml-1">
-        <div className="mr-1">{profile?.first_name}</div>
-        <div>{profile?.last_name}</div>
+      <div className="flex flex-col ml-2">
+        <div className="text-[14px] font-semibold">{profile?.name}</div>
+        <div className="text-[12px] text-gray-600">{profile?.email}</div>
       </div>
     </div>
   );
 
+  const formatScheduleStartDate = (schedule: Schedule) => (
+    <div className="flex items-center">
+      <div className="flex flex-col ml-2">
+        <div className="text-[12px] text-gray-600">
+          {schedule?.start_time}
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     isModalVisible && (
-      <main className="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-30 flex justify-center align-middle z-[1]">
+      <main
+        onClick={() => {
+          setModalVisible(false);
+          setIsDecline(true);
+        }}
+        className="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-30 flex justify-center align-middle z-[1]"
+      >
         <div
           className="py-5 max-w-[40%] h-[70%] overflow-auto m-auto w-[385px] capitalize bg-[#FFF] rounded-[8px] flex flex-col items-center scrollbar-hidden"
           onClick={(e) => e?.stopPropagation()}
@@ -178,22 +208,14 @@ const Leave: React.FC<LeaveProps> = ({
           </div>
           <div className="text-sm text-[#101010] w-full px-5">
             <div className="font-bold">Start Date</div>
-            <input
-              type="date"
-              placeholder="Select date"
+            <Select
+              formatOptionLabel={formatScheduleStartDate}
+              options={schedule}
+              value={schedule?.filter((each: Schedule) => each?.id?.toString() === formik.values.start_date)[0]}
               name="start_date"
-              required
-              className="w-[350px] h-[40px] border placeholder-[#5D6561] rounded-[8px] p-2 my-2 outline-none"
-              id="start_date"
-              onChange={formik?.handleChange}
-              onBlur={formik?.handleBlur}
-              value={formik?.values?.start_date}
-              style={{
-                borderColor:
-                  formik?.touched?.start_date && formik?.errors?.start_date
-                    ? "#E23121"
-                    : "#5D6561",
-              }}
+              onChange={(option) => formik.setFieldValue("start_date", option)}
+              onBlur={() => formik?.setFieldTouched("start_date")}
+              className="w-[350px] h-[40px] my-2"
             />
             <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
               {formik?.touched?.start_date && formik?.errors?.start_date && (
@@ -201,22 +223,14 @@ const Leave: React.FC<LeaveProps> = ({
               )}
             </div>
             <div className="font-bold">End Date</div>
-            <input
-              type="date"
-              placeholder="Select date"
+            <Select
+              formatOptionLabel={formatScheduleStartDate}
+              options={schedule}
+              value={schedule?.filter((each: Schedule) => each?.id?.toString() === formik.values.start_date)[0]}
               name="end_date"
-              required
-              className="w-[350px] h-[40px] border placeholder-[#5D6561] rounded-[8px] p-2 my-2 outline-none"
-              id="end_date"
-              onChange={formik?.handleChange}
-              onBlur={formik?.handleBlur}
-              value={formik?.values?.end_date}
-              style={{
-                borderColor:
-                  formik?.touched?.end_date && formik?.errors?.end_date
-                    ? "#E23121"
-                    : "#5D6561",
-              }}
+              onChange={(option) => formik.setFieldValue("end_date", option)}
+              onBlur={() => formik?.setFieldTouched("end_date")}
+              className="w-[350px] h-[40px] my-2"
             />
             <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
               {formik?.touched?.end_date && formik?.errors?.end_date && (
@@ -301,6 +315,8 @@ const Leave: React.FC<LeaveProps> = ({
                 status={status}
                 setStatus={setStatus}
                 onClick={(e: any) => {
+                  console.log(formik.errors);
+
                   formik.handleSubmit();
                 }}
               />
