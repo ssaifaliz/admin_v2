@@ -21,6 +21,7 @@ import DeleteModal from "../modals/deleteModal";
 import grayArrowDown from "@/assets/grayArrowDown.png";
 import { useRouter, useSearchParams } from "next/navigation";
 import { updateQueryParams } from "@/lib";
+import Select from "react-select";
 
 interface SwapRequestsProps {
   isModalVisible: boolean | SwapRequest;
@@ -82,11 +83,26 @@ const SwapRequests: React.FC<SwapRequestsProps> = ({
   >(false);
   const [isMsgTxt, setMsgTxt] = useState<string>("");
   const [content, setContent] = useState<string>("");
+  const [user, setUsers] = useState<any>();
+  const [selectedUserFrom, setSelectedUserFrom] = useState<any>('');
+  const [selectedUserTo, setSelectedUserTo] = useState<any>('');
+
+  const fetchUsers = async () => {
+    try {
+      const data = await fetchWithToken(`/user/list`, {
+        method: "GET",
+      });
+      console.log(data?.content?.user, "data?.content?.user");
+      setUsers(data?.content?.user);
+    } catch (error) {
+      console.error("Failed to fetch users:", error);
+    }
+  };
 
   const fetchSwapRequests = async () => {
     try {
       const data = await fetchWithToken(
-        `/swaprequest/list?page=${page}&pageSize=${pageSize}&search=${search}`,
+        `/swaprequest/list?page=${page}&pageSize=${pageSize}&search=${search}&userFrom=${selectedUserFrom}&userTo=${selectedUserTo}`,
         {
           method: "GET",
         }
@@ -107,7 +123,11 @@ const SwapRequests: React.FC<SwapRequestsProps> = ({
 
   useEffect(() => {
     fetchSwapRequests();
-  }, [page, pageSize, search]);
+  }, [page, pageSize, search,selectedUserFrom,selectedUserTo]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   return (
     <>
@@ -124,19 +144,45 @@ const SwapRequests: React.FC<SwapRequestsProps> = ({
         setState={setDeleteRequestModal}
         fetchAllCall={fetchSwapRequests}
       />
-      <Table className={"relative mt-5"}>
+      <Table className={"relative mt-5 h-[80svh]"}>
         <TableHead>
           <TableRow className="bg-[#F7F8F7]">
             <TableHeader className="!outline-none !border-b-0">
               <div className="flex items-center">
-                User From
-                <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
+                {/* User From */}
+                <Select
+                  isSearchable={false}
+                  options={user?.map((item: any) => ({
+                    label: item.name,
+                    value: item.id,
+                  }))}
+                  onChange={(option:any) => {
+                    console.log(option);
+                    setSelectedUserFrom(option?.value);
+                  }}
+                  name="userFrom"
+                  className="[&.css-13cymwt-control]:!bg-none w-[150px]"
+                />
+                {/* <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" /> */}
               </div>
             </TableHeader>
             <TableHeader className="!outline-none !border-b-0">
               <div className="flex items-center">
-                User To
-                <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
+                {/* User To
+                <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" /> */}
+                <Select
+                  isSearchable={false}
+                  options={user?.map((item: any) => ({
+                    label: item.name,
+                    value: item.id,
+                  }))}
+                  onChange={(option:any) => {
+                    console.log(option);
+                    setSelectedUserTo(option?.value);
+                  }}
+                  name="userFrom"
+                  className="[&.css-13cymwt-control]:!bg-none w-[150px]"
+                />
               </div>
             </TableHeader>
             <TableHeader className="!outline-none !border-b-0">
