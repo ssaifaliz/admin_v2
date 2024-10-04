@@ -14,6 +14,8 @@ import fetchWithToken from "@/utils/api";
 import RoleModal from "../modals/roleModal";
 import DeleteModal from "../modals/deleteModal";
 import grayArrowDown from "@/assets/grayArrowDown.png";
+import { updateQueryParams } from "@/lib";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface rolesProps {
   isModalVisible: boolean | Role;
@@ -21,6 +23,11 @@ interface rolesProps {
 }
 
 const Roles: React.FC<rolesProps> = ({ isModalVisible, setModalVisible }) => {
+  const { replace } = useRouter();
+  const searchParams = useSearchParams();
+  const page = parseInt(searchParams.get("page") || "1");
+  const pageSize = parseInt(searchParams.get("pageSize") || "10");
+  const search = searchParams.get("search") || "";
   const [content, setContent] = useState<string>("");
   const [deleteRoleModal, setDeleteRoleModal] = useState<
     boolean | number | string
@@ -29,10 +36,20 @@ const Roles: React.FC<rolesProps> = ({ isModalVisible, setModalVisible }) => {
 
   const fetchRoles = async () => {
     try {
-      const data = await fetchWithToken("/role/list", {
-        method: "GET",
-      });
+      const data = await fetchWithToken(
+        `/role/list?page=${page}&pageSize=${pageSize}&search=${search}`,
+        {
+          method: "GET",
+        }
+      );
       setRoles(data?.content?.role);
+      updateQueryParams(
+        {
+          totalPages: data?.content?.totalPages?.toString(),
+          totalCount: data?.content?.totalCount?.toString(),
+        },
+        replace
+      );
       console.log("data", data);
     } catch (error) {
       console.error("Failed to fetch roles:", error);
@@ -41,7 +58,7 @@ const Roles: React.FC<rolesProps> = ({ isModalVisible, setModalVisible }) => {
 
   useEffect(() => {
     fetchRoles();
-  }, []);
+  }, [page, pageSize, search]);
 
   return (
     <>

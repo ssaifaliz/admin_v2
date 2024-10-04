@@ -15,6 +15,9 @@ import grayArrowDown from "@/assets/grayArrowDown.png";
 import editIcon from "@/assets/editIcon.png";
 import DeleteModal from "../modals/deleteModal";
 import ScheduleModal from "../modals/schedule";
+import moment from "moment";
+import { useRouter, useSearchParams } from "next/navigation";
+import { updateQueryParams } from "@/lib";
 
 interface ScheduleProps {
   isModalVisible: boolean | Schedule;
@@ -25,6 +28,11 @@ const Schedule: React.FC<ScheduleProps> = ({
   isModalVisible,
   setModalVisible,
 }) => {
+  const { replace } = useRouter();
+  const searchParams = useSearchParams();
+  const page = parseInt(searchParams.get("page") || "1");
+  const pageSize = parseInt(searchParams.get("pageSize") || "10");
+  const search = searchParams.get("search") || "";
   const [content, setContent] = useState<string>("");
   const [schedule, setSchedule] = useState<Schedule[]>([]);
   const [deleteModal, setDeleteModal] = useState<boolean | number | string>(
@@ -33,10 +41,20 @@ const Schedule: React.FC<ScheduleProps> = ({
 
   const fetchSchedule = async () => {
     try {
-      const data = await fetchWithToken("/schedule/list", {
-        method: "GET",
-      });
+      const data = await fetchWithToken(
+        `/schedule/list?page=${page}&pageSize=${pageSize}&search=${search}`,
+        {
+          method: "GET",
+        }
+      );
       setSchedule(data?.content?.schedule);
+      updateQueryParams(
+        {
+          totalPages: data?.content?.totalPages?.toString(),
+          totalCount: data?.content?.totalCount?.toString(),
+        },
+        replace
+      );
     } catch (error) {
       console.error("Failed to fetch shift:", error);
     }
@@ -44,7 +62,7 @@ const Schedule: React.FC<ScheduleProps> = ({
 
   useEffect(() => {
     fetchSchedule();
-  }, []);
+  }, [page, pageSize, search]);
 
   return (
     <>
@@ -59,25 +77,19 @@ const Schedule: React.FC<ScheduleProps> = ({
             </TableHeader>
             <TableHeader className="!outline-none !border-b-0">
               <div className="flex items-center">
-                Start date
+                Schedule
                 <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
               </div>
             </TableHeader>
             <TableHeader className="!outline-none !border-b-0">
               <div className="flex items-center">
-                End Date
+                Shift
                 <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
               </div>
             </TableHeader>
             <TableHeader className="!outline-none !border-b-0">
               <div className="flex items-center">
                 Work Hours
-                <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
-              </div>
-            </TableHeader>
-            <TableHeader className="!outline-none !border-b-0">
-              <div className="flex items-center ">
-                Over Time Hours
                 <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
               </div>
             </TableHeader>
@@ -91,7 +103,7 @@ const Schedule: React.FC<ScheduleProps> = ({
                 <div className="flex items-center max-w-min">
                   <div className="flex flex-col justify-center">
                     <div className="text-[16px] font-[600] mt-0">
-                      {schedule?.user_id}
+                      {schedule?.Profile?.name}
                     </div>
                   </div>
                 </div>
@@ -100,7 +112,9 @@ const Schedule: React.FC<ScheduleProps> = ({
                 <div className="flex items-center max-w-min">
                   <div className="flex flex-col justify-center">
                     <div className="text-[16px] font-[600] mt-0">
-                      {schedule?.start_date_id}
+                      {moment(schedule?.StartDate?.full_date)?.format("ll")}
+                      {" - "}
+                      {moment(schedule?.EndDate?.full_date)?.format("ll")}
                     </div>
                   </div>
                 </div>
@@ -109,7 +123,13 @@ const Schedule: React.FC<ScheduleProps> = ({
                 <div className="flex items-center max-w-min">
                   <div className="flex flex-col justify-center">
                     <div className="text-[16px] font-[600] mt-0">
-                      {schedule?.end_date_id}
+                      {`${moment(
+                        schedule?.Shift?.start_time,
+                        "HH:mm:ss"
+                      ).format("LT")} - ${moment(
+                        schedule?.Shift?.end_time,
+                        "HH:mm:ss"
+                      ).format("LT")}`}
                     </div>
                   </div>
                 </div>
@@ -119,15 +139,6 @@ const Schedule: React.FC<ScheduleProps> = ({
                   <div className="flex flex-col justify-center">
                     <div className="text-[16px] font-[600] mt-0">
                       {schedule?.hours_worked}
-                    </div>
-                  </div>
-                </div>
-              </TableCell>
-              <TableCell className="!outline-none !border-b-0">
-                <div className="flex items-center max-w-min">
-                  <div className="flex flex-col justify-center">
-                    <div className="text-[16px] font-[600] mt-0">
-                      {schedule?.overtime_hours}
                     </div>
                   </div>
                 </div>

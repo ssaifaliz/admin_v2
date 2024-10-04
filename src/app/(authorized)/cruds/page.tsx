@@ -34,8 +34,17 @@ import Schedule from "@/components/tabs/schedule";
 import TableFooter from "@/components/tableFooter";
 import Search from "@/components/search";
 import Leaves from "@/components/tabs/leaves";
+import swap from "@/assets/cruds/swap.png";
+import activeSwap from "@/assets/cruds/activeSwap.png";
+import SwapRequests from "@/components/tabs/swapRequests";
 
 const tabs = [
+  {
+    name: "Swap Requests",
+    img: swap,
+    active: activeSwap,
+    component: (props: any) => <SwapRequests {...props} />,
+  },
   {
     name: "Departments",
     img: department,
@@ -94,7 +103,7 @@ const tabs = [
 
 const Page = () => {
   const [isModalVisible, setModalVisible] = useState(false);
-  const [selectedTab, setSelectedTab] = useState(tabs[1]);
+  const [selectedTab, setSelectedTab] = useState(tabs[9]);
 
   return (
     <Suspense fallback={<div>Loading...</div>}>

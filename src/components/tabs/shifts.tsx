@@ -23,11 +23,12 @@ interface ShiftProps {
 }
 
 const Shifts: React.FC<ShiftProps> = ({ isModalVisible, setModalVisible }) => {
-  const [content, setContent] = useState<string>("");
   const { replace } = useRouter();
   const searchParams = useSearchParams();
   const page = parseInt(searchParams.get("page") || "1");
   const pageSize = parseInt(searchParams.get("pageSize") || "10");
+  const search = searchParams.get("search") || "";
+  const [content, setContent] = useState<string>("");
   const [shift, setShift] = useState<Shift[]>([]);
   const [deleteShiftModal, setDeleteShifttModal] = useState<
     boolean | number | string
@@ -36,7 +37,7 @@ const Shifts: React.FC<ShiftProps> = ({ isModalVisible, setModalVisible }) => {
   const fetchShifts = async () => {
     try {
       const data = await fetchWithToken(
-        `/shift/list?page=${page}&pageSize=${pageSize}`,
+        `/shift/list?page=${page}&pageSize=${pageSize}&search=${search}`,
         {
           method: "GET",
         }
@@ -45,6 +46,7 @@ const Shifts: React.FC<ShiftProps> = ({ isModalVisible, setModalVisible }) => {
       updateQueryParams(
         {
           totalPages: data?.content?.totalPages?.toString(),
+          totalCount: data?.content?.totalCount?.toString(),
         },
         replace
       );
@@ -55,7 +57,7 @@ const Shifts: React.FC<ShiftProps> = ({ isModalVisible, setModalVisible }) => {
 
   useEffect(() => {
     fetchShifts();
-  }, []);
+  }, [page, pageSize, search]);
 
   return (
     <>
@@ -70,7 +72,7 @@ const Shifts: React.FC<ShiftProps> = ({ isModalVisible, setModalVisible }) => {
             </TableHeader>
             <TableHeader className="!outline-none !border-b-0">
               <div className="flex items-center">
-              Shift Type
+                Shift Type
                 <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
               </div>
             </TableHeader>
@@ -86,7 +88,7 @@ const Shifts: React.FC<ShiftProps> = ({ isModalVisible, setModalVisible }) => {
                 <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
               </div>
             </TableHeader>
-            
+
             <TableHeader></TableHeader>
           </TableRow>
         </TableHead>

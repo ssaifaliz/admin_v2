@@ -1,30 +1,14 @@
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
 import Select from "react-select";
 import moment from "moment";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import fetchWithToken from "@/utils/api";
 import AnimatedBtn from "../animatedBtn";
-import dp from "@/assets/noProfile.svg";
-
-const statusOptions = [
-  { value: "pending", label: "Pending" },
-  { value: "accepted", label: "Accepted" },
-  { value: "rejected", label: "Rejected" },
-];
-
-interface SelectOption {
-  value: string;
-  label: string;
-  id?: string | number | undefined;
-}
 
 interface LeaveProps {
-  isModalVisible: boolean | string | number;
-  setModalVisible: React.Dispatch<
-    React.SetStateAction<boolean | string | number>
-  >;
+  isModalVisible: boolean | any;
+  setModalVisible: React.Dispatch<React.SetStateAction<boolean | any>>;
   fetchLeaves: () => void;
 }
 
@@ -33,48 +17,47 @@ const Leave: React.FC<LeaveProps> = ({
   setModalVisible,
   fetchLeaves,
 }) => {
-  const isAdd = typeof isModalVisible === "boolean";
+  const isEdit = typeof isModalVisible !== "boolean";
   const [isDecline, setIsDecline] = useState<boolean>(false);
-  const [profiles, setProfiles] = useState<Profile[]>([]);
-  const [schedule, setSchedule] = useState<Schedule[]>([]);
+  const [prefilledDates, setPrefilledDates] = useState<PrefilledDate[]>([]);
 
   const [status, setStatus] = useState<string>("");
 
   const formik = useFormik<{
-    start_date: string;
-    end_date: string;
-    profile_id: Profile | null;
-    approved: SelectOption | null;
+    end_date_id: string;
+    start_date_id: string;
+    total_days: string;
+    total_holidays: string;
     leave_type: string;
   }>({
     initialValues: {
-      start_date: "",
-      end_date: "",
-      profile_id: null,
-      approved: null,
+      end_date_id: "",
+      start_date_id: "",
+      total_days: "",
+      total_holidays: "",
       leave_type: "",
     },
     validationSchema: Yup.object({
       end_date_id: Yup.string().required("Required"),
-      leave_type: Yup.string().required("Required"),
-      start_date: Yup.string().required("Required"),
+      start_date_id: Yup.string().required("Required"),
       total_days: Yup.string().required("Required"),
       total_holidays: Yup.string().required("Required"),
+      leave_type: Yup.string().required("Required"),
     }),
     onSubmit: async (values) => {
       setStatus("onclic");
       try {
-        await fetchWithToken(isAdd ? "/leave/list" : `/leave/create}`, {
-          method: isAdd ? "POST" : "PUT",
+        await fetchWithToken(!isEdit ? "/leave/create" : `/leave/update`, {
+          method: !isEdit ? "POST" : "PUT",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            ...values,
-            start_date: moment(values?.start_date).format("DD-MM-YYYY"),
-            end_date: moment(values?.end_date).format("DD-MM-YYYY"),
-            profile_id: values?.profile_id?.id,
-            approved: values?.profile_id,
+            ...(isEdit && { id: isModalVisible?.id }),
+            end_date_id: values?.end_date_id,
+            start_date_id: values?.start_date_id,
+            total_days: values?.total_days,
+            total_holidays: values?.total_holidays,
             leave_type: values?.leave_type,
           }),
         });
@@ -90,61 +73,21 @@ const Leave: React.FC<LeaveProps> = ({
     },
   });
 
-  const fetchProfiles = async () => {
+  const fetchPrefilledDates = async () => {
     try {
-      const data = await fetchWithToken("/user/list", {
+      const data = await fetchWithToken("/prefilleddate/list", {
         method: "GET",
       });
 
-      const profilesData = data?.content?.user.map((each: Profile) => ({
-        value: each.id,
-        label: each.email,
-        name: each.name,
-        email: each.email,
-      }));
-
-      setProfiles(profilesData);
-    } catch (error) {
-      console.error("Failed to fetch profiles:", error);
-    }
-  };
-
-  const fetchSchedule = async () => {
-    try {
-      const data = await fetchWithToken("/schedule/list", {
-        method: "GET",
-      });
-
-      const schedulesData = data?.content?.schedule.map((each: Schedule) => ({
-        value: each.id,
-        label: each.start_time,
-      }));
-
-      setSchedule(schedulesData);
-    } catch (error) {
-      console.error("Failed to fetch profiles:", error);
-    }
-  };
-
-  const getLeaveDetails = async (id: string | number) => {
-    try {
-      const data = await fetchWithToken(`/leave/${id}`, {
-        method: "GET",
-      });
-
-      formik?.setFieldValue("start_date", data?.start_date);
-      formik?.setFieldValue("end_date", data?.end_date);
-      formik?.setFieldValue(
-        "profile_id",
-        profiles?.filter((each) => each?.id === data?.profile_id)[0]
+      setPrefilledDates(
+        data?.content?.prefilledDate?.map((each: PrefilledDate) => ({
+          ...each,
+          value: each?.id,
+          label: moment(each?.full_date)?.format("ll"),
+        }))
       );
-      formik?.setFieldValue(
-        "approved",
-        statusOptions?.filter((each) => each?.value === data?.approved)[0]
-      );
-      formik?.setFieldValue("leave_type", data?.leave_type);
     } catch (error) {
-      console.error("Failed to fetch leave:", error);
+      console.error("Failed to fetch shifts:", error);
     }
   };
 
@@ -153,49 +96,19 @@ const Leave: React.FC<LeaveProps> = ({
     if (
       typeof isModalVisible === "number" ||
       typeof isModalVisible === "string"
-    )
-      getLeaveDetails(isModalVisible);
+    ) {
+    }
   }, [isModalVisible]);
 
   useEffect(() => {
-    fetchProfiles();
+    fetchPrefilledDates();
   }, []);
-  useEffect(() => {
-    fetchSchedule();
-  }, []);
-
-  const formatOptionLabel = (profile: Profile) => (
-    <div className="flex items-center">
-      <Image
-        alt="profile"
-        src={dp}
-        className="w-[40px] rounded-full"
-        width={6}
-        height={6}
-      />
-      <div className="flex flex-col ml-2">
-        <div className="text-[14px] font-semibold">{profile?.name}</div>
-        <div className="text-[12px] text-gray-600">{profile?.email}</div>
-      </div>
-    </div>
-  );
-
-  const formatScheduleStartDate = (schedule: Schedule) => (
-    <div className="flex items-center">
-      <div className="flex flex-col ml-2">
-        <div className="text-[12px] text-gray-600">
-          {schedule?.start_time}
-        </div>
-      </div>
-    </div>
-  );
 
   return (
     isModalVisible && (
       <main
         onClick={() => {
           setModalVisible(false);
-          setIsDecline(true);
         }}
         className="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-30 flex justify-center align-middle z-[1]"
       >
@@ -204,74 +117,49 @@ const Leave: React.FC<LeaveProps> = ({
           onClick={(e) => e?.stopPropagation()}
         >
           <div className="text-center text-lg font-bold">
-            {!isAdd ? "Edit" : "Add"}
+            {isEdit ? "Edit" : "Add"}
           </div>
           <div className="text-sm text-[#101010] w-full px-5">
             <div className="font-bold">Start Date</div>
             <Select
-              formatOptionLabel={formatScheduleStartDate}
-              options={schedule}
-              value={schedule?.filter((each: Schedule) => each?.id?.toString() === formik.values.start_date)[0]}
-              name="start_date"
-              onChange={(option) => formik.setFieldValue("start_date", option)}
-              onBlur={() => formik?.setFieldTouched("start_date")}
+              options={prefilledDates}
+              value={prefilledDates?.find(
+                (each) =>
+                  each?.id?.toString() ===
+                  formik.values.start_date_id?.toString()
+              )}
+              name="start_date_id"
+              onChange={(option) =>
+                formik.setFieldValue("start_date_id", option?.id)
+              }
+              onBlur={formik.handleBlur}
               className="w-[350px] h-[40px] my-2"
             />
             <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
-              {formik?.touched?.start_date && formik?.errors?.start_date && (
-                <div>{formik?.errors?.start_date}</div>
-              )}
+              {formik?.touched?.start_date_id &&
+                formik?.errors?.start_date_id && (
+                  <div>{formik?.errors?.start_date_id}</div>
+                )}
             </div>
             <div className="font-bold">End Date</div>
             <Select
-              formatOptionLabel={formatScheduleStartDate}
-              options={schedule}
-              value={schedule?.filter((each: Schedule) => each?.id?.toString() === formik.values.start_date)[0]}
-              name="end_date"
-              onChange={(option) => formik.setFieldValue("end_date", option)}
-              onBlur={() => formik?.setFieldTouched("end_date")}
+              options={prefilledDates}
+              value={prefilledDates?.find(
+                (each) =>
+                  each?.id?.toString() === formik.values.end_date_id?.toString()
+              )}
+              name="end_date_id"
+              onChange={(option) =>
+                formik.setFieldValue("end_date_id", option?.id)
+              }
+              onBlur={formik.handleBlur}
               className="w-[350px] h-[40px] my-2"
             />
             <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
-              {formik?.touched?.end_date && formik?.errors?.end_date && (
-                <div>{formik?.errors?.end_date}</div>
+              {formik?.touched?.end_date_id && formik?.errors?.end_date_id && (
+                <div>{formik?.errors?.end_date_id}</div>
               )}
             </div>
-            <div className="font-bold">profile</div>
-            <Select
-              formatOptionLabel={formatOptionLabel}
-              options={profiles}
-              value={formik?.values?.profile_id}
-              name="profile_id"
-              onChange={(option) => formik.setFieldValue("profile_id", option)}
-              onBlur={() => formik?.setFieldTouched("profile_id")}
-              className="w-[350px] h-[40px] my-2"
-            />
-            <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
-              {formik?.touched?.profile_id && formik?.errors?.profile_id && (
-                <div>{formik?.errors?.profile_id}</div>
-              )}
-            </div>
-            {(typeof isModalVisible === "number" ||
-              typeof isModalVisible === "string") && (
-              <>
-                <div className="font-bold">Status</div>
-                <Select
-                  options={statusOptions}
-                  value={formik.values.approved}
-                  onChange={(option) =>
-                    formik.setFieldValue("approved", option)
-                  }
-                  onBlur={() => formik.setFieldTouched("approved", true)}
-                  name="approved"
-                />
-                <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
-                  {formik?.touched?.approved && formik?.errors?.approved && (
-                    <div>{formik?.errors?.approved}</div>
-                  )}
-                </div>
-              </>
-            )}
             <div className="font-bold">Leave type</div>
             <input
               type="text"
@@ -295,6 +183,54 @@ const Leave: React.FC<LeaveProps> = ({
                 <div>{formik?.errors?.leave_type}</div>
               )}
             </div>
+            <div className="font-bold">Total Days</div>
+            <input
+              type="number"
+              placeholder="Enter leave type"
+              name="total_days"
+              required
+              className="w-[350px] h-[40px] border placeholder-[#5D6561] rounded-[8px] p-2 my-2 outline-none"
+              id="total_days"
+              onChange={formik?.handleChange}
+              onBlur={formik?.handleBlur}
+              value={formik?.values?.total_days}
+              style={{
+                borderColor:
+                  formik?.touched?.total_days && formik?.errors?.total_days
+                    ? "#E23121"
+                    : "#5D6561",
+              }}
+            />
+            <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
+              {formik?.touched?.total_days && formik?.errors?.total_days && (
+                <div>{formik?.errors?.total_days}</div>
+              )}
+            </div>
+            <div className="font-bold">Total Holidays</div>
+            <input
+              type="number"
+              placeholder="Enter leave type"
+              name="total_holidays"
+              required
+              className="w-[350px] h-[40px] border placeholder-[#5D6561] rounded-[8px] p-2 my-2 outline-none"
+              id="total_holidays"
+              onChange={formik?.handleChange}
+              onBlur={formik?.handleBlur}
+              value={formik?.values?.total_holidays}
+              style={{
+                borderColor:
+                  formik?.touched?.total_holidays &&
+                  formik?.errors?.total_holidays
+                    ? "#E23121"
+                    : "#5D6561",
+              }}
+            />
+            <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
+              {formik?.touched?.total_holidays &&
+                formik?.errors?.total_holidays && (
+                  <div>{formik?.errors?.total_holidays}</div>
+                )}
+            </div>
           </div>
           <div className="w-[350px] flex justify-between">
             <button
@@ -316,7 +252,6 @@ const Leave: React.FC<LeaveProps> = ({
                 setStatus={setStatus}
                 onClick={(e: any) => {
                   console.log(formik.errors);
-
                   formik.handleSubmit();
                 }}
               />

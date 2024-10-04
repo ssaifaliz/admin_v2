@@ -17,6 +17,7 @@ const TableFooter = () => {
   const page = parseInt(searchParams.get("page") || "1");
   const pageSize = parseInt(searchParams.get("pageSize") || "10");
   const totalPages = parseInt(searchParams.get("totalPages") || "1");
+  const totalCount = parseInt(searchParams.get("totalCount") || "1");
   useEffect(() => {
     updateQueryParams(
       {
@@ -70,7 +71,10 @@ const TableFooter = () => {
         </div>
 
         <div className="text-[14px] font-semibold text-center text-[#101010]">
-          Items 1-4 of 4
+          {`Items ${(page - 1) * pageSize + 1} - ${Math.min(
+            page * pageSize,
+            totalCount
+          )} of ${totalCount}`}
         </div>
 
         <div className="flex items-center">

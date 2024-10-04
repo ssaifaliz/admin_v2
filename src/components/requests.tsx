@@ -10,34 +10,7 @@ import requestBtn from "@/assets/requestBtn.png";
 import moment from "moment";
 import Tooltip from "./tooltip";
 import AnimatedBtn from "./animatedBtn";
-
-interface SwapRequest {
-  id: number;
-  schedule_from: string;
-  startfrom: string;
-  endfrom: string;
-  shifttypefrom: string | null;
-  profile_from: number;
-  first_name_from: string;
-  last_name_from: string;
-  dept_from: string;
-  position_from: string;
-  code_name_from: string;
-  location_from: string;
-  schedule_to: string;
-  startto: string;
-  endto: string;
-  shifttypeto: string | null;
-  profile_to: number;
-  first_name_to: string;
-  last_name_to: string;
-  dept_to: string;
-  position_to: string;
-  code_name_to: string;
-  location_to: string;
-  req_message: string;
-  created_datetime: string;
-}
+import clock from "@/assets/time-line.svg";
 
 interface Option {
   name: string;
@@ -60,7 +33,13 @@ const formatTimeDifference = (createdDateTime: string) => {
     : "now";
 };
 
-const Request = ({ each, fetchSwapRequests }: any) => {
+const Request = ({
+  each,
+  fetchSwapRequests,
+}: {
+  each: SwapRequest;
+  fetchSwapRequests: any;
+}) => {
   const [statusDecline, setStatusDecline] = useState<string>("");
   const [statusAccept, setStatusAccept] = useState<string>("");
   return (
@@ -70,7 +49,7 @@ const Request = ({ each, fetchSwapRequests }: any) => {
     >
       <div className="w-full flex items-center justify-between mb-4">
         <div className="flex items-center">
-          <Tooltip
+          {/* <Tooltip
             text={`${each?.first_name_from} ${
               each?.last_name_from
             } had a shift ${formatTimeDifference(each?.created_datetime)}`}
@@ -78,16 +57,16 @@ const Request = ({ each, fetchSwapRequests }: any) => {
             <div className="mr-2">
               <Image alt="warn" src={warn} className="w-[23px]" />
             </div>
-          </Tooltip>
+          </Tooltip> */}
 
-          <div className="text-[18px] font-[700]">{`${each?.first_name_from} ${each?.last_name_from}`}</div>
+          <div className="text-[18px] font-[700]">{`${each?.ByProfile?.name}`}</div>
           <div className="text-[14px] font-[400] ml-2 text-[#5d6561]">
             {/* {index % 2 === 0 ? "requested a day off" : "Requested a Shift Swap"} */}
-            {/* {"add proper text here ask with swati"} */}
+            {"add proper text here"}
           </div>
         </div>
         <div className="text-[14px] font-[600]">
-          {formatTimeDifference(each?.created_datetime)}
+          {formatTimeDifference(each?.created_at)}
         </div>
       </div>
       <div className="flex justify-between mb-3">
@@ -96,7 +75,15 @@ const Request = ({ each, fetchSwapRequests }: any) => {
           <div className="text-[12px] flex items-center w-full">
             <Image alt="calender" src={calender} className="w-[13px]" />
             <div className="text-[16px] ml-3">
-              {moment(each?.schedule_from).format("ddd, DD MMM YYYY")}
+              {moment(each?.OriginalSchedule?.StartDate?.full_date).format(
+                "ddd, DD MMM YYYY"
+              )}
+            </div>
+          </div>
+          <div className="text-[12px] flex items-center w-full">
+            <Image alt="clock" src={clock} className="w-[14px]" />
+            <div className="text-[16px] ml-3">
+              {moment(new Date(), "HH:mm:ss")?.format("h:mm A")}
             </div>
           </div>
         </div>
@@ -105,7 +92,15 @@ const Request = ({ each, fetchSwapRequests }: any) => {
           <div className="text-[12px] flex items-center w-full">
             <Image alt="calender" src={calender} className="w-[13px]" />
             <div className="text-[16px] ml-3">
-              {moment(each?.schedule_to).format("ddd, DD MMM YYYY")}
+              {moment(each?.RequestedSchedule?.StartDate?.full_date).format(
+                "ddd, DD MMM YYYY"
+              )}
+            </div>
+          </div>
+          <div className="text-[12px] flex items-center w-full">
+            <Image alt="clock" src={clock} className="w-[14px]" />
+            <div className="text-[16px] ml-3">
+              {moment(new Date(), "HH:mm:ss")?.format("h:mm A")}
             </div>
           </div>
         </div>
@@ -113,7 +108,7 @@ const Request = ({ each, fetchSwapRequests }: any) => {
       <div className="flex items-center mb-3">
         <Image alt="request" src={request} className="w-[14px]" />
         <div className="text-[16px] ml-2 text-[#5d6561]">
-          {each?.req_message || "No Message"}
+          {each?.message || "No Message"}
         </div>
       </div>
       <div className="w-full flex items-center justify-between mt-1">
@@ -177,17 +172,14 @@ const Requests = () => {
 
   const fetchSwapRequests = async () => {
     try {
-      const data = await fetchWithToken("/dashboard/displayallswapreq", {
-        method: "POST",
+      const data = await fetchWithToken("/swaprequest/list", {
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
-        // body: JSON.stringify({
-        //   department: "",
-        // }),
       });
-      setSwapRequests(data);
       console.log("data", data);
+      setSwapRequests(data?.content?.swapRequest);
     } catch (error) {
       console.error("Failed to fetch swap requests:", error);
     }

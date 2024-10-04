@@ -27,20 +27,21 @@ const Permission: React.FC<permissionProps> = ({
   isModalVisible,
   setModalVisible,
 }) => {
-  const [content, setContent] = useState<string>("");
-  const [deletePermissionModal, setDeletePermissiontModal] = useState<
-    boolean | number | string
-  >(false);
   const { replace } = useRouter();
   const searchParams = useSearchParams();
   const page = parseInt(searchParams.get("page") || "1");
   const pageSize = parseInt(searchParams.get("pageSize") || "10");
+  const search = searchParams.get("search") || "";
+  const [content, setContent] = useState<string>("");
+  const [deletePermissionModal, setDeletePermissiontModal] = useState<
+    boolean | number | string
+  >(false);
   const [permissions, setPermissions] = useState<Permission[]>([]);
 
   const fetchPermissions = async () => {
     try {
       const data = await fetchWithToken(
-        `/permission/list?page=${page}&pageSize=${pageSize}`,
+        `/permission/list?page=${page}&pageSize=${pageSize}&search=${search}`,
         {
           method: "GET",
         }
@@ -49,6 +50,7 @@ const Permission: React.FC<permissionProps> = ({
       updateQueryParams(
         {
           totalPages: data?.content?.totalPages?.toString(),
+          totalCount: data?.content?.totalCount?.toString(),
         },
         replace
       );
@@ -59,7 +61,7 @@ const Permission: React.FC<permissionProps> = ({
 
   useEffect(() => {
     fetchPermissions();
-  }, [page, pageSize]);
+  }, [page, pageSize, search]);
 
   return (
     <>

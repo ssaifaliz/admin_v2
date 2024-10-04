@@ -62,17 +62,20 @@ const ScheduleTable = () => {
   }
   const fetchSchedule = async (dateFrom: string, dateTo: string) => {
     try {
-      const data = await fetchWithToken("/dashboard/allschedule", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          datefrom: dateFrom,
-          dateto: dateTo,
-        }),
-      });
-      setSchedule(data);
+      const data = await fetchWithToken(
+        `/user/schedule/list?start_date=${dateFrom}&end_date=${dateTo}`,
+        {
+          method: "GET",
+          // headers: {
+          //   "Content-Type": "application/json",
+          // },
+          // body: JSON.stringify({
+          //   datefrom: dateFrom,
+          //   dateto: dateTo,
+          // }),
+        }
+      );
+      // setSchedule(data);
       console.log("data", data);
     } catch (error) {
       console.error("Failed to fetch locations:", error);
@@ -83,8 +86,8 @@ const ScheduleTable = () => {
     console.log("week", week);
     if (!week?.firstDay || !week?.lastDay) return;
     fetchSchedule(
-      moment(week?.firstDay).format("YYYY-MM-DD"),
-      moment(week?.lastDay).format("YYYY-MM-DD")
+      moment(new Date(week?.firstDay)).utc().startOf("day").toISOString(),
+      moment(new Date(week?.lastDay)).utc().startOf("day").toISOString()
     );
   }, [week]);
   return (
@@ -167,7 +170,7 @@ const ScheduleTable = () => {
                     <div className="mr-1">{each?.last_name}</div>
                   </div>
                 </TableCell>
-                {/* {weekDates?.map((val, index) => (
+                {weekDates?.map((val, index) => (
                   <TableCell
                     key={index}
                     style={{
@@ -176,16 +179,16 @@ const ScheduleTable = () => {
                     }}
                   >
                     {each?.schedules?.filter(
-                      (schdl: Schedule) =>
+                      (schdl: any) =>
                         moment(schdl?.date)?.format("DD") === val?.format("DD")
                     )?.length ? (
                       each?.schedules
                         ?.filter(
-                          (schdl: Schedule) =>
+                          (schdl: any) =>
                             moment(schdl?.date)?.format("DD") ===
                             val?.format("DD")
                         )
-                        ?.map((schdl: Schedule) => (
+                        ?.map((schdl: any) => (
                           <div
                             key={schdl?.id}
                             className="flex items-center justify-center"
@@ -220,7 +223,7 @@ const ScheduleTable = () => {
                       </div>
                     )}
                   </TableCell>
-                ))} */}
+                ))}
               </TableRow>
             ))}
           </TableBody>

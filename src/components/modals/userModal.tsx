@@ -11,10 +11,8 @@ import AnimatedBtn from "../animatedBtn";
 import Select from "react-select";
 
 interface userProps {
-  isModalVisible: boolean | string | number;
-  setModalVisible: React.Dispatch<
-    React.SetStateAction<boolean | string | number>
-  >;
+  isModalVisible: boolean | Profile;
+  setModalVisible: React.Dispatch<React.SetStateAction<boolean | Profile>>;
   fetchUsers: () => void;
 }
 
@@ -23,7 +21,7 @@ const UserModal: React.FC<userProps> = ({
   setModalVisible,
   fetchUsers,
 }) => {
-  const isAdd = isModalVisible === true;
+  const isEdit = typeof isModalVisible !== "boolean";
   const [visible, setVisible] = useState(false);
   const [roles, setRoles] = useState<Role[]>([]);
   const [isDecline, setIsDecline] = useState<boolean>(false);
@@ -69,21 +67,19 @@ const UserModal: React.FC<userProps> = ({
     onSubmit: async (values) => {
       setStatus("onclic");
       try {
-        await fetchWithToken(
-          isAdd ? "/user/create" : `/user/${isModalVisible}`,
-          {
-            method: isAdd ? "POST" : "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              email: values?.email,
-              name: values?.name,
-              password: values?.password,
-              role_id: values?.role_id,
-            }),
-          }
-        );
+        await fetchWithToken(!isEdit ? "/user/create" : `/user/update`, {
+          method: !isEdit ? "POST" : "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...(isEdit && { id: isModalVisible?.id }),
+            email: values?.email,
+            name: values?.name,
+            password: values?.password,
+            role_id: values?.role_id,
+          }),
+        });
         setStatus("success");
         setTimeout(() => {
           setModalVisible(!isModalVisible);
@@ -96,176 +92,164 @@ const UserModal: React.FC<userProps> = ({
     },
   });
 
-  const getUserDetails = async (id: string | number) => {
-    try {
-      const data = await fetchWithToken(`/user/${id}`, {
-        method: "GET",
-      });
-      formik?.setFieldValue("name", data?.name);
-      formik?.setFieldValue("password", data?.password);
-      formik?.setFieldValue("email", data?.email);
-      formik?.setFieldValue("role_id", data?.role_id);
-    } catch (error) {
-      console.error("Failed to fetch user:", error);
-    }
-  };
-
   useEffect(() => {
     formik?.resetForm();
-    if (
-      typeof isModalVisible === "number" ||
-      typeof isModalVisible === "string"
-    )
-      getUserDetails(isModalVisible);
+    if (isEdit) {
+      formik?.setFieldValue("name", isModalVisible?.name);
+      formik?.setFieldValue("email", isModalVisible?.email);
+      formik?.setFieldValue("password", isModalVisible?.password);
+      formik?.setFieldValue("role_id", isModalVisible?.role_id);
+    }
   }, [isModalVisible]);
 
   return (
     isModalVisible && (
       <main
-        onClick={() => setModalVisible(!isModalVisible)}
-        className="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-30 flex justify-center align-middle"
+        onClick={() => {
+          setModalVisible(false);
+        }}
+        className="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-30 flex justify-center align-middle z-[1]"
       >
-        <div className="container my-auto">
-          <div
-            onClick={(e) => e?.stopPropagation()}
-            className="py-5 max-w-[40%] h-[70%] overflow-auto m-auto w-[385px] capitalize bg-[#FFF] rounded-[8px] flex flex-col items-center scrollbar-hidden"
-          >
-            <div className="text-center text-lg font-bold">user</div>
-            <div className="text-sm text-[#101010]">
-              <div className="font-bold">Name</div>
-              <input
-                type="name"
-                placeholder="Enter name"
-                name="name"
-                required
-                className="w-[350px] h-[40px] border placeholder-[#5D6561] rounded-[8px] p-2 my-2 outline-none"
-                id="name"
-                onChange={formik?.handleChange}
-                onBlur={formik?.handleBlur}
-                value={formik?.values?.name}
-                style={{
-                  borderColor:
-                    formik?.touched?.name && formik?.errors?.name
-                      ? "#E23121"
-                      : "#5D6561",
-                }}
-              />
-              <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
-                {formik?.touched?.name && formik?.errors?.name && (
-                  <div>{formik?.errors?.name}</div>
-                )}
-              </div>
-
-              <div className="font-bold">password</div>
-
-              <div className="w-[350px] h-[40px] border rounded-[8px] border-[#101010] flex">
-                <input
-                  type={visible ? "text" : "password"}
-                  placeholder="Enter password"
-                  name="password"
-                  required
-                  className="w-[315px] placeholder-[#5D6561] p-2 my-2 outline-none"
-                  id="password"
-                  onChange={formik?.handleChange}
-                  onBlur={formik?.handleBlur}
-                  value={formik?.values?.password}
-                  style={{
-                    borderColor:
-                      formik?.touched?.password && formik?.errors?.password
-                        ? "#E23121"
-                        : "#5D6561",
-                  }}
-                />
-                {visible ? (
-                  <Image
-                    src={hide}
-                    alt="hide"
-                    onClick={() => setVisible(!visible)}
-                    className="w-5 h-5 mt-2"
-                  />
-                ) : (
-                  <Image
-                    src={view}
-                    alt="view"
-                    onClick={() => setVisible(!visible)}
-                    className="w-5 h-5 mt-2"
-                  />
-                )}
-              </div>
-              <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
-                {formik?.touched?.password && formik?.errors?.password && (
-                  <div>{formik?.errors?.password}</div>
-                )}
-              </div>
-              <div className="font-bold">email</div>
-              <input
-                type="email"
-                placeholder="Enter email"
-                name="email"
-                required
-                className="w-[350px] h-[40px] border placeholder-[#5D6561] rounded-[8px] p-2 my-2 outline-none"
-                id="email"
-                onChange={formik?.handleChange}
-                onBlur={formik?.handleBlur}
-                value={formik?.values?.email}
-                style={{
-                  borderColor:
-                    formik?.touched?.email && formik?.errors?.email
-                      ? "#E23121"
-                      : "#5D6561",
-                }}
-              />
-              <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
-                {formik?.touched?.email && formik?.errors?.email && (
-                  <div>{formik?.errors?.email}</div>
-                )}
-              </div>
-
-              <div className="font-bold">Role</div>
-              <Select
-                options={roles}
-                value={
-                  roles?.filter(
-                    (role) => role.id?.toString() === formik?.values?.role_id
-                  )[0]
-                }
-                name="role_id"
-                onChange={(option: any) => {
-                  console.log(option);
-                  formik.setFieldValue("role_id", option?.id);
-                }}
-                onBlur={formik.handleBlur}
-                className="w-[350px] h-[40px] my-2"
-              />
-              <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
-                {formik?.touched?.role_id && formik?.errors?.role_id && (
-                  <div>{formik?.errors?.role_id}</div>
-                )}
-              </div>
+        <div
+          className="py-5 max-w-[40%] h-[70%] overflow-auto m-auto w-[385px] capitalize bg-[#FFF] rounded-[8px] flex flex-col items-center scrollbar-hidden"
+          onClick={(e) => e?.stopPropagation()}
+        >
+          <div className="text-center text-lg font-bold">
+            {isEdit ? "Edit" : "Add"}
+          </div>
+          <div className="text-sm text-[#101010]">
+            <div className="font-bold">Name</div>
+            <input
+              type="name"
+              placeholder="Enter name"
+              name="name"
+              required
+              className="w-[350px] h-[40px] border placeholder-[#5D6561] rounded-[8px] p-2 my-2 outline-none"
+              id="name"
+              onChange={formik?.handleChange}
+              onBlur={formik?.handleBlur}
+              value={formik?.values?.name}
+              style={{
+                borderColor:
+                  formik?.touched?.name && formik?.errors?.name
+                    ? "#E23121"
+                    : "#5D6561",
+              }}
+            />
+            <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
+              {formik?.touched?.name && formik?.errors?.name && (
+                <div>{formik?.errors?.name}</div>
+              )}
             </div>
-            <div className="w-[350px] flex justify-between">
-              <button
-                type="button"
-                onClick={() => {
-                  setModalVisible(false);
-                  setIsDecline(true);
+
+            <div className="font-bold">password</div>
+
+            <div className="w-[350px] h-[40px] border rounded-[8px] border-[#101010] flex">
+              <input
+                type={visible ? "text" : "password"}
+                placeholder="Enter password"
+                name="password"
+                required
+                className="w-[315px] placeholder-[#5D6561] p-2 my-2 outline-none"
+                id="password"
+                onChange={formik?.handleChange}
+                onBlur={formik?.handleBlur}
+                value={formik?.values?.password}
+                style={{
+                  borderColor:
+                    formik?.touched?.password && formik?.errors?.password
+                      ? "#E23121"
+                      : "#5D6561",
                 }}
-                className={`w-[168px] h-[40px] rounded-[8px] border border-[#05A5FB] text-[#50C2FF] hover:border-[#50C2FF] hover:text-[#50C2FF] ${
-                  isDecline ? "text-[#70CDFF] border-[#70CDFF]" : ""
-                } text-[16px] font-[700] px-[24px] py-[8px]`}
-              >
-                Cancel
-              </button>
-              <div className="w-[168px]">
-                <AnimatedBtn
-                  txt="Create"
-                  status={status}
-                  setStatus={setStatus}
-                  onClick={(e: any) => {
-                    formik.handleSubmit();
-                  }}
+              />
+              {visible ? (
+                <Image
+                  src={hide}
+                  alt="hide"
+                  onClick={() => setVisible(!visible)}
+                  className="w-5 h-5 mt-2"
                 />
-              </div>
+              ) : (
+                <Image
+                  src={view}
+                  alt="view"
+                  onClick={() => setVisible(!visible)}
+                  className="w-5 h-5 mt-2"
+                />
+              )}
+            </div>
+            <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
+              {formik?.touched?.password && formik?.errors?.password && (
+                <div>{formik?.errors?.password}</div>
+              )}
+            </div>
+            <div className="font-bold">email</div>
+            <input
+              type="email"
+              placeholder="Enter email"
+              name="email"
+              required
+              className="w-[350px] h-[40px] border placeholder-[#5D6561] rounded-[8px] p-2 my-2 outline-none"
+              id="email"
+              onChange={formik?.handleChange}
+              onBlur={formik?.handleBlur}
+              value={formik?.values?.email}
+              style={{
+                borderColor:
+                  formik?.touched?.email && formik?.errors?.email
+                    ? "#E23121"
+                    : "#5D6561",
+              }}
+            />
+            <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
+              {formik?.touched?.email && formik?.errors?.email && (
+                <div>{formik?.errors?.email}</div>
+              )}
+            </div>
+
+            <div className="font-bold">Role</div>
+            <Select
+              options={roles}
+              value={roles?.find(
+                (role) =>
+                  role.id?.toString() === formik?.values?.role_id?.toString()
+              )}
+              name="role_id"
+              onChange={(option: any) => {
+                console.log(option);
+                formik.setFieldValue("role_id", option?.id);
+              }}
+              onBlur={formik.handleBlur}
+              className="w-[350px] h-[40px] my-2"
+            />
+            <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
+              {formik?.touched?.role_id && formik?.errors?.role_id && (
+                <div>{formik?.errors?.role_id}</div>
+              )}
+            </div>
+          </div>
+          <div className="w-[350px] flex justify-between">
+            <button
+              type="button"
+              onClick={() => {
+                setModalVisible(false);
+                setIsDecline(true);
+              }}
+              className={`w-[168px] h-[40px] rounded-[8px] border border-[#05A5FB] text-[#50C2FF] hover:border-[#50C2FF] hover:text-[#50C2FF] ${
+                isDecline ? "text-[#70CDFF] border-[#70CDFF]" : ""
+              } text-[16px] font-[700] px-[24px] py-[8px]`}
+            >
+              Cancel
+            </button>
+            <div className="w-[168px]">
+              <AnimatedBtn
+                txt="Create"
+                status={status}
+                setStatus={setStatus}
+                onClick={(e: any) => {
+                  formik.handleSubmit();
+                }}
+              />
             </div>
           </div>
         </div>

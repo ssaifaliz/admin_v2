@@ -68,35 +68,63 @@ interface Schedule_dept {
 }
 
 interface Profile {
-  created_at: string; 
-  created_by: number | null; 
-  deleted_at: string | null;  
-  email: string;
   id: number;
-  image: string | null; 
-  is_active: boolean;
-  is_admin: boolean;
   name: string;
-  password: string;  
+  email: string;
+  password: string;
+  image: string | null;
+  role_id: number;
   prefered_language: string;
-  role_id: number; 
-  updated_at: string; 
+  is_admin: boolean;
+  is_active: boolean;
+  created_by: number | null;
+  designation: string;
+  title: string;
+  contact_number: string;
+  department_id: number;
+  location_id: number;
+  position_id: number;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+  Department: Department;
+  Location: Location;
+  Position: Position;
+  Role: Role;
 }
 
 interface Schedule {
   id: number;
   hours_worked: number;
-  end_date_id: number;
-  end_time: string | null;
-  created_at: string;
-  deleted_at: string | null;
-  leave_id: number | null;
   overtime_hours: number;
-  shift_id: number;
   start_date_id: number;
-  start_time: string | null; 
-  updated_at: string; 
+  end_date_id: number;
+  shift_id: number;
+  start_time: string | null;
+  end_time: string | null;
   user_id: number;
+  leave_id: number | null;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+  Profile: Profile;
+  StartDate: PrefilledDate;
+  EndDate: PrefilledDate;
+  Shift: Shift;
+}
+
+interface PrefilledDate {
+  id: number;
+  full_date: string;
+  day_of_week: number;
+  week_in_a_year: number;
+  day_of_year: number;
+  is_holiday: boolean;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+  value: string;
+  label: string;
 }
 
 interface ScheduleDept {
@@ -126,4 +154,36 @@ interface ScheduleInterface {
   position: Position;
   role: Role;
   schedules: Schedule[];
+}
+
+interface SwapRequest {
+  id: number;
+  status: string;
+  message: string | null;
+  requested_by: number;
+  requested_to: number;
+  requested_shift_swap: number | null;
+  original_schedule_id: number;
+  requested_schedule_id: number;
+  approved_by: number | null;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+  ByProfile: Profile;
+  ToProfile: Profile;
+  OriginalSchedule: Schedule;
+  RequestedSchedule: Schedule;
+}
+
+interface Leave {
+  id: number;
+  leave_type: string;
+  start_date_id: number;
+  end_date_id: number;
+  total_days: number;
+  total_holidays: number;
+  approved_by: number | null;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
 }

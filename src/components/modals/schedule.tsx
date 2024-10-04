@@ -1,61 +1,20 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import Select, { SingleValue } from "react-select";
+import Select from "react-select";
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import moment from "moment";
 import "react-dropdown/style.css";
 import fetchWithToken from "@/utils/api";
 import AnimatedBtn from "../animatedBtn";
 import dp from "@/assets/noProfile.svg";
-
-interface User {
-  id: number;
-  username: string;
-  password: string;
-  email: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface Profile {
-  id: number;
-  first_name: string;
-  last_name: string;
-  email: string;
-  contact: string;
-  profilePicture: string | null;
-  userId: number;
-  deptId: number;
-  positionId: number;
-  roleId: number;
-  createdAt: string;
-  updatedAt: string;
-  User: User;
-  department: Department;
-  position: Position;
-  role: Role;
-  value: number;
-  label: string;
-}
+import moment from "moment";
 
 interface Shift {
   id: number;
   start_time: string;
   end_time: string;
   shift_type: string;
-  value: number;
-  label: string;
-}
-
-interface Department {
-  id: number;
-  dept_name: string;
-  locationId: number;
-  createdAt: string;
-  updatedAt: string;
-  location: Location;
   value: number;
   label: string;
 }
@@ -71,56 +30,49 @@ const ScheduleModal: React.FC<scheduleProps> = ({
   setModalVisible,
   fetchSchedules,
 }) => {
-  const isAdd = isModalVisible === true;
+  const isEdit = typeof isModalVisible !== "boolean";
   const [profiles, setProfiles] = useState<Profile[]>([]);
-  const [shifs, setShifts] = useState<Shift[]>([]);
-  const [departments, setDepartments] = useState<Department[]>([]);
+  const [shifts, setShifts] = useState<Shift[]>([]);
+  const [prefilledDates, setPrefilledDates] = useState<PrefilledDate[]>([]);
   const [isDecline, setIsDecline] = useState<boolean>(false);
   const [status, setStatus] = useState<string>("");
 
   const formik = useFormik<{
-    date: string;
-    profileId: Profile | null;
-    shiftId: Shift | null;
-    deptId: SingleValue<{ value: number; label: string }> | null;
+    end_date_id: string;
+    start_date_id: string;
+    user_id: string;
+    shift_id: string;
   }>({
     initialValues: {
-      date: "",
-      profileId: null,
-      shiftId: null,
-      deptId: null,
+      end_date_id: "",
+      start_date_id: "",
+      user_id: "",
+      shift_id: "",
     },
     validationSchema: Yup.object({
-      date: Yup.string().required("Required"),
-      profileId: Yup.object().shape({
-        value: Yup.number().required("Profile is required"),
-        label: Yup.string().required("Profile is required"),
-      }),
-      shiftId: Yup.object().shape({
-        value: Yup.number().required("Shift is required"),
-        label: Yup.string().required("Shift is required"),
-      }),
-      deptId: Yup.object().shape({
-        value: Yup.number().required("Department is required"),
-        label: Yup.string().required("Department is required"),
-      }),
+      end_date_id: Yup.string().required("Required"),
+      start_date_id: Yup.string().required("Required"),
+      user_id: Yup.string().required("Required"),
+      shift_id: Yup.string().required("Required"),
     }),
     onSubmit: async (values) => {
       setStatus("onclic");
       try {
         await fetchWithToken(
-          isAdd ? "/schedules" : `/schedules/${isModalVisible}`,
+          !isEdit ? "/schedule/create" : `/schedule/update`,
           {
-            method: isAdd ? "POST" : "PUT",
+            method: !isEdit ? "POST" : "PUT",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              ...values,
-              date: moment(values?.date).format("DD-MM-YYYY"),
-              profileId: values?.profileId?.value,
-              shiftId: values?.shiftId?.value,
-              deptId: values?.deptId?.value,
+              ...(isEdit && { id: isModalVisible?.id }),
+              end_date_id: values?.end_date_id,
+              start_date_id: values?.start_date_id,
+              user_id: values?.user_id,
+              shift_id: values?.shift_id,
+              hours_worked: 8,
+              overtime_hours: 2,
             }),
           }
         );
@@ -136,40 +88,16 @@ const ScheduleModal: React.FC<scheduleProps> = ({
     },
   });
 
-  const getSceduleDetails = async (id: string | number) => {
-    try {
-      const data = await fetchWithToken(`/schedules/${id}`, {
-        method: "GET",
-      });
-      formik?.setFieldValue("date", moment(data?.date).format("YYYY-MM-DD"));
-      formik?.setFieldValue(
-        "profileId",
-        profiles?.filter((each) => each?.id === data?.profileId)[0]
-      );
-      formik?.setFieldValue(
-        "shiftId",
-        shifs?.filter((each) => each?.id === data?.shiftId)[0]
-      );
-      formik?.setFieldValue(
-        "deptId",
-        departments?.filter((each) => each?.id === data?.deptId)[0]
-      );
-    } catch (error) {
-      console.error("Failed to fetch schedule:", error);
-    }
-  };
-
   const fetchProfiles = async () => {
     try {
-      const data = await fetchWithToken("/profiles", {
+      const data = await fetchWithToken("/user/list", {
         method: "GET",
       });
 
       setProfiles(
-        data?.map((each: Profile) => ({
+        data?.content?.user?.map((each: Profile) => ({
           ...each,
           value: each?.id,
-          label: each?.email,
         }))
       );
     } catch (error) {
@@ -179,15 +107,14 @@ const ScheduleModal: React.FC<scheduleProps> = ({
 
   const fetchShifts = async () => {
     try {
-      const data = await fetchWithToken("/shifts", {
+      const data = await fetchWithToken("/shift/list", {
         method: "GET",
       });
 
       setShifts(
-        data?.map((each: Shift) => ({
+        data?.content?.shift?.map((each: Shift) => ({
           ...each,
           value: each?.id,
-          label: each?.start_time,
         }))
       );
     } catch (error) {
@@ -195,59 +122,62 @@ const ScheduleModal: React.FC<scheduleProps> = ({
     }
   };
 
-  const fetchDepartments = async () => {
+  const fetchPrefilledDates = async () => {
     try {
-      const data = await fetchWithToken("/departments", {
+      const data = await fetchWithToken("/prefilleddate/list", {
         method: "GET",
       });
 
-      setDepartments(
-        data?.map((each: Department) => ({
+      setPrefilledDates(
+        data?.content?.prefilledDate?.map((each: PrefilledDate) => ({
           ...each,
           value: each?.id,
-          label: each?.dept_name,
+          label: moment(each?.full_date)?.format("ll"),
         }))
       );
     } catch (error) {
-      console.error("Failed to fetch departments:", error);
+      console.error("Failed to fetch shifts:", error);
     }
   };
 
   useEffect(() => {
+    profiles?.map((each) => console.log(each?.id));
+    console.log("isModalVisible", isModalVisible);
     formik?.resetForm();
-    if (
-      typeof isModalVisible === "number" ||
-      typeof isModalVisible === "string"
-    )
-      getSceduleDetails(isModalVisible);
+    if (isEdit) {
+      formik?.setFieldValue("end_date_id", isModalVisible?.end_date_id);
+      formik?.setFieldValue("start_date_id", isModalVisible?.start_date_id);
+      formik?.setFieldValue("user_id", isModalVisible?.user_id);
+      formik?.setFieldValue("shift_id", isModalVisible?.shift_id);
+    }
   }, [isModalVisible]);
 
   useEffect(() => {
+    fetchPrefilledDates();
     fetchProfiles();
     fetchShifts();
-    fetchDepartments();
   }, []);
 
-  const formatOptionLabel = (profile: Profile) => (
+  const UserLabel = (profile: Profile) => (
     <div className="flex items-center">
       <Image
         alt="profile"
-        src={profile?.profilePicture || dp}
+        src={profile?.image || dp}
         className="w-[40px] rounded-full"
         width={6}
         height={6}
       />
-      <div className="flex text-[14px] ml-1">
-        <div className="mr-1">{profile?.first_name}</div>
-        <div>{profile?.last_name}</div>
+      <div className="flex flex-col text-[14px] ml-1">
+        <div className="font-[700]">{profile?.name}</div>
+        <div>{profile?.email}</div>
       </div>
     </div>
   );
-  const formatShiftLabel = (shift: Shift) => (
+  const ShiftLabel = (shift: Shift) => (
     <div className="flex items-center">
       <div className="flex text-[14px] ml-1">
         <div className="mr-1 font-medium">{shift?.shift_type}</div>
-        <div className="font-light">{`(${shift?.start_time})`}</div>
+        <div className="font-light">{`${shift?.start_time} - ${shift?.end_time}`}</div>
       </div>
     </div>
   );
@@ -265,71 +195,86 @@ const ScheduleModal: React.FC<scheduleProps> = ({
           >
             <div className="text-center text-lg font-bold">edit schedule</div>
             <div className="text-sm text-[#101010]">
-              <div className="font-bold">date</div>
-              <input
-                type="date"
-                placeholder="Select date"
-                name="date"
-                required
-                className="w-[350px] h-[40px] border placeholder-[#5D6561] rounded-[8px] p-2 my-2 outline-none"
-                id="date"
-                onChange={formik?.handleChange}
-                onBlur={formik?.handleBlur}
-                value={formik?.values?.date}
-                style={{
-                  borderColor:
-                    formik?.touched?.date && formik?.errors?.date
-                      ? "#E23121"
-                      : "#5D6561",
-                }}
-              />
-              <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
-                {formik?.touched?.date && formik?.errors?.date && (
-                  <div>{formik?.errors?.date}</div>
-                )}
-              </div>
-              <div className="font-bold">profile</div>
+              <div className="font-bold">Start Date</div>
               <Select
-                formatOptionLabel={formatOptionLabel}
-                options={profiles}
-                value={formik?.values?.profileId}
-                name="profileId"
-                onChange={(option) => formik.setFieldValue("profileId", option)}
+                options={prefilledDates}
+                value={prefilledDates?.find(
+                  (each) =>
+                    each?.id?.toString() ===
+                    formik.values.start_date_id?.toString()
+                )}
+                name="start_date_id"
+                onChange={(option) =>
+                  formik.setFieldValue("start_date_id", option?.id)
+                }
                 onBlur={formik.handleBlur}
                 className="w-[350px] h-[40px] my-2"
               />
               <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
-                {formik?.touched?.profileId && formik?.errors?.profileId && (
-                  <div>{formik?.errors?.profileId}</div>
+                {formik?.touched?.start_date_id &&
+                  formik?.errors?.start_date_id && (
+                    <div>{formik?.errors?.start_date_id}</div>
+                  )}
+              </div>
+              <div className="font-bold">End Date</div>
+              <Select
+                options={prefilledDates}
+                value={prefilledDates?.find(
+                  (each) =>
+                    each?.id?.toString() ===
+                    formik.values.end_date_id?.toString()
+                )}
+                name="end_date_id"
+                onChange={(option) =>
+                  formik.setFieldValue("end_date_id", option?.id)
+                }
+                onBlur={formik.handleBlur}
+                className="w-[350px] h-[40px] my-2"
+              />
+              <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
+                {formik?.touched?.end_date_id &&
+                  formik?.errors?.end_date_id && (
+                    <div>{formik?.errors?.end_date_id}</div>
+                  )}
+              </div>
+              <div className="font-bold">profile</div>
+              <Select
+                formatOptionLabel={UserLabel}
+                options={profiles}
+                value={profiles?.find(
+                  (each) =>
+                    each?.id?.toString() === formik.values.user_id?.toString()
+                )}
+                name="user_id"
+                onChange={(option) =>
+                  formik.setFieldValue("user_id", option?.id)
+                }
+                onBlur={formik.handleBlur}
+                className="w-[350px] h-[40px] my-2"
+              />
+              <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
+                {formik?.touched?.user_id && formik?.errors?.user_id && (
+                  <div>{formik?.errors?.user_id}</div>
                 )}
               </div>
               <div className="font-bold">shift</div>
               <Select
-                formatOptionLabel={formatShiftLabel}
-                options={shifs}
-                value={formik.values.shiftId}
-                name="shiftId"
-                onChange={(option) => formik.setFieldValue("shiftId", option)}
-                onBlur={formik.handleBlur}
-                className="w-[350px] h-[40px] my-2"
-              />
-              <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
-                {formik?.touched?.shiftId && formik?.errors?.shiftId && (
-                  <div>{formik?.errors?.shiftId}</div>
+                formatOptionLabel={ShiftLabel}
+                options={shifts}
+                value={shifts?.find(
+                  (each) =>
+                    each?.id?.toString() === formik.values.shift_id?.toString()
                 )}
-              </div>
-              <div className="font-bold">departement</div>
-              <Select
-                options={departments}
-                value={formik.values.deptId || "Select departement ..."}
-                name="deptId"
-                onChange={(option) => formik.setFieldValue("deptId", option)}
+                name="shift_id"
+                onChange={(option) =>
+                  formik.setFieldValue("shift_id", option?.id)
+                }
                 onBlur={formik.handleBlur}
                 className="w-[350px] h-[40px] my-2"
               />
               <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
-                {formik?.touched?.deptId && formik?.errors?.deptId && (
-                  <div>{formik?.errors?.deptId}</div>
+                {formik?.touched?.shift_id && formik?.errors?.shift_id && (
+                  <div>{formik?.errors?.shift_id}</div>
                 )}
               </div>
             </div>

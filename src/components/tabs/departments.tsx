@@ -25,21 +25,21 @@ const Departments: React.FC<departmentsProps> = ({
   isModalVisible,
   setModalVisible,
 }) => {
+  const { replace } = useRouter();
+  const searchParams = useSearchParams();
+  const page = parseInt(searchParams.get("page") || "1");
+  const pageSize = parseInt(searchParams.get("pageSize") || "10");
+  const search = searchParams.get("search") || "";
   const [content, setContent] = useState<string>("");
   const [departments, setDepartments] = useState<Department[]>([]);
   const [deleteDepartmentModal, setDeleteDepartmentModal] = useState<
     boolean | number | string
   >(false);
 
-  const { replace } = useRouter();
-  const searchParams = useSearchParams();
-  const page = parseInt(searchParams.get("page") || "1");
-  const pageSize = parseInt(searchParams.get("pageSize") || "10");
-
   const fetchDepartments = async () => {
     try {
       const data = await fetchWithToken(
-        `/department/list?page=${page}&pageSize=${pageSize}`,
+        `/department/list?page=${page}&pageSize=${pageSize}&search=${search}`,
         {
           method: "GET",
         }
@@ -48,6 +48,7 @@ const Departments: React.FC<departmentsProps> = ({
       updateQueryParams(
         {
           totalPages: data?.content?.totalPages?.toString(),
+          totalCount: data?.content?.totalCount?.toString(),
         },
         replace
       );
@@ -58,7 +59,7 @@ const Departments: React.FC<departmentsProps> = ({
 
   useEffect(() => {
     fetchDepartments();
-  }, [page, pageSize]);
+  }, [page, pageSize, search]);
 
   return (
     <>

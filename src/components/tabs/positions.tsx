@@ -17,7 +17,6 @@ import grayArrowDown from "@/assets/grayArrowDown.png";
 import { useSearchParams, useRouter } from "next/navigation";
 import { updateQueryParams } from "@/lib";
 
-
 interface positionProps {
   isModalVisible: boolean | Position;
   setModalVisible: React.Dispatch<React.SetStateAction<boolean | Position>>;
@@ -27,21 +26,21 @@ const Positions: React.FC<positionProps> = ({
   isModalVisible,
   setModalVisible,
 }) => {
+  const { replace } = useRouter();
+  const searchParams = useSearchParams();
+  const page = parseInt(searchParams.get("page") || "1");
+  const pageSize = parseInt(searchParams.get("pageSize") || "10");
+  const search = searchParams.get("search") || "";
   const [positions, setPositions] = useState<Position[]>([]);
   const [content, setContent] = useState<string>("");
   const [deletePositionModal, setDeletePositionModal] = useState<
     boolean | number | string
   >(false);
 
-  const { replace } = useRouter();
-  const searchParams = useSearchParams();
-  const page = parseInt(searchParams.get("page") || "1");
-  const limit = parseInt(searchParams.get("limit") || "10");
-
   const fetchPositons = async () => {
     try {
       const data = await fetchWithToken(
-        `/position/list?page=${page}&limit=${limit}`,
+        `/position/list?page=${page}&pageSize=${pageSize}&search=${search}`,
         {
           method: "GET",
         }
@@ -50,6 +49,7 @@ const Positions: React.FC<positionProps> = ({
       updateQueryParams(
         {
           totalPages: data?.content?.totalPages?.toString(),
+          totalCount: data?.content?.totalCount?.toString(),
         },
         replace
       );
@@ -60,7 +60,7 @@ const Positions: React.FC<positionProps> = ({
 
   useEffect(() => {
     fetchPositons();
-  }, [page, limit]);
+  }, [page, pageSize, search]);
 
   return (
     <>

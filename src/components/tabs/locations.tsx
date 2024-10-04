@@ -26,21 +26,21 @@ const Locations: React.FC<LocationsProps> = ({
   isModalVisible,
   setModalVisible,
 }) => {
+  const { replace } = useRouter();
+  const searchParams = useSearchParams();
+  const page = parseInt(searchParams.get("page") || "1");
+  const pageSize = parseInt(searchParams.get("pageSize") || "10");
+  const search = searchParams.get("search") || "";
   const [content, setContent] = useState<string>("");
   const [locations, setLocations] = useState<Locations[]>([]);
   const [deleteRequestModal, setDeleteRequestModal] = useState<
     boolean | string | number
   >(false);
 
-  const { replace } = useRouter();
-  const searchParams = useSearchParams();
-  const page = parseInt(searchParams.get("page") || "1");
-  const limit = parseInt(searchParams.get("limit") || "10");
-
   const fetchLocations = async () => {
     try {
       const data = await fetchWithToken(
-        `/location/list?page=${page}&limit=${limit}`,
+        `/location/list?page=${page}&pageSize=${pageSize}&search=${search}`,
         {
           method: "GET",
         }
@@ -49,6 +49,7 @@ const Locations: React.FC<LocationsProps> = ({
       updateQueryParams(
         {
           totalPages: data?.content?.totalPages?.toString(),
+          totalCount: data?.content?.totalCount?.toString(),
         },
         replace
       );
@@ -59,7 +60,7 @@ const Locations: React.FC<LocationsProps> = ({
 
   useEffect(() => {
     fetchLocations();
-  }, [page, limit]);
+  }, [page, pageSize, search]);
 
   return (
     <>
@@ -175,12 +176,12 @@ const Locations: React.FC<LocationsProps> = ({
                 </div>
               </TableCell>
               <TableCell className="!outline-none !border-b-0 w-[120px] flex float-right h-16 items-center">
-              <div
-                    onClick={() => setModalVisible(each)}
-                    className="w-[60px] h-full flex justify-center items-center cursor-pointer"
-                  >
-                    <Image alt="editIcon" src={editIcon} className="w-6 h-6" />
-                  </div>
+                <div
+                  onClick={() => setModalVisible(each)}
+                  className="w-[60px] h-full flex justify-center items-center cursor-pointer"
+                >
+                  <Image alt="editIcon" src={editIcon} className="w-6 h-6" />
+                </div>
                 <div
                   onClick={() => {
                     setDeleteRequestModal(each.id);

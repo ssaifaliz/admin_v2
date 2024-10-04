@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
 import {
   Table,
   TableBody,
@@ -8,42 +7,91 @@ import {
   TableHeader,
   TableRow,
 } from "../catalyst/table";
-import fetchWithToken from "@/utils/api";
-import Leave from "../modals/leave";
-import DeleteModal from "../modals/deleteModal";
+import Image from "next/image";
+import dp from "@/assets/noProfile.svg";
 import editIcon from "@/assets/editIcon.png";
 import deleteIcon from "@/assets/deleteIcon.png";
+import message from "@/assets/message.png";
+import close from "@/assets/close.png";
+import SwapRequestAdd from "../modals/swapRequestAdd";
+import SwapMessage from "../modals/swapMessage";
+import fetchWithToken from "@/utils/api";
+import moment from "moment";
+import DeleteModal from "../modals/deleteModal";
 import grayArrowDown from "@/assets/grayArrowDown.png";
 import { useRouter, useSearchParams } from "next/navigation";
 import { updateQueryParams } from "@/lib";
 
-interface LeaveProps {
-  isModalVisible: boolean | string | number;
-  setModalVisible: React.Dispatch<
-    React.SetStateAction<boolean | string | number>
-  >;
+interface SwapRequestsProps {
+  isModalVisible: boolean | SwapRequest;
+  setModalVisible: React.Dispatch<React.SetStateAction<boolean | SwapRequest>>;
 }
 
-const Leaves: React.FC<LeaveProps> = ({ isModalVisible, setModalVisible }) => {
+const badgeColors: Array<
+  | "blue"
+  | "cyan"
+  | "fuchsia"
+  | "green"
+  | "indigo"
+  | "lime"
+  | "orange"
+  | "pink"
+  | "purple"
+  | "red"
+  | "teal"
+  | "violet"
+  | "yellow"
+  | "amber"
+  | "emerald"
+  | "sky"
+  | "rose"
+  | "zinc"
+> = [
+  "red",
+  "orange",
+  "amber",
+  "yellow",
+  "lime",
+  "green",
+  "emerald",
+  "teal",
+  "cyan",
+  "sky",
+  "blue",
+  "indigo",
+  "violet",
+  "purple",
+  "fuchsia",
+  "pink",
+  "rose",
+  "zinc",
+];
+
+const SwapRequests: React.FC<SwapRequestsProps> = ({
+  isModalVisible,
+  setModalVisible,
+}) => {
   const { replace } = useRouter();
   const searchParams = useSearchParams();
   const page = parseInt(searchParams.get("page") || "1");
   const pageSize = parseInt(searchParams.get("pageSize") || "10");
   const search = searchParams.get("search") || "";
-  const [leaves, setLeaves] = useState<Leave[]>([]);
+  const [swapRequests, setSwapRequests] = useState<SwapRequest[]>([]);
   const [deleteRequestModal, setDeleteRequestModal] = useState<
     boolean | string | number
   >(false);
+  const [isMsgTxt, setMsgTxt] = useState<string>("");
+  const [content, setContent] = useState<string>("");
 
-  const fetchLeaves = async () => {
+  const fetchSwapRequests = async () => {
     try {
       const data = await fetchWithToken(
-        `/leave/list?page=${page}&pageSize=${pageSize}&search=${search}`,
+        `/swaprequest/list?page=${page}&pageSize=${pageSize}&search=${search}`,
         {
           method: "GET",
         }
       );
-      setLeaves(data?.content?.leaves);
+      setSwapRequests(data?.content?.swapRequest);
       updateQueryParams(
         {
           totalPages: data?.content?.totalPages?.toString(),
@@ -51,57 +99,55 @@ const Leaves: React.FC<LeaveProps> = ({ isModalVisible, setModalVisible }) => {
         },
         replace
       );
+      console.log("data", data);
     } catch (error) {
-      console.error("Failed to fetch shifts:", error);
+      console.error("Failed to fetch swap requests:", error);
     }
   };
 
   useEffect(() => {
-    fetchLeaves();
+    fetchSwapRequests();
   }, [page, pageSize, search]);
+
   return (
     <>
-      <Leave
+      <SwapRequestAdd
         isModalVisible={isModalVisible}
         setModalVisible={setModalVisible}
-        fetchLeaves={fetchLeaves}
+        fetchSwapRequests={fetchSwapRequests}
       />
+      <SwapMessage isMsgTxt={isMsgTxt} setMsgTxt={setMsgTxt} />
       <DeleteModal
-        route="leave"
+        route="swaprequest"
+        content={content}
         visibilityState={deleteRequestModal}
         setState={setDeleteRequestModal}
-        fetchAllCall={fetchLeaves}
+        fetchAllCall={fetchSwapRequests}
       />
       <Table className={"relative mt-5"}>
         <TableHead>
           <TableRow className="bg-[#F7F8F7]">
             <TableHeader className="!outline-none !border-b-0">
               <div className="flex items-center">
-                Approved By
+                User From
                 <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
               </div>
             </TableHeader>
             <TableHeader className="!outline-none !border-b-0">
               <div className="flex items-center">
-                Start Date
+                User To
                 <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
               </div>
             </TableHeader>
             <TableHeader className="!outline-none !border-b-0">
               <div className="flex items-center">
-                End Date
+                Schedule From
                 <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
               </div>
             </TableHeader>
             <TableHeader className="!outline-none !border-b-0">
               <div className="flex items-center">
-                Profile
-                <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
-              </div>
-            </TableHeader>
-            <TableHeader className="!outline-none !border-b-0">
-              <div className="flex items-center">
-                Type
+                Schedule To
                 <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
               </div>
             </TableHeader>
@@ -111,82 +157,110 @@ const Leaves: React.FC<LeaveProps> = ({ isModalVisible, setModalVisible }) => {
                 <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
               </div>
             </TableHeader>
+            <TableHeader className="!outline-none !border-b-0">
+              <div className="flex items-center">
+                Message
+                <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
+              </div>
+            </TableHeader>
             <TableHeader className="!outline-none !border-b-0"></TableHeader>
           </TableRow>
         </TableHead>
         <TableBody>
-          {leaves?.map((each, index) => (
-            <TableRow key={index}>
+          {swapRequests?.map((swapRequest) => (
+            <TableRow key={swapRequest?.id}>
               <TableCell className="!outline-none !border-b-0">
                 <div className="flex items-center max-w-min">
-                  <div className="flex flex-col justify-center">
+                  <Image
+                    alt="profile"
+                    src={swapRequest?.ByProfile?.image || dp}
+                    className="w-[36px]"
+                    width={40}
+                    height={40}
+                  />
+                  <div className="flex flex-col justify-center ml-3">
                     <div className="text-[16px] font-[600] mt-0">
-                      {/* @ts-ignore */}
-                      {each?.approved}
+                      {swapRequest?.ByProfile?.name}
                     </div>
                   </div>
                 </div>
               </TableCell>
               <TableCell className="!outline-none !border-b-0">
-                <div className="flex items-center max-w-min">
-                  <div className="flex flex-col justify-center">
+                <div className="flex items-center">
+                  <Image
+                    alt="profile"
+                    src={swapRequest?.ToProfile?.image || dp}
+                    className="w-[36px]"
+                    width={40}
+                    height={40}
+                  />
+                  <div className="flex flex-col justify-center ml-3">
                     <div className="text-[16px] font-[600] mt-0">
-                      {/* @ts-ignore */}
-                      {each?.start_date}
+                      {swapRequest?.ToProfile?.name}
                     </div>
                   </div>
                 </div>
               </TableCell>
               <TableCell className="!outline-none !border-b-0">
-                <div className="flex items-center max-w-min">
-                  <div className="flex flex-col justify-center">
-                    <div className="text-[16px] font-[600] mt-0">
-                      {/* @ts-ignore */}
-                      {each?.end_date}
-                    </div>
-                  </div>
+                <div>
+                  {moment(
+                    swapRequest?.OriginalSchedule?.StartDate?.full_date
+                  ).format("MMMM Do YYYY")}
+                </div>
+                <div>
+                  {moment(
+                    swapRequest?.OriginalSchedule?.EndDate?.full_date
+                  ).format("MMMM Do YYYY")}
                 </div>
               </TableCell>
               <TableCell className="!outline-none !border-b-0">
-                <div className="flex items-center max-w-min">
-                  <div className="flex flex-col justify-center">
-                    <div className="text-[16px] font-[600] mt-0">
-                      {/* @ts-ignore */}
-                      {`${each?.profile?.first_name} ${each?.profile?.last_name}`}
-                    </div>
-                  </div>
+                <div>
+                  {moment(
+                    swapRequest?.RequestedSchedule?.StartDate?.full_date
+                  ).format("MMMM Do YYYY")}
+                </div>
+                <div>
+                  {moment(
+                    swapRequest?.RequestedSchedule?.EndDate?.full_date
+                  ).format("MMMM Do YYYY")}
                 </div>
               </TableCell>
               <TableCell className="!outline-none !border-b-0">
-                <div className="flex items-center max-w-min">
-                  <div className="flex flex-col justify-center">
-                    <div className="text-[16px] font-[600] mt-0">
-                      {each?.leave_type}
-                    </div>
-                  </div>
-                </div>
+                <div>{swapRequest?.status}</div>
               </TableCell>
               <TableCell className="!outline-none !border-b-0">
-                <div className="flex items-center max-w-min">
-                  <div className="flex flex-col justify-center">
-                    <div className="text-[16px] font-[600] mt-0">
-                      {/* @ts-ignore */}
-                      {each?.approved}
-                    </div>
-                  </div>
+                <div
+                  onClick={() => setMsgTxt(swapRequest?.message || "")}
+                  className="cursor-pointer relative flex items-center justify-center max-w-[20px] ml-4"
+                >
+                  <Image
+                    src={message}
+                    alt="message"
+                    className="w-[20px] absolute"
+                  />
+                  {!swapRequest?.message && (
+                    <Image
+                      src={close}
+                      alt="message"
+                      className="w-[10px] absolute"
+                    />
+                  )}
                 </div>
               </TableCell>
               <TableCell className="!outline-none !border-b-0 w-[120px] flex float-right">
                 <div
                   onClick={() => {
-                    setModalVisible(each?.id);
+                    setModalVisible(swapRequest);
                   }}
                   className="w-[60px] h-full flex justify-center items-center cursor-pointer"
                 >
                   <Image alt="editIcon" src={editIcon} className="w-6 h-6" />
                 </div>
                 <div
-                  onClick={() => setDeleteRequestModal(each?.id)}
+                  onClick={() => {
+                    setDeleteRequestModal(swapRequest?.id);
+                    setContent(`request from ${swapRequest?.ByProfile?.name}`);
+                  }}
                   className="w-[60px] h-full flex justify-center items-center cursor-pointer"
                 >
                   <Image
@@ -204,4 +278,4 @@ const Leaves: React.FC<LeaveProps> = ({ isModalVisible, setModalVisible }) => {
   );
 };
 
-export default Leaves;
+export default SwapRequests;
