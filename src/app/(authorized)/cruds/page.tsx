@@ -118,7 +118,7 @@ const Page = () => {
                   width: "200px",
                 }}
               >
-                <div className="h-full w-full rounded-lg relative py-2 px-4 bg-[#F7F8F7] flex hover:bg-[#E8EBE9]">
+                <div className="h-full w-full rounded-[5px] relative py-2 px-4 bg-[#F7F8F7] flex hover:bg-[#E8EBE9]">
                   <Image
                     src={selectedTab.active}
                     alt=""
