@@ -18,6 +18,8 @@ import ScheduleModal from "../modals/schedule";
 import moment from "moment";
 import { useRouter, useSearchParams } from "next/navigation";
 import { updateQueryParams } from "@/lib";
+import Select from "react-select";
+import DatePicker, { DateObject } from "react-multi-date-picker";
 
 interface ScheduleProps {
   isModalVisible: boolean | Schedule;
@@ -38,11 +40,37 @@ const Schedule: React.FC<ScheduleProps> = ({
   const [deleteModal, setDeleteModal] = useState<boolean | number | string>(
     false
   );
+  const [user, setUsers] = useState<any>();
+  const [selectedProfile, setSelectedProfile] = useState<any>("");
+  const [scheduleRage, setScheduleRage] = useState<any>([]);
+
+  const fetchUsers = async () => {
+    try {
+      const data = await fetchWithToken(`/user/list`, {
+        method: "GET",
+      });
+      console.log(data?.content?.user, "data?.content?.user");
+      setUsers(data?.content?.user);
+    } catch (error) {
+      console.error("Failed to fetch users:", error);
+    }
+  };
+
+  const handleDateRage =(value:any) =>{
+
+    
+
+  }
 
   const fetchSchedule = async () => {
+    let selectedDateRage = {
+      startDate:scheduleRage[0]?`${scheduleRage[0].day}/${scheduleRage[0].month.number}/${scheduleRage[0].year}`:"",
+      endDate:scheduleRage[1]?`${scheduleRage[1].day}/${scheduleRage[1].month.number}/${scheduleRage[1].year}`:""
+    }
+
     try {
       const data = await fetchWithToken(
-        `/schedule/list?page=${page}&pageSize=${pageSize}&search=${search}`,
+        `/schedule/list?page=${page}&pageSize=${pageSize}&search=${search}&profile=${selectedProfile}&scheduleStartDate=${selectedDateRage?.startDate}&scheduleEndDate=${selectedDateRage?.endDate}`,
         {
           method: "GET",
         }
@@ -52,6 +80,9 @@ const Schedule: React.FC<ScheduleProps> = ({
         {
           totalPages: data?.content?.totalPages?.toString(),
           totalCount: data?.content?.totalCount?.toString(),
+          profile:selectedProfile,
+          scheduleStartDate:selectedDateRage?.startDate,
+          scheduleEndDate:selectedDateRage?.endDate
         },
         replace
       );
@@ -62,7 +93,11 @@ const Schedule: React.FC<ScheduleProps> = ({
 
   useEffect(() => {
     fetchSchedule();
-  }, [page, pageSize, search]);
+  }, [page, pageSize, search, selectedProfile,scheduleRage]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   return (
     <>
@@ -71,14 +106,45 @@ const Schedule: React.FC<ScheduleProps> = ({
           <TableRow className="bg-[#F7F8F7]">
             <TableHeader className="!outline-none !border-b-0">
               <div className="flex items-center">
-                Profile
-                <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
+                {/* Profile
+                <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" /> */}
+                <Select
+                  isSearchable={false}
+                  options={user?.map((item: any) => ({
+                    label: item.name,
+                    value: item.id,
+                  }))}
+                  onChange={(option: any) => {
+                    console.log(option);
+                    setSelectedProfile(option?.value);
+                  }}
+                  name="profile"
+                  className=" w-[150px]"
+                  styles={{
+                    control: (base: any) => ({
+                      ...base,
+                      backgroundColor: "transparent",
+                      borderColor: "none",
+                      borderWidth: "0",
+                      color: "",
+                      "&:hover": {
+                        borderColor: "none",
+                      },
+                      boxShadow: "none",
+                    }),
+                    indicatorSeparator: () => ({
+                      display: "none",
+                    }),
+                  }}
+                  placeholder={"Profile"}
+                />
               </div>
             </TableHeader>
             <TableHeader className="!outline-none !border-b-0">
-              <div className="flex items-center">
+              <div className="flex flex-col">
                 Schedule
-                <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
+                <DatePicker value={scheduleRage} onChange={setScheduleRage} range placeholder="select Schedule Rage"/>
+                {/* <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" /> */}
               </div>
             </TableHeader>
             <TableHeader className="!outline-none !border-b-0">

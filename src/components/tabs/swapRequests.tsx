@@ -84,8 +84,8 @@ const SwapRequests: React.FC<SwapRequestsProps> = ({
   const [isMsgTxt, setMsgTxt] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [user, setUsers] = useState<any>();
-  const [selectedUserFrom, setSelectedUserFrom] = useState<any>('');
-  const [selectedUserTo, setSelectedUserTo] = useState<any>('');
+  const [selectedUserFrom, setSelectedUserFrom] = useState<any>("");
+  const [selectedUserTo, setSelectedUserTo] = useState<any>("");
 
   const fetchUsers = async () => {
     try {
@@ -112,6 +112,8 @@ const SwapRequests: React.FC<SwapRequestsProps> = ({
         {
           totalPages: data?.content?.totalPages?.toString(),
           totalCount: data?.content?.totalCount?.toString(),
+          userFrom:selectedUserFrom,
+          userTo:selectedUserTo
         },
         replace
       );
@@ -123,7 +125,7 @@ const SwapRequests: React.FC<SwapRequestsProps> = ({
 
   useEffect(() => {
     fetchSwapRequests();
-  }, [page, pageSize, search,selectedUserFrom,selectedUserTo]);
+  }, [page, pageSize, search, selectedUserFrom, selectedUserTo]);
 
   useEffect(() => {
     fetchUsers();
@@ -156,12 +158,29 @@ const SwapRequests: React.FC<SwapRequestsProps> = ({
                     label: item.name,
                     value: item.id,
                   }))}
-                  onChange={(option:any) => {
+                  onChange={(option: any) => {
                     console.log(option);
                     setSelectedUserFrom(option?.value);
                   }}
                   name="userFrom"
-                  className="[&.css-13cymwt-control]:!bg-none w-[150px]"
+                  className=" w-[150px]"
+                  styles={{
+                    control: (base) => ({
+                      ...base,
+                      backgroundColor: 'transparent', 
+                      borderColor: 'none',
+                      borderWidth:"0",          
+                      color: '',
+                      '&:hover':{
+                        borderColor:"none"
+                      },
+                      boxShadow:"none"            
+                    }),
+                    indicatorSeparator: () => ({
+                      display: 'none',
+                    }),
+                  }}
+                  placeholder={"User From"}
                 />
                 {/* <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" /> */}
               </div>
@@ -176,12 +195,29 @@ const SwapRequests: React.FC<SwapRequestsProps> = ({
                     label: item.name,
                     value: item.id,
                   }))}
-                  onChange={(option:any) => {
+                  onChange={(option: any) => {
                     console.log(option);
                     setSelectedUserTo(option?.value);
                   }}
-                  name="userFrom"
-                  className="[&.css-13cymwt-control]:!bg-none w-[150px]"
+                  name="userTo"
+                  className=" w-[150px]"
+                  styles={{
+                    control: (base) => ({
+                      ...base,
+                      backgroundColor: 'transparent', 
+                      borderColor: 'none',
+                      borderWidth:"0",          
+                      color: '',
+                      '&:hover':{
+                        borderColor:"none"
+                      },
+                      boxShadow:"none"            
+                    }),
+                    indicatorSeparator: () => ({
+                      display: 'none',
+                    }),
+                  }}
+                  placeholder={"User To"}
                 />
               </div>
             </TableHeader>
