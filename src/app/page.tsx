@@ -43,7 +43,7 @@ const Home = () => {
       if (response?.status) {
         setStatus("success");
         setToken(response?.content?.token);
-        push("/cruds");
+        push("/schedule");
         refresh();
       } else {
         console.error("Login failed:", response?.validation?.message);
@@ -54,7 +54,7 @@ const Home = () => {
   });
 
   useEffect(() => {
-    if (Cookies.get("session")) push("/cruds");
+    if (Cookies.get("session")) push("/schedule");
   }, [Cookies.get("session")]);
 
   return (

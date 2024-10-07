@@ -6,13 +6,14 @@ import fetchWithToken from "@/utils/api";
 
 const fetchDepartments = async (setDepartments: any) => {
   try {
-    const data = await fetchWithToken("/departments", {
+    const data = await fetchWithToken(`/department/list`, {
       method: "GET",
     });
+
     setDepartments(
-      data?.map((each: any) => ({
+      data?.content?.department?.map((each: any) => ({
         ...each,
-        name: each?.dept_name,
+        name: each?.name,
         value: each?.id?.toString(),
       }))
     );

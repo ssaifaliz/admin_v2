@@ -16,6 +16,7 @@ import "./style.css";
 import { WeekPicker } from "../weekpicker";
 import moment from "moment";
 import fetchWithToken from "@/utils/api";
+import MultiSelect from "../multiSelect";
 
 const colors = [
   "#c0b0ff",
@@ -66,17 +67,9 @@ const ScheduleTable = () => {
         `/user/schedule/list?start_date=${dateFrom}&end_date=${dateTo}`,
         {
           method: "GET",
-          // headers: {
-          //   "Content-Type": "application/json",
-          // },
-          // body: JSON.stringify({
-          //   datefrom: dateFrom,
-          //   dateto: dateTo,
-          // }),
         }
       );
-      // setSchedule(data);
-      console.log("data", data);
+      setSchedule(data?.content?.user);
     } catch (error) {
       console.error("Failed to fetch locations:", error);
     }
@@ -95,6 +88,10 @@ const ScheduleTable = () => {
       <div className="flex items-center my-2 h-[40px]">
         <div className="text-[24px] font-[700] mr-[10%]">{displayMonth}</div>
         <WeekPicker onChange={(e: any) => setWeek(e)} />
+        <MultiSelect
+        // selectedOptions={selectedDepartments}
+        // setSelectedOptions={setSelectedDepartments}
+        />
       </div>
       <div className="overflow-y-scroll scrollbar-hidden h-[90%]">
         <Table className={""}>
@@ -166,8 +163,7 @@ const ScheduleTable = () => {
                   className={"bg-[#f7f8f7] font-[600] text-[12px]"}
                 >
                   <div className="h-[50px] pl-3 w-[100px] flex flex-wrap items-center">
-                    <div className="mr-1">{each?.first_name}</div>
-                    <div className="mr-1">{each?.last_name}</div>
+                    <div className="mr-1">{each?.name}</div>
                   </div>
                 </TableCell>
                 {weekDates?.map((val, index) => (
@@ -178,43 +174,40 @@ const ScheduleTable = () => {
                       padding: 0,
                     }}
                   >
-                    {each?.schedules?.filter(
+                    {each?.Schedules?.filter(
                       (schdl: any) =>
-                        moment(schdl?.date)?.format("DD") === val?.format("DD")
+                        moment(schdl?.StartDate?.full_date)?.format("DD") ===
+                        val?.format("DD")
                     )?.length ? (
-                      each?.schedules
-                        ?.filter(
-                          (schdl: any) =>
-                            moment(schdl?.date)?.format("DD") ===
-                            val?.format("DD")
-                        )
-                        ?.map((schdl: any) => (
+                      each?.Schedules?.filter(
+                        (schdl: any) =>
+                          moment(schdl?.StartDate?.full_date)?.format("DD") ===
+                          val?.format("DD")
+                      )?.map((schdl: any) => (
+                        <div
+                          key={schdl?.id}
+                          className="flex items-center justify-center"
+                        >
                           <div
-                            key={schdl?.id}
-                            className="flex items-center justify-center"
+                            style={{
+                              background: colors[index],
+                              opacity: val?.diff(moment(), "d") < 0 ? 0.3 : 0.9,
+                            }}
+                            className={`rounded-[3px] w-full h-[60px] italic flex flex-col justify-center pl-3 m-1 relative`}
                           >
-                            <div
-                              style={{
-                                background: colors[index],
-                                opacity:
-                                  val?.diff(moment(), "d") < 0 ? 0.3 : 0.9,
-                                // border: "10px solid red",
-                              }}
-                              className={`rounded-[3px] w-full h-[60px] italic flex flex-col justify-center pl-3 m-1 relative`}
-                            >
-                              <div className="font-[600] text-[14px]">
-                                {schdl?.schedule_dept?.dept_name}
-                              </div>
-                              <div className="text-[12px]">{`${moment(
-                                schdl?.shift?.start_time,
-                                "HH:mm:ss"
-                              ).format("ha")} - ${moment(
-                                schdl?.shift?.end_time,
-                                "HH:mm:ss"
-                              ).format("ha")}`}</div>
+                            <div className="font-[600] text-[14px]">
+                              {each?.Department?.name}
                             </div>
+                            <div className="text-[12px]">{`${moment(
+                              schdl?.StartDate?.full_date,
+                              "HH:mm:ss"
+                            ).format("ha")} - ${moment(
+                              schdl?.EndDate?.full_date,
+                              "HH:mm:ss"
+                            ).format("ha")}`}</div>
                           </div>
-                        ))
+                        </div>
+                      ))
                     ) : (
                       <div className="flex items-center justify-center">
                         <div

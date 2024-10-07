@@ -15,12 +15,24 @@ const Sidebar = () => {
         <div>
           <div
             className={`mb-[20px] rounded-[4px] w-[40px] h-[40px] flex items-center justify-center cursor-pointer ${
-              pathname === "/dashboard"
+              pathname === "/schedule"
                 ? "bg-[#05a5fb] hover:bg-[#50C2FF]"
                 : "bg-[#4a4e4d] hover:bg-[#50C2FF]"
             }`}
             onClick={async () => {
-              push("/dashboard");
+              push("/schedule");
+            }}
+          >
+            <Image alt="dashboard" src={dashboard} className="w-[18px]" />
+          </div>
+          <div
+            className={`mb-[20px] rounded-[4px] w-[40px] h-[40px] flex items-center justify-center cursor-pointer ${
+              pathname === "/swaprequest"
+                ? "bg-[#05a5fb] hover:bg-[#50C2FF]"
+                : "bg-[#4a4e4d] hover:bg-[#50C2FF]"
+            }`}
+            onClick={async () => {
+              push("/swaprequest");
             }}
           >
             <Image alt="dashboard" src={dashboard} className="w-[18px]" />
