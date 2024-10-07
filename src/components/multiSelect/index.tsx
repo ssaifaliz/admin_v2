@@ -4,33 +4,15 @@ import "./style.css";
 import Image from "next/image";
 import fetchWithToken from "@/utils/api";
 
-const fetchDepartments = async (setDepartments: any) => {
-  try {
-    const data = await fetchWithToken(`/department/list`, {
-      method: "GET",
-    });
-
-    setDepartments(
-      data?.content?.department?.map((each: any) => ({
-        ...each,
-        name: each?.name,
-        value: each?.id?.toString(),
-      }))
-    );
-    console.log("data", data);
-  } catch (error) {
-    console.error("Failed to fetch swap requests:", error);
-  }
-};
-
 const MultiSelect = ({
+  options,
   selectedOptions,
   setSelectedOptions,
 }: {
+  options: any[];
   selectedOptions: any[];
   setSelectedOptions: any;
 }) => {
-  const [departments, setDepartments] = useState<any[]>([]);
   const [dropdownActive, setDropdownActive] = useState(false);
   const [cursor, setCursor] = useState(0);
 
@@ -45,8 +27,8 @@ const MultiSelect = ({
     let newSelectedOptions: any[] = [];
 
     if (e.target.checked) {
-      const selectedItem = departments?.find(
-        (opt) => opt.value?.toString() === e.target.value?.toString()
+      const selectedItem = options?.find(
+        (opt: any) => opt.value?.toString() === e.target.value?.toString()
       );
       if (selectedItem) {
         newSelectedOptions = [...selectedOptions, selectedItem];
@@ -63,9 +45,9 @@ const MultiSelect = ({
     return selectedOptions?.some((item) => item.value === value);
   };
 
-  useEffect(() => {
-    fetchDepartments(setDepartments);
-  }, []);
+  // useEffect(() => {
+  //   fetchDepartments(setDepartments);
+  // }, []);
 
   useEffect(() => {
     const handleMousedown = (e: MouseEvent) => {
@@ -89,7 +71,10 @@ const MultiSelect = ({
   }, [dropdownActive]);
 
   return (
-    <div className={`multiselect-wrapper rounded-[8px]`} ref={multiSelectRef}>
+    <div
+      className={`multiselect-wrapper rounded-[8px] mx-[10px] z-[1]`}
+      ref={multiSelectRef}
+    >
       <div
         className="multiselect__control relative w-[200px] h-[40px] flex items-center justify-between bg-[#f7f8f7] px-2 text-[16px] font-[600] cursor-pointer"
         onClick={handleDropdownClick}
@@ -117,7 +102,7 @@ const MultiSelect = ({
         }`}
       >
         <ul className="multiselect-results">
-          {departments?.map((option, index) => (
+          {options?.map((option, index) => (
             <li
               key={option.value}
               className={`multiselect-results__item 

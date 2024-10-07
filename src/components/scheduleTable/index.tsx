@@ -17,6 +17,9 @@ import { WeekPicker } from "../weekpicker";
 import moment from "moment";
 import fetchWithToken from "@/utils/api";
 import MultiSelect from "../multiSelect";
+import whitePlus from "@/assets/whitePlus.png";
+import Leave from "../modals/leave";
+import ScheduleModal from "../modals/schedule";
 
 const colors = [
   "#c0b0ff",
@@ -29,8 +32,15 @@ const colors = [
 ];
 
 const ScheduleTable = () => {
+  const [isScheduleModalVisible, setScheduleModalVisible] =
+    useState<any>(false);
+  const [isLeaveModalVisible, setLeaveModalVisible] = useState<any>(false);
   const [week, setWeek] = useState<any>();
   const [schedule, setSchedule] = useState<ScheduleInterface[]>();
+  const [departments, setDepartments] = useState<Department[]>();
+  const [profiles, setProfiles] = useState<Profile[]>();
+  const [shifts, setShifts] = useState<Shift[]>();
+
   const firstDay = moment(week?.firstDay);
   const lastDay = moment(week?.lastDay);
   const daysOfWeek = [
@@ -75,6 +85,68 @@ const ScheduleTable = () => {
     }
   };
 
+  const fetchProfiles = async () => {
+    try {
+      const data = await fetchWithToken(`/user/list`, {
+        method: "GET",
+      });
+
+      setProfiles(
+        data?.content?.user?.map((each: Profile) => ({
+          ...each,
+          // name: each?.name,
+          // value: each?.id,
+        }))
+      );
+      console.log("data", data);
+    } catch (error) {
+      console.error("Failed to fetch swap requests:", error);
+    }
+  };
+
+  const fetchShifts = async () => {
+    try {
+      const data = await fetchWithToken(`/shift/list`, {
+        method: "GET",
+      });
+
+      setShifts(
+        data?.content?.shift?.map((each: Department) => ({
+          ...each,
+          // name: each?.name,
+          // value: each?.id,
+        }))
+      );
+      console.log("data", data);
+    } catch (error) {
+      console.error("Failed to fetch swap requests:", error);
+    }
+  };
+  const fetchDepartments = async () => {
+    try {
+      const data = await fetchWithToken(`/department/list`, {
+        method: "GET",
+      });
+
+      setDepartments(
+        data?.content?.department?.map((each: Department) => ({
+          ...each,
+          // name: each?.name,
+          // value: each?.id,
+        }))
+      );
+      console.log("data", data);
+    } catch (error) {
+      console.error("Failed to fetch swap requests:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchDepartments();
+    fetchProfiles();
+    fetchShifts();
+  }, []);
+
   useEffect(() => {
     console.log("week", week);
     if (!week?.firstDay || !week?.lastDay) return;
@@ -85,13 +157,53 @@ const ScheduleTable = () => {
   }, [week]);
   return (
     <div className="h-full">
+      <Leave
+        isModalVisible={isLeaveModalVisible}
+        setModalVisible={setLeaveModalVisible}
+        fetchLeaves={() =>
+          fetchSchedule(
+            moment(new Date(week?.firstDay)).utc().startOf("day").toISOString(),
+            moment(new Date(week?.lastDay)).utc().startOf("day").toISOString()
+          )
+        }
+      />
+      <ScheduleModal
+        isModalVisible={isScheduleModalVisible}
+        setModalVisible={setScheduleModalVisible}
+        fetchSchedules={() =>
+          fetchSchedule(
+            moment(new Date(week?.firstDay)).utc().startOf("day").toISOString(),
+            moment(new Date(week?.lastDay)).utc().startOf("day").toISOString()
+          )
+        }
+      />
       <div className="flex items-center my-2 h-[40px]">
-        <div className="text-[24px] font-[700] mr-[10%]">{displayMonth}</div>
+        <div className="text-[24px] w-[335px] font-[700] mr-[10px]">
+          {displayMonth}
+        </div>
         <WeekPicker onChange={(e: any) => setWeek(e)} />
-        <MultiSelect
-        // selectedOptions={selectedDepartments}
-        // setSelectedOptions={setSelectedDepartments}
-        />
+        <button
+          type="button"
+          onClick={() => setScheduleModalVisible(!isScheduleModalVisible)}
+          className="bg-[#05A5FB] hover:bg-[#50C2FF] w-[180px] h-[40px] rounded-[8px] text-[16px] font-[700] flex items-center justify-center text-[#fff] mx-[10px]"
+        >
+          Add Schedule
+          <Image src={whitePlus} alt="+" className="w-3 h-3 ml-3" />
+        </button>
+        <button
+          type="button"
+          onClick={() => setLeaveModalVisible(!isLeaveModalVisible)}
+          className="bg-[#05A5FB] hover:bg-[#50C2FF] w-[180px] h-[40px] rounded-[8px] text-[16px] font-[700] flex items-center justify-center text-[#fff] mx-[10px]"
+        >
+          Add Leave
+          <Image src={whitePlus} alt="+" className="w-3 h-3 ml-3" />
+        </button>
+      </div>
+      <div className="flex items-center my-2 h-[40px]">
+        <div className="text-[24px] font-[700] mr-[10%]">Search Filter</div>
+        <MultiSelect options={departments} />
+        <MultiSelect options={profiles} />
+        <MultiSelect options={shifts} />
       </div>
       <div className="overflow-y-scroll scrollbar-hidden h-[90%]">
         <Table className={""}>
