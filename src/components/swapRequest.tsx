@@ -27,9 +27,11 @@ const formatTimeDifference = (createdDateTime: string) => {
 const Request = ({
   each,
   fetchSwapRequests,
+  setModalVisible
 }: {
   each: SwapRequest;
   fetchSwapRequests: any;
+  setModalVisible?:any
 }) => {
   const [statusDecline, setStatusDecline] = useState<string>("");
   const [statusAccept, setStatusAccept] = useState<string>("");
@@ -149,7 +151,14 @@ const Request = ({
           }}
         />
         <div className="w-[60px] h-[40px] rounded-[8px] border border-1 border-[#05A5FB] text-[#05A5FB] text-[16px] font-[700] flex items-center justify-center cursor-pointer">
-          <Image alt="requestBtn" src={requestBtn} className="w-[16px]" />
+          <Image
+            alt="requestBtn"
+            src={requestBtn}
+            className="w-[16px]"
+            onClick={() => {
+              setModalVisible(each);
+            }}
+          />
         </div>
       </div>
     </div>

@@ -9,6 +9,8 @@ import fetchWithToken from "@/utils/api";
 import AnimatedBtn from "../animatedBtn";
 import dp from "@/assets/noProfile.svg";
 import moment from "moment";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 interface Shift {
   id: number;
@@ -122,18 +124,27 @@ const ScheduleModal: React.FC<scheduleProps> = ({
     }
   };
 
+  const isDateAvailable = (date:any) => {
+    return prefilledDates.some((availableDate:any) => 
+      availableDate.toDateString() === date.toDateString()
+    );
+  };
+
   const fetchPrefilledDates = async () => {
     try {
       const data = await fetchWithToken("/prefilleddate/list", {
         method: "GET",
       });
 
+      const dates = data?.content?.prefilledDate?.map((date:any) => new Date(date?.full_date));
+
       setPrefilledDates(
-        data?.content?.prefilledDate?.map((each: PrefilledDate) => ({
-          ...each,
-          value: each?.id,
-          label: moment(each?.full_date)?.format("ll"),
-        }))
+        dates
+        // data?.content?.prefilledDate?.map((each: PrefilledDate) => ({
+        //   ...each,
+        //   value: each?.id,
+        //   label: moment(each?.full_date)?.format("ll"),
+        // }))
       );
     } catch (error) {
       console.error("Failed to fetch shifts:", error);
@@ -196,7 +207,16 @@ const ScheduleModal: React.FC<scheduleProps> = ({
             <div className="text-center text-lg font-bold">edit schedule</div>
             <div className="text-sm text-[#101010]">
               <div className="font-bold">Start Date</div>
-              <Select
+              <DatePicker
+                // selected={selectedDate}
+                // onChange={(date) => setSelectedDate(date)}
+                showIcon
+                filterDate={isDateAvailable}
+                placeholderText="Select start date"
+                name="start_date_id"
+                className="w-full border"
+              />
+              {/* <Select
                 options={prefilledDates}
                 value={prefilledDates?.find(
                   (each) =>
@@ -209,7 +229,7 @@ const ScheduleModal: React.FC<scheduleProps> = ({
                 }
                 onBlur={formik.handleBlur}
                 className="w-[350px] h-[40px] my-2"
-              />
+              /> */}
               <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
                 {formik?.touched?.start_date_id &&
                   formik?.errors?.start_date_id && (
@@ -217,7 +237,16 @@ const ScheduleModal: React.FC<scheduleProps> = ({
                   )}
               </div>
               <div className="font-bold">End Date</div>
-              <Select
+              <DatePicker
+              showIcon
+                // selected={selectedDate}
+                // onChange={(date) => setSelectedDate(date)}
+                filterDate={isDateAvailable}
+                placeholderText="Select a date"
+                name="end_date_id"
+                className="w-full"
+              />
+              {/* <Select
                 options={prefilledDates}
                 value={prefilledDates?.find(
                   (each) =>
@@ -230,7 +259,7 @@ const ScheduleModal: React.FC<scheduleProps> = ({
                 }
                 onBlur={formik.handleBlur}
                 className="w-[350px] h-[40px] my-2"
-              />
+              /> */}
               <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
                 {formik?.touched?.end_date_id &&
                   formik?.errors?.end_date_id && (

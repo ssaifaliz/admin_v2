@@ -88,7 +88,7 @@ const Roles: React.FC<rolesProps> = ({ isModalVisible, setModalVisible }) => {
         </TableHead>
         <TableBody>
           {roles?.map((each) => {
-            const { id, code_name, permission, title } = each;
+            const { id, code_name, permission, title }: any = each;
             return (
               <TableRow key={id}>
                 <TableCell className="!outline-none !border-b-0">
@@ -104,7 +104,11 @@ const Roles: React.FC<rolesProps> = ({ isModalVisible, setModalVisible }) => {
                   <div className="flex items-center max-w-min">
                     <div className="flex flex-col justify-center">
                       <div className="text-[16px] font-[600] mt-0">
-                        {permission}
+                        <ul className="list-disc">
+                          {permission.map((item: any, index: number) => (
+                            <li key={index}>{item.title}</li>
+                          ))}
+                        </ul>
                       </div>
                     </div>
                   </div>
