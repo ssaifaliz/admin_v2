@@ -3,12 +3,14 @@ import SearchFilters from "@/components/searchFIlters";
 import fetchWithToken from "@/utils/api";
 import Request from "@/components/swapRequest";
 import TableFooter from "@/components/tableFooter";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import whitePlus from "@/assets/whitePlus.png";
 import Image from "next/image";
 import SwapRequestAdd from "@/components/modals/swapRequestAdd";
+import { updateQueryParams } from "@/lib";
 
 const RequestsWrapper = () => {
+  const { replace } = useRouter();
   const searchParams = useSearchParams();
   const page = parseInt(searchParams.get("page") || "1");
   const pageSize = parseInt(searchParams.get("pageSize") || "10");
@@ -33,6 +35,13 @@ const RequestsWrapper = () => {
         }
       );
       setSwapRequests(data?.content?.swapRequest);
+      updateQueryParams(
+        {
+          totalPages: data?.content?.totalPages?.toString(),
+          totalCount: data?.content?.totalCount?.toString(),
+        },
+        replace
+      );
     } catch (error) {
       console.error("Failed to fetch swap requests:", error);
     }
