@@ -226,10 +226,10 @@ const Requests = () => {
           />
           <Image alt="search" src={search} className="w-[17px]" />
         </div>
-        <MultiSelect
+        {/* <MultiSelect
           selectedOptions={selectedDepartments}
           setSelectedOptions={setSelectedDepartments}
-        />
+        /> */}
       </div>
       <div className="text-[24px] font-[700]">Requests</div>
       <div className="overflow-y-scroll scrollbar-hidden max-h-[85%]">

@@ -112,8 +112,8 @@ const SwapRequests: React.FC<SwapRequestsProps> = ({
         {
           totalPages: data?.content?.totalPages?.toString(),
           totalCount: data?.content?.totalCount?.toString(),
-          userFrom:selectedUserFrom,
-          userTo:selectedUserTo
+          userFrom: selectedUserFrom,
+          userTo: selectedUserTo,
         },
         replace
       );
@@ -167,17 +167,17 @@ const SwapRequests: React.FC<SwapRequestsProps> = ({
                   styles={{
                     control: (base) => ({
                       ...base,
-                      backgroundColor: 'transparent', 
-                      borderColor: 'none',
-                      borderWidth:"0",          
-                      color: '',
-                      '&:hover':{
-                        borderColor:"none"
+                      backgroundColor: "transparent",
+                      borderColor: "none",
+                      borderWidth: "0",
+                      color: "",
+                      "&:hover": {
+                        borderColor: "none",
                       },
-                      boxShadow:"none"            
+                      boxShadow: "none",
                     }),
                     indicatorSeparator: () => ({
-                      display: 'none',
+                      display: "none",
                     }),
                   }}
                   placeholder={"User From"}
@@ -204,17 +204,17 @@ const SwapRequests: React.FC<SwapRequestsProps> = ({
                   styles={{
                     control: (base) => ({
                       ...base,
-                      backgroundColor: 'transparent', 
-                      borderColor: 'none',
-                      borderWidth:"0",          
-                      color: '',
-                      '&:hover':{
-                        borderColor:"none"
+                      backgroundColor: "transparent",
+                      borderColor: "none",
+                      borderWidth: "0",
+                      color: "",
+                      "&:hover": {
+                        borderColor: "none",
                       },
-                      boxShadow:"none"            
+                      boxShadow: "none",
                     }),
                     indicatorSeparator: () => ({
-                      display: 'none',
+                      display: "none",
                     }),
                   }}
                   placeholder={"User To"}

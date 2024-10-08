@@ -1,21 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
-import warn from "@/assets/Warning3.png";
-import MultiSelect from "./multiSelect";
-import search from "@/assets/search.png";
 import fetchWithToken from "@/utils/api";
 import calender from "@/assets/calender.png";
 import request from "@/assets/request.png";
 import requestBtn from "@/assets/requestBtn.png";
 import moment from "moment";
-import Tooltip from "./tooltip";
 import AnimatedBtn from "./animatedBtn";
 import clock from "@/assets/time-line.svg";
-
-interface Option {
-  name: string;
-  value: string;
-}
 
 const formatTimeDifference = (createdDateTime: string) => {
   const createdMoment = moment(createdDateTime);
@@ -44,7 +35,7 @@ const Request = ({
   const [statusAccept, setStatusAccept] = useState<string>("");
   return (
     <div
-      className="bg-[#f7f8f7] rounded-[8px] w-full max-h-[250px] flex flex-col justify-between my-2 p-3 py-4"
+      className="bg-[#f7f8f7] rounded-[8px] w-[410px] max-h-[250px] flex flex-col justify-between m-2 p-3 py-4"
       key={each?.id}
     >
       <div className="w-full flex items-center justify-between mb-4">
@@ -165,84 +156,4 @@ const Request = ({
   );
 };
 
-const Requests = () => {
-  const [swapRequests, setSwapRequests] = useState<SwapRequest[]>([]);
-  const [selectedDepartments, setSelectedDepartments] = useState<Option[]>([]);
-  const [filterText, setFilterText] = useState("");
-
-  const fetchSwapRequests = async () => {
-    try {
-      const data = await fetchWithToken("/swaprequest/list", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      console.log("data", data);
-      setSwapRequests(data?.content?.swapRequest);
-    } catch (error) {
-      console.error("Failed to fetch swap requests:", error);
-    }
-  };
-  // const swapRequestsFilter = (data: any) => {
-  //   let arr = data;
-  //   if (selectedDepartments?.length) {
-  //     arr = arr?.filter((item: any) =>
-  //       selectedDepartments?.some(
-  //         (dept) =>
-  //           item?.scheduleFrom?.deptId?.toString() ===
-  //             dept?.value?.toString() ||
-  //           item?.scheduleFrom?.deptId?.toString() === dept?.value?.toString()
-  //       )
-  //     );
-  //   }
-
-  //   setSwapRequests(arr);
-  // };
-
-  useEffect(() => {
-    console.log(selectedDepartments);
-    fetchSwapRequests();
-  }, [selectedDepartments]);
-
-  return (
-    <div
-      className="max-w-[410px] min-w-[410px] max-h-full"
-      // style={{ border: "10px solid red" }}
-    >
-      <div
-        className="flex items-center justify-between my-2"
-        // style={{ border: "10px solid green" }}
-      >
-        <div className="h-[40px] w-[196px] flex items-center justify-center rounded-[8px] border border-1 border-[#7e8581]">
-          <input
-            type="text"
-            placeholder="Search"
-            className="w-[70%] text-[14px] outline-none"
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setFilterText(event.target.value);
-            }}
-            value={filterText}
-          />
-          <Image alt="search" src={search} className="w-[17px]" />
-        </div>
-        <MultiSelect
-          selectedOptions={selectedDepartments}
-          setSelectedOptions={setSelectedDepartments}
-        />
-      </div>
-      <div className="text-[24px] font-[700]">Requests</div>
-      <div className="overflow-y-scroll scrollbar-hidden max-h-[85%]">
-        {swapRequests?.map((each, index) => (
-          <Request
-            each={each}
-            key={each?.id}
-            fetchSwapRequests={fetchSwapRequests}
-          />
-        ))}
-      </div>
-    </div>
-  );
-};
-
-export default Requests;
+export default Request;

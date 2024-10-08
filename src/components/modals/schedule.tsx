@@ -186,7 +186,7 @@ const ScheduleModal: React.FC<scheduleProps> = ({
     isModalVisible && (
       <main
         onClick={() => setModalVisible(!isModalVisible)}
-        className="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-30 flex justify-center align-middle z-[1]"
+        className="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-30 flex justify-center align-middle z-[2]"
       >
         <div className="container my-auto">
           <div

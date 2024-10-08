@@ -2,17 +2,20 @@ import React, { useState, useEffect, useRef, ChangeEvent } from "react";
 import downArrow from "@/assets/downArrow.png";
 import "./style.css";
 import Image from "next/image";
-import fetchWithToken from "@/utils/api";
+import { useRouter, useSearchParams } from "next/navigation";
+import { updateQueryParams } from "@/lib";
 
 const MultiSelect = ({
   options,
-  selectedOptions,
-  setSelectedOptions,
+  placeHolder,
 }: {
   options: any[];
-  selectedOptions: any[];
-  setSelectedOptions: any;
+  placeHolder: string;
 }) => {
+  const { replace } = useRouter();
+  const searchParams = useSearchParams();
+  const page = searchParams.get(placeHolder);
+  const [selectedOptions, setSelectedOptions] = useState<any[]>([]);
   const [dropdownActive, setDropdownActive] = useState(false);
   const [cursor, setCursor] = useState(0);
 
@@ -45,10 +48,6 @@ const MultiSelect = ({
     return selectedOptions?.some((item) => item.value === value);
   };
 
-  // useEffect(() => {
-  //   fetchDepartments(setDepartments);
-  // }, []);
-
   useEffect(() => {
     const handleMousedown = (e: MouseEvent) => {
       if (
@@ -70,6 +69,25 @@ const MultiSelect = ({
     };
   }, [dropdownActive]);
 
+  useEffect(() => {
+    // if (!selectedOptions?.length) return;
+    const tempData = selectedOptions?.map((each) => each?.id);
+    updateQueryParams(
+      {
+        [placeHolder]: tempData?.toString(),
+      },
+      replace
+    );
+  }, [selectedOptions]);
+
+  useEffect(() => {
+    const paramData = page
+      ?.split(",")
+      ?.map((id) => options?.find((opt) => opt?.value?.toString() === id))
+      ?.filter((each) => each?.value);
+    if (paramData?.length) setSelectedOptions(paramData);
+  }, [page, options]);
+
   return (
     <div
       className={`multiselect-wrapper rounded-[8px] mx-[10px] z-[1]`}
@@ -85,7 +103,7 @@ const MultiSelect = ({
               selectedOptions?.length ? "is-hidden" : ""
             }`}
           >
-            Choose Department...
+            {`${placeHolder}...`}
           </span>
 
           {selectedOptions?.map((option) => (
@@ -113,12 +131,12 @@ const MultiSelect = ({
                 type="checkbox"
                 onChange={handleOptionChange}
                 className="custom-checkbox"
-                id={`opt-${option.value}`}
+                id={`${placeHolder}-${option.value}`}
                 value={option.value}
                 checked={isChecked(option.value)}
               />
               <label
-                htmlFor={`opt-${option.value}`}
+                htmlFor={`${placeHolder}-${option.value}`}
                 className="custom-checkbox-label"
               >
                 {option.name}

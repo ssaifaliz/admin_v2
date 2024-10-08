@@ -9,17 +9,18 @@ import {
 } from "@/components/catalyst/table";
 import calenderDark from "@/assets/calenderDark.png";
 import Image from "next/image";
-import twoUsers from "@/assets/twoUsers.png";
-import flight from "@/assets/flight.png";
-import hospital from "@/assets/hospital.png";
+// import twoUsers from "@/assets/twoUsers.png";
+// import flight from "@/assets/flight.png";
+// import hospital from "@/assets/hospital.png";
 import "./style.css";
 import { WeekPicker } from "../weekpicker";
 import moment from "moment";
 import fetchWithToken from "@/utils/api";
-import MultiSelect from "../multiSelect";
 import whitePlus from "@/assets/whitePlus.png";
 import Leave from "../modals/leave";
 import ScheduleModal from "../modals/schedule";
+import { useSearchParams } from "next/navigation";
+import SearchFilters from "../searchFIlters";
 
 const colors = [
   "#c0b0ff",
@@ -32,14 +33,16 @@ const colors = [
 ];
 
 const ScheduleTable = () => {
+  const searchParams = useSearchParams();
+  const shift_id = searchParams.get("Shifts");
+  const user_id = searchParams.get("Profiles");
+  const department_id = searchParams.get("Departments");
+
   const [isScheduleModalVisible, setScheduleModalVisible] =
     useState<any>(false);
   const [isLeaveModalVisible, setLeaveModalVisible] = useState<any>(false);
   const [week, setWeek] = useState<any>();
   const [schedule, setSchedule] = useState<ScheduleInterface[]>();
-  const [departments, setDepartments] = useState<Department[]>();
-  const [profiles, setProfiles] = useState<Profile[]>();
-  const [shifts, setShifts] = useState<Shift[]>();
 
   const firstDay = moment(week?.firstDay);
   const lastDay = moment(week?.lastDay);
@@ -71,10 +74,18 @@ const ScheduleTable = () => {
       "MMMM YYYY"
     )}`;
   }
-  const fetchSchedule = async (dateFrom: string, dateTo: string) => {
+  const fetchSchedule = async () => {
     try {
       const data = await fetchWithToken(
-        `/user/schedule/list?start_date=${dateFrom}&end_date=${dateTo}`,
+        `/user/schedule/list?start_date=${moment(new Date(week?.firstDay))
+          ?.utc()
+          ?.startOf("day")
+          ?.toISOString()}&end_date=${moment(new Date(week?.lastDay))
+          ?.utc()
+          ?.startOf("day")
+          ?.toISOString()}&user_id=[${user_id || []}]&shift_id=[${
+          shift_id || []
+        }]&department_id=[${department_id || []}]`,
         {
           method: "GET",
         }
@@ -85,97 +96,21 @@ const ScheduleTable = () => {
     }
   };
 
-  const fetchProfiles = async () => {
-    try {
-      const data = await fetchWithToken(`/user/list`, {
-        method: "GET",
-      });
-
-      setProfiles(
-        data?.content?.user?.map((each: Profile) => ({
-          ...each,
-          // name: each?.name,
-          // value: each?.id,
-        }))
-      );
-      console.log("data", data);
-    } catch (error) {
-      console.error("Failed to fetch swap requests:", error);
-    }
-  };
-
-  const fetchShifts = async () => {
-    try {
-      const data = await fetchWithToken(`/shift/list`, {
-        method: "GET",
-      });
-
-      setShifts(
-        data?.content?.shift?.map((each: Department) => ({
-          ...each,
-          // name: each?.name,
-          // value: each?.id,
-        }))
-      );
-      console.log("data", data);
-    } catch (error) {
-      console.error("Failed to fetch swap requests:", error);
-    }
-  };
-  const fetchDepartments = async () => {
-    try {
-      const data = await fetchWithToken(`/department/list`, {
-        method: "GET",
-      });
-
-      setDepartments(
-        data?.content?.department?.map((each: Department) => ({
-          ...each,
-          // name: each?.name,
-          // value: each?.id,
-        }))
-      );
-      console.log("data", data);
-    } catch (error) {
-      console.error("Failed to fetch swap requests:", error);
-    }
-  };
-
   useEffect(() => {
-    fetchDepartments();
-    fetchProfiles();
-    fetchShifts();
-  }, []);
-
-  useEffect(() => {
-    console.log("week", week);
     if (!week?.firstDay || !week?.lastDay) return;
-    fetchSchedule(
-      moment(new Date(week?.firstDay)).utc().startOf("day").toISOString(),
-      moment(new Date(week?.lastDay)).utc().startOf("day").toISOString()
-    );
-  }, [week]);
+    fetchSchedule();
+  }, [week, user_id, department_id, shift_id]);
   return (
     <div className="h-full">
       <Leave
         isModalVisible={isLeaveModalVisible}
         setModalVisible={setLeaveModalVisible}
-        fetchLeaves={() =>
-          fetchSchedule(
-            moment(new Date(week?.firstDay)).utc().startOf("day").toISOString(),
-            moment(new Date(week?.lastDay)).utc().startOf("day").toISOString()
-          )
-        }
+        fetchLeaves={() => fetchSchedule()}
       />
       <ScheduleModal
         isModalVisible={isScheduleModalVisible}
         setModalVisible={setScheduleModalVisible}
-        fetchSchedules={() =>
-          fetchSchedule(
-            moment(new Date(week?.firstDay)).utc().startOf("day").toISOString(),
-            moment(new Date(week?.lastDay)).utc().startOf("day").toISOString()
-          )
-        }
+        fetchSchedules={() => fetchSchedule()}
       />
       <div className="flex items-center my-2 h-[40px]">
         <div className="text-[24px] w-[335px] font-[700] mr-[10px]">
@@ -187,7 +122,7 @@ const ScheduleTable = () => {
           onClick={() => setScheduleModalVisible(!isScheduleModalVisible)}
           className="bg-[#05A5FB] hover:bg-[#50C2FF] w-[180px] h-[40px] rounded-[8px] text-[16px] font-[700] flex items-center justify-center text-[#fff] mx-[10px]"
         >
-          Add Schedule
+          Schedule
           <Image src={whitePlus} alt="+" className="w-3 h-3 ml-3" />
         </button>
         <button
@@ -195,16 +130,11 @@ const ScheduleTable = () => {
           onClick={() => setLeaveModalVisible(!isLeaveModalVisible)}
           className="bg-[#05A5FB] hover:bg-[#50C2FF] w-[180px] h-[40px] rounded-[8px] text-[16px] font-[700] flex items-center justify-center text-[#fff] mx-[10px]"
         >
-          Add Leave
+          Leave
           <Image src={whitePlus} alt="+" className="w-3 h-3 ml-3" />
         </button>
       </div>
-      <div className="flex items-center my-2 h-[40px]">
-        <div className="text-[24px] font-[700] mr-[10%]">Search Filter</div>
-        <MultiSelect options={departments} />
-        <MultiSelect options={profiles} />
-        <MultiSelect options={shifts} />
-      </div>
+      <SearchFilters />
       <div className="overflow-y-scroll scrollbar-hidden h-[90%]">
         <Table className={""}>
           <TableHead>
@@ -241,7 +171,8 @@ const ScheduleTable = () => {
                       {date.format("DD")}
                     </div>
                   </div>
-                  <div className="w-full h-[22px] mt-[5px] flex items-center justify-between">
+                  {/* keep this for future */}
+                  {/* <div className="w-full h-[22px] mt-[5px] flex items-center justify-between">
                     <div className="bg-[#f7f8f7] h-full w-[32px] flex items-center justify-around rounded-[2px]">
                       <Image
                         alt="twoUsers"
@@ -262,7 +193,7 @@ const ScheduleTable = () => {
                       />
                       <div className="text-[12px]">1</div>
                     </div>
-                  </div>
+                  </div> */}
                 </TableHeader>
               ))}
             </TableRow>

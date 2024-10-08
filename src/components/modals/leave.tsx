@@ -5,12 +5,30 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import fetchWithToken from "@/utils/api";
 import AnimatedBtn from "../animatedBtn";
+import Image from "next/image";
+import dp from "@/assets/noProfile.svg";
 
 interface LeaveProps {
   isModalVisible: boolean | any;
   setModalVisible: React.Dispatch<React.SetStateAction<boolean | any>>;
   fetchLeaves: () => void;
 }
+
+const UserLabel = (profile: Profile) => (
+  <div className="flex items-center">
+    <Image
+      alt="profile"
+      src={profile?.image || dp}
+      className="w-[40px] rounded-full"
+      width={6}
+      height={6}
+    />
+    <div className="flex flex-col text-[14px] ml-1">
+      <div className="font-[700]">{profile?.name}</div>
+      <div>{profile?.email}</div>
+    </div>
+  </div>
+);
 
 const Leave: React.FC<LeaveProps> = ({
   isModalVisible,
@@ -20,6 +38,7 @@ const Leave: React.FC<LeaveProps> = ({
   const isEdit = typeof isModalVisible !== "boolean";
   const [isDecline, setIsDecline] = useState<boolean>(false);
   const [prefilledDates, setPrefilledDates] = useState<PrefilledDate[]>([]);
+  const [profiles, setProfiles] = useState<Profile[]>([]);
 
   const [status, setStatus] = useState<string>("");
 
@@ -29,6 +48,7 @@ const Leave: React.FC<LeaveProps> = ({
     total_days: string;
     total_holidays: string;
     leave_type: string;
+    user_id: string;
   }>({
     initialValues: {
       end_date_id: "",
@@ -36,6 +56,7 @@ const Leave: React.FC<LeaveProps> = ({
       total_days: "",
       total_holidays: "",
       leave_type: "",
+      user_id: "",
     },
     validationSchema: Yup.object({
       end_date_id: Yup.string().required("Required"),
@@ -43,6 +64,7 @@ const Leave: React.FC<LeaveProps> = ({
       total_days: Yup.string().required("Required"),
       total_holidays: Yup.string().required("Required"),
       leave_type: Yup.string().required("Required"),
+      user_id: Yup.string().required("Required"),
     }),
     onSubmit: async (values) => {
       setStatus("onclic");
@@ -59,6 +81,7 @@ const Leave: React.FC<LeaveProps> = ({
             total_days: values?.total_days,
             total_holidays: values?.total_holidays,
             leave_type: values?.leave_type,
+            user_id: values?.user_id,
           }),
         });
         setStatus("success");
@@ -91,17 +114,37 @@ const Leave: React.FC<LeaveProps> = ({
     }
   };
 
+  const fetchProfiles = async () => {
+    try {
+      const data = await fetchWithToken("/user/list", {
+        method: "GET",
+      });
+
+      setProfiles(
+        data?.content?.user?.map((each: Profile) => ({
+          ...each,
+          value: each?.id,
+        }))
+      );
+    } catch (error) {
+      console.error("Failed to fetch profiles:", error);
+    }
+  };
+
   useEffect(() => {
     formik?.resetForm();
     if (
       typeof isModalVisible === "number" ||
       typeof isModalVisible === "string"
     ) {
+      // @ts-ignore
+      formik?.setFieldValue("user_id", isModalVisible?.user_id);
     }
   }, [isModalVisible]);
 
   useEffect(() => {
     fetchPrefilledDates();
+    fetchProfiles();
   }, []);
 
   return (
@@ -110,7 +153,7 @@ const Leave: React.FC<LeaveProps> = ({
         onClick={() => {
           setModalVisible(false);
         }}
-        className="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-30 flex justify-center align-middle z-[1]"
+        className="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-30 flex justify-center align-middle z-[2]"
       >
         <div
           className="py-5 max-w-[40%] h-[70%] overflow-auto m-auto w-[385px] capitalize bg-[#FFF] rounded-[8px] flex flex-col items-center scrollbar-hidden"
@@ -120,6 +163,24 @@ const Leave: React.FC<LeaveProps> = ({
             {isEdit ? "Edit" : "Add"}
           </div>
           <div className="text-sm text-[#101010] w-full px-5">
+            <div className="font-bold">profile</div>
+            <Select
+              formatOptionLabel={UserLabel}
+              options={profiles}
+              value={profiles?.find(
+                (each) =>
+                  each?.id?.toString() === formik.values.user_id?.toString()
+              )}
+              name="user_id"
+              onChange={(option) => formik.setFieldValue("user_id", option?.id)}
+              onBlur={formik.handleBlur}
+              className="w-[350px] h-[40px] my-2"
+            />
+            <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
+              {formik?.touched?.user_id && formik?.errors?.user_id && (
+                <div>{formik?.errors?.user_id}</div>
+              )}
+            </div>
             <div className="font-bold">Start Date</div>
             <Select
               options={prefilledDates}
