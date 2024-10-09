@@ -186,7 +186,7 @@ const Leaves: React.FC<LeaveProps> = ({ isModalVisible, setModalVisible }) => {
               <TableCell className="!outline-none !border-b-0 w-[120px] flex float-right">
                 <div
                   onClick={() => {
-                    setModalVisible(each?.id);
+                    setModalVisible(each);
                   }}
                   className="w-[60px] h-full flex justify-center items-center cursor-pointer"
                 >

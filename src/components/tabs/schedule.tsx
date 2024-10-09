@@ -56,12 +56,6 @@ const Schedule: React.FC<ScheduleProps> = ({
     }
   };
 
-  const handleDateRage =(value:any) =>{
-
-    
-
-  }
-
   const fetchSchedule = async () => {
     let selectedDateRage = {
       startDate:scheduleRage[0]?`${scheduleRage[0].day}/${scheduleRage[0].month.number}/${scheduleRage[0].year}`:"",

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import calenderIcon from "../../assets/calender.png";
 
@@ -16,7 +16,17 @@ export default function DatePickerCalender({
   handleDateChange:any
   selectedDateValue:any
 }) {
-  const [selectedDate, setSelectedDate] = useState(selectedDateValue);
+  console.log(selectedDateValue,"selectedDateValue")
+  const [selectedDate, setSelectedDate] = useState<any>(selectedDateValue ? new Date(selectedDateValue) : null);
+
+  useEffect(() => {
+    if (selectedDateValue) {
+      setSelectedDate(new Date(selectedDateValue));
+    } else {
+      setSelectedDate(null);
+    }
+  }, [selectedDateValue]);
+
   const isDateAvailable = (date: any) => {
     return prefilledDates.some(
       (availableDate: any) =>
