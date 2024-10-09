@@ -6,7 +6,7 @@ async function fetchWithToken(endpoint: string, options: RequestInit = {}) {
   const headers = new Headers(options.headers || {});
 
   if (token) {
-    headers.set("Authorization", `Bearer ${token}`);
+    headers.set("Authorization", `${token}`);
   }
 
   const response = await fetch(
