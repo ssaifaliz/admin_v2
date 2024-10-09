@@ -178,7 +178,7 @@ const Leaves: React.FC<LeaveProps> = ({ isModalVisible, setModalVisible }) => {
                   <div className="flex flex-col justify-center">
                     <div className="text-[16px] font-[600] mt-0">
                       {/* @ts-ignore */}
-                      {each?.approved}
+                      {each?.status}
                     </div>
                   </div>
                 </div>
