@@ -24,7 +24,7 @@ const RequestsWrapper = () => {
   const fetchSwapRequests = async () => {
     try {
       const data = await fetchWithToken(
-        `/swaprequest/list?page=${page}&pageSize=${pageSize}&user_id=[${
+        `/swaprequest/list?page=${page}&pageSize=${pageSize}&status=PENDING&user_id=[${
           user_id || []
         }]&shift_id=[${shift_id || []}]&department_id=[${department_id || []}]`,
         {
