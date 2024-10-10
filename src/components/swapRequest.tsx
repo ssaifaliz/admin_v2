@@ -56,7 +56,7 @@ const Request = ({
       });
       console?.log("response", response);
       fetchSwapRequests();
-      if (statusType === "Approved") {
+      if (statusType === "APPROVED") {
         setStatusAccept("success");
       } else {
         setStatusDecline("success");
@@ -135,28 +135,39 @@ const Request = ({
           {each?.message || "No Message"}
         </div>
       </div>
-      <div className="w-full flex items-center justify-between mt-1">
-        <AnimatedBtn
-          secondary={true}
-          txt="Decline"
-          status={statusDecline}
-          setStatus={setStatusDecline}
-          className="w-[150px] text-[16px] font-[700]"
-          onClick={async () => {
-            setStatusDecline("onclic");
-            handleStatus("rejected", each);
-          }}
-        />
-        <AnimatedBtn
-          txt="Accept"
-          className="w-[150px] text-[16px] font-[700]"
-          setStatus={setStatusAccept}
-          status={statusAccept}
-          onClick={async () => {
-            setStatusAccept("onclic");
-            handleStatus("Approved", each);
-          }}
-        />
+      <div className="w-full flex items-center justify-between mt-1 gap-3">
+        {each.status.toLowerCase() != "pending" && (
+          <div
+            className={`rounded-md bg-[rgb(5_165_251)] text-white w-full text-center py-2 font-semibold`}
+          >
+            {each.status}
+          </div>
+        )}
+        {each.status.toLowerCase() == "pending" && (
+          <>
+            <AnimatedBtn
+              secondary={true}
+              txt="Decline"
+              status={statusDecline}
+              setStatus={setStatusDecline}
+              className="w-[150px] text-[16px] font-[700]"
+              onClick={async () => {
+                setStatusDecline("onclic");
+                handleStatus("REJECTED", each);
+              }}
+            />
+            <AnimatedBtn
+              txt="Accept"
+              className="w-[150px] text-[16px] font-[700]"
+              setStatus={setStatusAccept}
+              status={statusAccept}
+              onClick={async () => {
+                setStatusAccept("onclic");
+                handleStatus("APPROVED", each);
+              }}
+            />
+          </>
+        )}
         <div className="w-[60px] h-[40px] rounded-[8px] border border-1 border-[#05A5FB] text-[#05A5FB] text-[16px] font-[700] flex items-center justify-center cursor-pointer">
           <Image
             alt="requestBtn"

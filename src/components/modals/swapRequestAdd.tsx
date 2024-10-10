@@ -24,10 +24,10 @@ interface SwapRequestProps {
   fetchSwapRequests: () => void;
 }
 
-const statusOptions = [
-  { value: "pending", label: "Pending" },
-  { value: "accepted", label: "Accepted" },
-  { value: "rejected", label: "Rejected" },
+const statusOptions: any = [
+  { value: "PENDING", label: "Pending" },
+  { value: "APPROVED", label: "Accepted" },
+  { value: "REJECTED", label: "Rejected" },
 ];
 
 const SwapRequestAdd: React.FC<SwapRequestProps> = ({
@@ -60,6 +60,7 @@ const SwapRequestAdd: React.FC<SwapRequestProps> = ({
       status: Yup?.string(),
     }),
     onSubmit: async (values) => {
+      console.log(values,"casdasdasdasddas")
       setStatus("onclic");
       try {
         const response = await fetchWithToken(
@@ -334,6 +335,23 @@ const SwapRequestAdd: React.FC<SwapRequestProps> = ({
                   <div>{formik?.errors?.requested_schedule_id}</div>
                 )}
             </div>
+            {isEdit && (
+              <>
+                <div className="font-bold">Status</div>
+                <Select
+                  options={statusOptions}
+                  value={statusOptions.find((item:any)=>item.value===formik.values.status)}
+                  onChange={(option:any) => formik.setFieldValue("status", option?.value)}
+                  onBlur={() => formik.setFieldTouched("status", true)}
+                  name="status"
+                />
+                <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
+                  {formik?.touched?.status && formik?.errors?.status && (
+                    <div>{formik?.errors?.status}</div>
+                  )}
+                </div>
+              </>
+            )}
             <div className="font-bold">Message</div>
             <textarea
               placeholder="Type Message"
@@ -344,19 +362,7 @@ const SwapRequestAdd: React.FC<SwapRequestProps> = ({
               onChange={formik?.handleChange}
               onBlur={formik?.handleBlur}
             />
-            {/* <div className="font-bold">Status</div>
-            <Select
-              options={statusOptions}
-              value={formik.values.status}
-              onChange={(option) => formik.setFieldValue("status", option)}
-              onBlur={() => formik.setFieldTouched("status", true)}
-              name="status"
-            />
-            <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
-              {formik?.touched?.status && formik?.errors?.status && (
-                <div>{formik?.errors?.status}</div>
-              )}
-            </div> */}
+            
           </div>
           <div className="w-[350px] flex justify-between">
             <button
