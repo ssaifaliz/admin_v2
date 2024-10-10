@@ -34,7 +34,7 @@ const RequestsWrapper = () => {
           },
         }
       );
-      setSwapRequests(data?.content?.swapRequest.filter((item:any)=>(item.status.toLowerCase()==="pending")));
+      setSwapRequests(data?.content?.swapRequest);
       updateQueryParams(
         {
           totalPages: data?.content?.totalPages?.toString(),
