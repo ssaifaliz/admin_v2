@@ -9,5 +9,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard", "/cruds", "/upload"],
+  matcher: ["/dashboard", "/cruds", "/upload", "/schedule", "/swaprequest"],
 };
