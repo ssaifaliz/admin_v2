@@ -18,7 +18,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { updateQueryParams } from "@/lib";
 import moment from "moment";
 
-
 interface LeaveProps {
   isModalVisible: boolean | string | number;
   setModalVisible: React.Dispatch<
@@ -45,7 +44,7 @@ const Leaves: React.FC<LeaveProps> = ({ isModalVisible, setModalVisible }) => {
           method: "GET",
         }
       );
-      console.log(data?.content?.leaves,"data?.content?.leaves")
+      console.log(data?.content?.leaves, "data?.content?.leaves");
       setLeaves(data?.content?.leaves);
       updateQueryParams(
         {
@@ -118,14 +117,14 @@ const Leaves: React.FC<LeaveProps> = ({ isModalVisible, setModalVisible }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {leaves?.map((each:any, index) => (
+          {leaves?.map((each: any, index) => (
             <TableRow key={index}>
               <TableCell className="!outline-none !border-b-0">
                 <div className="flex items-center max-w-min">
                   <div className="flex flex-col justify-center">
                     <div className="text-[16px] font-[600] mt-0">
                       {/* @ts-ignore */}
-                      {each?.approved_by??"-"}
+                      {each?.approved_by ?? "-"}
                     </div>
                   </div>
                 </div>
@@ -135,9 +134,9 @@ const Leaves: React.FC<LeaveProps> = ({ isModalVisible, setModalVisible }) => {
                   <div className="flex flex-col justify-center">
                     <div className="text-[16px] font-[600] mt-0">
                       {/* @ts-ignore */}
-                      {moment(
-                           each?.StartDate?.full_date
-                  ).format("MMMM Do YYYY")}
+                      {moment(each?.StartDate?.full_date).format(
+                        "MMMM Do YYYY"
+                      )}
                     </div>
                   </div>
                 </div>
@@ -147,9 +146,7 @@ const Leaves: React.FC<LeaveProps> = ({ isModalVisible, setModalVisible }) => {
                   <div className="flex flex-col justify-center">
                     <div className="text-[16px] font-[600] mt-0">
                       {/* @ts-ignore */}
-                      {moment(
-                           each?.EndDate.full_date
-                  ).format("MMMM Do YYYY")}
+                      {moment(each?.EndDate.full_date).format("MMMM Do YYYY")}
                     </div>
                   </div>
                 </div>
@@ -159,7 +156,7 @@ const Leaves: React.FC<LeaveProps> = ({ isModalVisible, setModalVisible }) => {
                   <div className="flex flex-col justify-center">
                     <div className="text-[16px] font-[600] mt-0">
                       {/* @ts-ignore */}
-                      {each?.User?.name??"-"}
+                      {each?.User?.name ?? "-"}
                     </div>
                   </div>
                 </div>

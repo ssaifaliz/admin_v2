@@ -140,8 +140,7 @@ const Leave: React.FC<LeaveProps> = ({
       formik?.setFieldValue("user_id", isModalVisible?.user_id);
       formik?.setFieldValue("total_days", isModalVisible?.total_days);
       formik?.setFieldValue("leave_type", isModalVisible?.leave_type);
-      formik?.setFieldValue("total_holidays ", isModalVisible?.total_holidays  );
-
+      formik?.setFieldValue("total_holidays ", isModalVisible?.total_holidays);
     }
     // if (
     //   typeof isModalVisible === "number" ||

@@ -9,9 +9,6 @@ import {
 } from "@/components/catalyst/table";
 import calenderDark from "@/assets/calenderDark.png";
 import Image from "next/image";
-// import twoUsers from "@/assets/twoUsers.png";
-// import flight from "@/assets/flight.png";
-// import hospital from "@/assets/hospital.png";
 import "./style.css";
 import { WeekPicker } from "../weekpicker";
 import moment from "moment";
@@ -20,9 +17,7 @@ import whitePlus from "@/assets/whitePlus.png";
 import Leave from "../modals/leave";
 import ScheduleModal from "../modals/schedule";
 import { useSearchParams } from "next/navigation";
-import SearchFilters from "../searchFIlters";
-import editIcon from "@/assets/editIcon.png";
-
+import SearchFilters from "../searchFilters";
 
 const colors = [
   "#c0b0ff",
@@ -202,8 +197,7 @@ const ScheduleTable = () => {
           </TableHead>
           <TableBody className="cursor-pointer">
             {schedule?.map((each: any, index) => (
-              <TableRow key={index} >
-                
+              <TableRow key={index}>
                 <TableCell
                   style={{ border: 0, padding: 0 }}
                   className={"bg-[#f7f8f7] font-[600] text-[12px]"}
@@ -214,7 +208,6 @@ const ScheduleTable = () => {
                     setScheduleModalVisible(each?.Schedules);
                   }}/> */}
                   </div>
-                  
                 </TableCell>
                 {weekDates?.map((val, index) => (
                   <TableCell

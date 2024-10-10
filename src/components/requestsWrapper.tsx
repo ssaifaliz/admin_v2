@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import SearchFilters from "@/components/searchFIlters";
+import SearchFilters from "@/components/searchFilters";
 import fetchWithToken from "@/utils/api";
 import Request from "@/components/swapRequest";
 import TableFooter from "@/components/tableFooter";

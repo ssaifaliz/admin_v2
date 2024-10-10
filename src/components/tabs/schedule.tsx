@@ -58,9 +58,13 @@ const Schedule: React.FC<ScheduleProps> = ({
 
   const fetchSchedule = async () => {
     let selectedDateRage = {
-      startDate:scheduleRage[0]?`${scheduleRage[0].day}/${scheduleRage[0].month.number}/${scheduleRage[0].year}`:"",
-      endDate:scheduleRage[1]?`${scheduleRage[1].day}/${scheduleRage[1].month.number}/${scheduleRage[1].year}`:""
-    }
+      startDate: scheduleRage[0]
+        ? `${scheduleRage[0].day}/${scheduleRage[0].month.number}/${scheduleRage[0].year}`
+        : "",
+      endDate: scheduleRage[1]
+        ? `${scheduleRage[1].day}/${scheduleRage[1].month.number}/${scheduleRage[1].year}`
+        : "",
+    };
 
     try {
       const data = await fetchWithToken(
@@ -74,9 +78,9 @@ const Schedule: React.FC<ScheduleProps> = ({
         {
           totalPages: data?.content?.totalPages?.toString(),
           totalCount: data?.content?.totalCount?.toString(),
-          profile:selectedProfile,
-          scheduleStartDate:selectedDateRage?.startDate,
-          scheduleEndDate:selectedDateRage?.endDate
+          profile: selectedProfile,
+          scheduleStartDate: selectedDateRage?.startDate,
+          scheduleEndDate: selectedDateRage?.endDate,
         },
         replace
       );
@@ -87,7 +91,7 @@ const Schedule: React.FC<ScheduleProps> = ({
 
   useEffect(() => {
     fetchSchedule();
-  }, [page, pageSize, search, selectedProfile,scheduleRage]);
+  }, [page, pageSize, search, selectedProfile, scheduleRage]);
 
   useEffect(() => {
     fetchUsers();
@@ -137,7 +141,12 @@ const Schedule: React.FC<ScheduleProps> = ({
             <TableHeader className="!outline-none !border-b-0">
               <div className="flex flex-col">
                 Schedule
-                <DatePicker value={scheduleRage} onChange={setScheduleRage} range placeholder="select Schedule Rage"/>
+                <DatePicker
+                  value={scheduleRage}
+                  onChange={setScheduleRage}
+                  range
+                  placeholder="select Schedule Rage"
+                />
                 {/* <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" /> */}
               </div>
             </TableHeader>

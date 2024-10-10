@@ -8,8 +8,6 @@ import "react-dropdown/style.css";
 import fetchWithToken from "@/utils/api";
 import AnimatedBtn from "../animatedBtn";
 import dp from "@/assets/noProfile.svg";
-import moment from "moment";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import DatePickerCalender from "../datePicker";
 
@@ -210,11 +208,13 @@ const ScheduleModal: React.FC<scheduleProps> = ({
                 handleDateChange={(dateId: any) => {
                   formik.setFieldValue("start_date_id", dateId);
                 }}
-                selectedDateValue={prefilledDates?.find(
-                  (each) =>
-                    each?.id?.toString() ===
-                    formik.values.start_date_id?.toString()
-                )?.full_date}
+                selectedDateValue={
+                  prefilledDates?.find(
+                    (each) =>
+                      each?.id?.toString() ===
+                      formik.values.start_date_id?.toString()
+                  )?.full_date
+                }
               />
               {/* <Select
                 options={prefilledDates}
@@ -244,11 +244,13 @@ const ScheduleModal: React.FC<scheduleProps> = ({
                 handleDateChange={(dateId: any) => {
                   formik.setFieldValue("end_date_id", dateId);
                 }}
-                selectedDateValue={prefilledDates?.find(
-                  (each) =>
-                    each?.id?.toString() ===
-                    formik.values.end_date_id?.toString()
-                )?.full_date}
+                selectedDateValue={
+                  prefilledDates?.find(
+                    (each) =>
+                      each?.id?.toString() ===
+                      formik.values.end_date_id?.toString()
+                  )?.full_date
+                }
               />
               {/* <Select
                 options={prefilledDates}
