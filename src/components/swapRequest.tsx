@@ -3,7 +3,7 @@ import Image from "next/image";
 import fetchWithToken from "@/utils/api";
 import calender from "@/assets/calender.png";
 import request from "@/assets/request.png";
-import requestBtn from "@/assets/requestBtn.png";
+import editIcon from "@/assets/editIcon.png";
 import moment from "moment";
 import AnimatedBtn from "./animatedBtn";
 import clock from "@/assets/time-line.svg";
@@ -27,12 +27,50 @@ const formatTimeDifference = (createdDateTime: string) => {
 const Request = ({
   each,
   fetchSwapRequests,
+  setModalVisible
 }: {
   each: SwapRequest;
   fetchSwapRequests: any;
+  setModalVisible?:any
 }) => {
   const [statusDecline, setStatusDecline] = useState<string>("");
   const [statusAccept, setStatusAccept] = useState<string>("");
+  console.log(each)
+  const handleStatus = async (statusType:string,values:any)=>{
+    console.log(values,"valuesssssssss")
+    try {
+      const response = await fetchWithToken(
+        `/swaprequest/update`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id:values.id,
+            requested_by: values?.requested_by,
+            original_schedule_id: values?.original_schedule_id,
+            requested_to: values?.requested_to,
+            requested_schedule_id: values?.requested_schedule_id,
+            message: values?.message,
+            status: statusType,
+          }),
+        }
+      );
+      console?.log("response", response);
+      fetchSwapRequests();
+      if(statusType==="Approved"){
+       setStatusAccept("success")
+      }else{
+        setStatusDecline("success");
+      }
+      
+    } catch (error) {
+      console.error("Error creating swap request:", error);
+      setStatusDecline("fail");
+    }
+
+  }
   return (
     <div
       className="bg-[#f7f8f7] rounded-[8px] w-[410px] max-h-[250px] flex flex-col justify-between m-2 p-3 py-4"
@@ -111,19 +149,7 @@ const Request = ({
           className="w-[150px] text-[16px] font-[700]"
           onClick={async () => {
             setStatusDecline("onclic");
-            try {
-              const data = await fetchWithToken(
-                `/swapRequests/rejectswap/${each?.id}`,
-                {
-                  method: "POST",
-                }
-              );
-              fetchSwapRequests();
-              setStatusDecline("success");
-            } catch (error) {
-              console.error("Failed to fetch swap requests:", error);
-              setStatusDecline("fail");
-            }
+            handleStatus("rejected",each)
           }}
         />
         <AnimatedBtn
@@ -133,23 +159,18 @@ const Request = ({
           status={statusAccept}
           onClick={async () => {
             setStatusAccept("onclic");
-            try {
-              const data = await fetchWithToken(
-                `/swapRequests/acceptswap/${each?.id}`,
-                {
-                  method: "POST",
-                }
-              );
-              fetchSwapRequests();
-              setStatusAccept("success");
-            } catch (error) {
-              console.error("Failed to fetch swap requests:", error);
-              setStatusAccept("fail");
-            }
+            handleStatus("Approved",each)
           }}
         />
         <div className="w-[60px] h-[40px] rounded-[8px] border border-1 border-[#05A5FB] text-[#05A5FB] text-[16px] font-[700] flex items-center justify-center cursor-pointer">
-          <Image alt="requestBtn" src={requestBtn} className="w-[16px]" />
+          <Image
+            alt="requestBtn"
+            src={editIcon}
+            className="w-[30px]"
+            onClick={() => {
+              setModalVisible(each);
+            }}
+          />
         </div>
       </div>
     </div>

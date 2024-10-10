@@ -21,6 +21,8 @@ import Leave from "../modals/leave";
 import ScheduleModal from "../modals/schedule";
 import { useSearchParams } from "next/navigation";
 import SearchFilters from "../searchFIlters";
+import editIcon from "@/assets/editIcon.png";
+
 
 const colors = [
   "#c0b0ff",
@@ -200,14 +202,19 @@ const ScheduleTable = () => {
           </TableHead>
           <TableBody className="cursor-pointer">
             {schedule?.map((each: any, index) => (
-              <TableRow key={index}>
+              <TableRow key={index} >
+                
                 <TableCell
                   style={{ border: 0, padding: 0 }}
                   className={"bg-[#f7f8f7] font-[600] text-[12px]"}
                 >
-                  <div className="h-[50px] pl-3 w-[100px] flex flex-wrap items-center">
+                  <div className="h-[50px] pl-3 w-[100px] flex flex-wrap items-center relative">
                     <div className="mr-1">{each?.name}</div>
+                    {/* <Image alt="editIcon" src={editIcon} className="w-6 h-6" onClick={() => {
+                    setScheduleModalVisible(each?.Schedules);
+                  }}/> */}
                   </div>
+                  
                 </TableCell>
                 {weekDates?.map((val, index) => (
                   <TableCell

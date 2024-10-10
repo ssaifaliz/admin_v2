@@ -70,7 +70,7 @@ const SearchFilters = () => {
   }, []);
 
   return (
-    <div className="flex items-center my-2 h-[40px] w-full">
+    <div className="flex items-center my-8 w-full">
       <div className="text-[24px] font-[700] mr-[10%]">Search Filters</div>
       <MultiSelect options={departments} placeHolder={"Departments"} />
       <MultiSelect options={profiles} placeHolder={"Profiles"} />

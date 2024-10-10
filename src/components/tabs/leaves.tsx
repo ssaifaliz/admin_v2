@@ -98,7 +98,7 @@ const Leaves: React.FC<LeaveProps> = ({ isModalVisible, setModalVisible }) => {
             </TableHeader>
             <TableHeader className="!outline-none !border-b-0">
               <div className="flex items-center">
-                Profile
+                User
                 <Image src={grayArrowDown} alt="" className="w-5 h-5 ml-2" />
               </div>
             </TableHeader>
@@ -159,7 +159,7 @@ const Leaves: React.FC<LeaveProps> = ({ isModalVisible, setModalVisible }) => {
                   <div className="flex flex-col justify-center">
                     <div className="text-[16px] font-[600] mt-0">
                       {/* @ts-ignore */}
-                      {`${each?.profile?.first_name??"-"} ${each?.profile?.last_name??'-'}`}
+                      {each?.User?.name??"-"}
                     </div>
                   </div>
                 </div>
@@ -178,7 +178,7 @@ const Leaves: React.FC<LeaveProps> = ({ isModalVisible, setModalVisible }) => {
                   <div className="flex flex-col justify-center">
                     <div className="text-[16px] font-[600] mt-0">
                       {/* @ts-ignore */}
-                      {each?.approved}
+                      {each?.status}
                     </div>
                   </div>
                 </div>
@@ -186,7 +186,7 @@ const Leaves: React.FC<LeaveProps> = ({ isModalVisible, setModalVisible }) => {
               <TableCell className="!outline-none !border-b-0 w-[120px] flex float-right">
                 <div
                   onClick={() => {
-                    setModalVisible(each?.id);
+                    setModalVisible(each);
                   }}
                   className="w-[60px] h-full flex justify-center items-center cursor-pointer"
                 >

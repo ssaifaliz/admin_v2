@@ -77,6 +77,7 @@ const RequestsWrapper = () => {
             each={each}
             key={each?.id}
             fetchSwapRequests={fetchSwapRequests}
+            setModalVisible={setModalVisible}
           />
         ))}
       </div>

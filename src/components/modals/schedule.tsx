@@ -9,6 +9,9 @@ import fetchWithToken from "@/utils/api";
 import AnimatedBtn from "../animatedBtn";
 import dp from "@/assets/noProfile.svg";
 import moment from "moment";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import DatePickerCalender from "../datePicker";
 
 interface Shift {
   id: number;
@@ -129,11 +132,15 @@ const ScheduleModal: React.FC<scheduleProps> = ({
       });
 
       setPrefilledDates(
-        data?.content?.prefilledDate?.map((each: PrefilledDate) => ({
-          ...each,
-          value: each?.id,
-          label: moment(each?.full_date)?.format("ll"),
+        data?.content?.prefilledDate?.map((item: any) => ({
+          id: item.id,
+          full_date: new Date(item.full_date),
         }))
+        // data?.content?.prefilledDate?.map((each: PrefilledDate) => ({
+        //   ...each,
+        //   value: each?.id,
+        //   label: moment(each?.full_date)?.format("ll"),
+        // }))
       );
     } catch (error) {
       console.error("Failed to fetch shifts:", error);
@@ -195,8 +202,21 @@ const ScheduleModal: React.FC<scheduleProps> = ({
           >
             <div className="text-center text-lg font-bold">edit schedule</div>
             <div className="text-sm text-[#101010]">
-              <div className="font-bold">Start Date</div>
-              <Select
+              <div className="font-bold mb-2">Start Date</div>
+              <DatePickerCalender
+                prefilledDates={prefilledDates}
+                name="start_date_id"
+                placeholder="select start date"
+                handleDateChange={(dateId: any) => {
+                  formik.setFieldValue("start_date_id", dateId);
+                }}
+                selectedDateValue={prefilledDates?.find(
+                  (each) =>
+                    each?.id?.toString() ===
+                    formik.values.start_date_id?.toString()
+                )?.full_date}
+              />
+              {/* <Select
                 options={prefilledDates}
                 value={prefilledDates?.find(
                   (each) =>
@@ -209,15 +229,28 @@ const ScheduleModal: React.FC<scheduleProps> = ({
                 }
                 onBlur={formik.handleBlur}
                 className="w-[350px] h-[40px] my-2"
-              />
+              /> */}
               <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
                 {formik?.touched?.start_date_id &&
                   formik?.errors?.start_date_id && (
                     <div>{formik?.errors?.start_date_id}</div>
                   )}
               </div>
-              <div className="font-bold">End Date</div>
-              <Select
+              <div className="font-bold mb-2">End Date</div>
+              <DatePickerCalender
+                prefilledDates={prefilledDates}
+                name="end_date_id"
+                placeholder="select End date"
+                handleDateChange={(dateId: any) => {
+                  formik.setFieldValue("end_date_id", dateId);
+                }}
+                selectedDateValue={prefilledDates?.find(
+                  (each) =>
+                    each?.id?.toString() ===
+                    formik.values.end_date_id?.toString()
+                )?.full_date}
+              />
+              {/* <Select
                 options={prefilledDates}
                 value={prefilledDates?.find(
                   (each) =>
@@ -230,7 +263,7 @@ const ScheduleModal: React.FC<scheduleProps> = ({
                 }
                 onBlur={formik.handleBlur}
                 className="w-[350px] h-[40px] my-2"
-              />
+              /> */}
               <div className="text-[12px] text-[#E23121] flex items-center h-[25px]">
                 {formik?.touched?.end_date_id &&
                   formik?.errors?.end_date_id && (

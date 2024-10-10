@@ -76,6 +76,7 @@ const Leave: React.FC<LeaveProps> = ({
           },
           body: JSON.stringify({
             ...(isEdit && { id: isModalVisible?.id }),
+            ...(isEdit && { requested_by: isModalVisible?.id }),
             end_date_id: values?.end_date_id,
             start_date_id: values?.start_date_id,
             total_days: values?.total_days,
@@ -133,13 +134,22 @@ const Leave: React.FC<LeaveProps> = ({
 
   useEffect(() => {
     formik?.resetForm();
-    if (
-      typeof isModalVisible === "number" ||
-      typeof isModalVisible === "string"
-    ) {
-      // @ts-ignore
+    if (isEdit) {
+      formik?.setFieldValue("end_date_id", isModalVisible?.end_date_id);
+      formik?.setFieldValue("start_date_id", isModalVisible?.start_date_id);
       formik?.setFieldValue("user_id", isModalVisible?.user_id);
+      formik?.setFieldValue("total_days", isModalVisible?.total_days);
+      formik?.setFieldValue("leave_type", isModalVisible?.leave_type);
+      formik?.setFieldValue("total_holidays ", isModalVisible?.total_holidays  );
+
     }
+    // if (
+    //   typeof isModalVisible === "number" ||
+    //   typeof isModalVisible === "string"
+    // ) {
+    //   // @ts-ignore
+    //   formik?.setFieldValue("user_id", isModalVisible?.user_id);
+    // }
   }, [isModalVisible]);
 
   useEffect(() => {
